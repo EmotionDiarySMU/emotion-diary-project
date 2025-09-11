@@ -1,2 +1,2 @@
-# emotion-diary-project
-To give small comfort to people who are struggling emotionally, we will develop an emotional diary program.
+# 감정 일기장 프로그램(Emotion Diary)
+우울증 등과 같이 감정적으로 힘들어하는 사람들에게 작은 위로를 전하고자, 감정을 기록하고 피드백을 받을 수 있는 일기장 프로그램을 개발한다.
