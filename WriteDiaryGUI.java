@@ -40,7 +40,7 @@ public class WriteDiaryGUI extends JFrame {
 
 
     public WriteDiaryGUI() {
-        setTitle("Emotional Diary - [쓰기]");
+        setTitle("Emotion Diary");
         setSize(550, 700);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
