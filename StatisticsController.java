@@ -1,16 +1,18 @@
-package com.diary.emotion;
+package share;
 
 // Java 8+ 날짜/시간 라이브러리 임포트
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.DayOfWeek; 
+import java.time.DayOfWeek;
 // '현실적인 주차' 계산을 위해 'WeekFields'와 'Locale' 임포트
-import java.time.temporal.WeekFields; 
-import java.util.Locale; 
+import java.time.temporal.WeekFields;
+import java.util.Locale;
 // Java 데이터 구조 (Map) 임포트
 import java.util.Map;
 // JFreeChart 데이터셋 임포트
 import org.jfree.data.category.DefaultCategoryDataset;
+// [수정] PieDataset 임포트 (DAO에서 Map 대신 PieDataset을 직접 받도록 변경 - View와 호환)
+import org.jfree.data.general.DefaultPieDataset; 
 // Swing 이벤트 리스너 임포트
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -18,7 +20,8 @@ import java.awt.event.ActionEvent;
 /**
  * [수정] 통계 MVC 패턴의 '컨트롤러(Controller)'
  * (수정) 캡슐화를 위해 모든 멤버 변수가 'private'으로 변경되었습니다.
- * 'get...DateFromView' 메소드가 'WeekFields'를 사용한 '현실적인' 날짜 로직으로 업그레이드되었습니다.
+ * (수정) 'get...DateFromView' 메소드가 'WeekFields'를 사용한 '현실적인' 날짜 로직으로 업그레이드되었습니다.
+ * (수정) DB 연동을 위해 DAO 호출 시 임시 'userId'를 전달합니다.
  */
 public class StatisticsController {
 
@@ -26,6 +29,11 @@ public class StatisticsController {
     private StatisticsView view;
     // Controller가 데이터를 요청할 DAO 객체
     private StatisticsDAO dao;
+
+    // --- 임시 사용자 ID ---
+    // (중요) 로그인 기능이 병합되기 전까지 사용할 임시 ID입니다.
+    // (TODO) 고객님의 'user' 테이블에 실제 데이터가 있는 user_id로 이 값을 변경해주세요. (예: "testuser")
+    private static final String TEMP_USER_ID = "testuser";
 
     /**
      * StatisticsController 생성자 (이 생성자는 'public'이 맞습니다)
@@ -71,6 +79,10 @@ public class StatisticsController {
      */
     private void updateAllCharts() {
         try {
+            // 0. [신규] 현재 사용자 ID 가져오기 (지금은 임시 ID 사용)
+            String currentUserId = TEMP_USER_ID; 
+            // (참고) 추후 로그인 기능이 병합되면 이 부분은 Session.getUserId() 등으로 대체됩니다.
+            
             // 1. View에서 현재 모드(String) 읽기
             String mode = (String) view.getViewModeSelector().getSelectedItem();
 
@@ -85,26 +97,29 @@ public class StatisticsController {
             // System.out.println("Mode: " + mode + ", Start: " + startDate + ", End: " + endDate);
 
             // 3. DAO에 '진짜 데이터' 요청
+            // [수정] 모든 DAO 호출에 'currentUserId'를 첫 번째 인자로 전달합니다.
             
             // (구현 1순위) 평균 스트레스 지수
-            double avgStress = dao.getAverageStress(startDate, endDate);
+            double avgStress = dao.getAverageStress(currentUserId, startDate, endDate);
             
             // (구현 2순위) 감정 차트 데이터
-            Map<String, Map<String, Double>> emotionData = dao.getEmotionData(startDate, endDate);
+            // [수정] DAO가 View가 바로 사용할 수 있는 DefaultPieDataset을 반환하도록 변경
+            //DefaultPieDataset emotionDataset = dao.getEmotionData(currentUserId, startDate, endDate);
 
             // (구현 3순위) 스트레스 차트 데이터
-            DefaultCategoryDataset stressDataset = dao.getStressData(startDate, endDate, mode);
+            // [수정] DAO 호출 시그니처 변경 (userId, startDate, endDate, mode)
+            DefaultCategoryDataset stressDataset = dao.getStressData(currentUserId, startDate, endDate, mode);
             
             // 4. View 갱신 (Update)
             
             // (구현 1순위) "평균 스트레스 지수" 라벨 텍스트 갱신
-            // (참고: DAO가 55.5를 반환하면, 이 텍스트가 55.5로 갱신됩니다.)
             view.getAvgStressLabel().setText(
                 String.format("<html><center>평균 스트레스 지수<b>:</b> <b>%.1f</b></center></html>", avgStress)
             );
             
-            // [신규] (구현 2/3순위) View의 갱신 메소드를 '진짜 데이터'로 호출
-            view.updateEmotionChart(emotionData); 
+            // [수정] (구현 2/3순위) View의 갱신 메소드를 '진짜 데이터'로 호출
+            // (참고) StatisticsView의 updateEmotionChart는 DefaultPieDataset을 받도록 설계되었습니다.
+            //view.updateEmotionChart(emotionDataset); 
             view.updateStressChart(stressDataset);
 
         } catch (Exception e) {
@@ -117,6 +132,7 @@ public class StatisticsController {
     /**
      * 'private': 이 클래스 '내부에서만' 사용되는 헬퍼 메소드입니다.
      * 'WeekFields'를 사용하여 '현실적인' 주간/월간/연간 시작일을 계산합니다.
+     * (이하 로직은 매우 잘 작성되어 있으므로 수정하지 않습니다.)
      * @param mode ("주간", "월간", "연간")
      * @return (LocalDate) 조회 시작일
      */
@@ -189,6 +205,7 @@ public class StatisticsController {
     /**
      * 'private': 이 클래스 '내부에서만' 사용되는 헬퍼 메소드입니다.
      * 'WeekFields'를 사용하여 '현실적인' 주간/월간/연간 종료일을 계산합니다.
+     * (이하 로직은 매우 잘 작성되어 있으므로 수정하지 않습니다.)
      * @param mode ("주간", "월간", "연간")
      * @return (LocalDate) 조회 종료일
      */
