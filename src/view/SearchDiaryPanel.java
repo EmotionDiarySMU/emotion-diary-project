@@ -6,10 +6,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 
-public class ViewWindow extends JPanel{
+public class SearchDiaryPanel extends JPanel{
 	private static final long serialVersionUID = 1L;
 
-	public ViewWindow() {
+	public SearchDiaryPanel() {
 		
 		setLayout(new BorderLayout());
 		
@@ -63,7 +63,7 @@ public class ViewWindow extends JPanel{
 		        int index = diaries.locationToIndex(e.getPoint());
 		        if (index != -1) {
 		            String diaryTitle = diaries.getModel().getElementAt(index);
-		            new OpenDiaryViewWindow(diaryTitle);
+		            new ExtraWindow(diaryTitle);
 		        }
 		    }
 		});
