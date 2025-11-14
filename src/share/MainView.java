@@ -4,12 +4,11 @@ import java.awt.CardLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import view.ViewWindow;
+import view.SearchDiaryPanel;
 import write.WriteDiaryGUI;
 
 public class MainView extends JFrame {
@@ -45,7 +44,7 @@ public class MainView extends JFrame {
         
         // 쓰기, 열람, 통계 패널 생성
         WriteDiaryGUI writePanel = new WriteDiaryGUI();
-        ViewWindow viewPanel = new ViewWindow();
+        SearchDiaryPanel viewPanel = new SearchDiaryPanel();
         JPanel chartPanel = new JPanel();
         
         // 각 3개의 패널을 cardLayout 패널에 추가
@@ -67,24 +66,11 @@ public class MainView extends JFrame {
         // 닫기전에 "저장하시겠습니까?" 창 띄우기
         addWindowListener(new WindowAdapter() {
         	public void windowClosing(WindowEvent e) {
-                if (writePanel.isModified) {
-                    int result = JOptionPane.showConfirmDialog(MainView.this, 
-                            "저장되지 않은 변경 사항이 있습니다. 저장하시겠습니까?", 
-                            "경고", 
-                            JOptionPane.YES_NO_CANCEL_OPTION);
-
-                    if (result == JOptionPane.YES_OPTION) {
-                    	writePanel.saveButton.doClick();
-                        if (writePanel.isModified) return;
-                        dispose();
-                    } else if (result == JOptionPane.NO_OPTION) {
-                    	dispose();
-                    }
-                } else {
-                	dispose();
-                }
+        		SaveQuestion.handleWindowClosing(MainView.this, writePanel, true);
             }
         });
         
 	}
 }
+	
+	

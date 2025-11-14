@@ -22,16 +22,23 @@ import java.util.List;
 public class WriteDiaryGUI extends JPanel { 
 
 	private static final long serialVersionUID = 1L;
-    JTextField titleField;
-    JTextArea contentArea;
+	
+	public JPanel mainPanel;
+	public JPanel southPanel;
+	
+	public GridBagConstraints gbc;
+	
+	public JLabel questionLabel;
+	public JTextField titleField;
+    public JTextArea contentArea;
     JScrollPane contentScrollPane;
     
-    JLabel[] iconLabels = new JLabel[4];
-    JTextField[] valueFields = new JTextField[4]; 
+    public JLabel[] iconLabels = new JLabel[4];
+    public JTextField[] valueFields = new JTextField[4]; 
     SingleIconChooserDialog iconDialog; // 아이콘 선택 팝업창
 
-    JSlider stressSlider;
-    JTextField stressValueField;
+    public JSlider stressSlider;
+    public JTextField stressValueField;
 
     public JButton saveButton;
 
@@ -48,10 +55,10 @@ public class WriteDiaryGUI extends JPanel {
         Arrays.fill(emotionValues, 0);;
 
         // --- 메인 컨텐츠 패널 (GridBagLayout 사용) ---
-        JPanel mainPanel = new JPanel(new GridBagLayout());
+        mainPanel = new JPanel(new GridBagLayout());
         mainPanel.setBackground(lightGreen); 
         
-        GridBagConstraints gbc = new GridBagConstraints();
+        gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
@@ -59,7 +66,7 @@ public class WriteDiaryGUI extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2; // 2열 병합
-        JLabel questionLabel = new JLabel("오늘의 질문: ");
+        questionLabel = new JLabel("오늘의 질문: ");
         questionLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
         questionLabel.setHorizontalAlignment(JLabel.CENTER);
         mainPanel.add(questionLabel, gbc);
@@ -193,7 +200,7 @@ public class WriteDiaryGUI extends JPanel {
         // --- 하단 저장 버튼 ---
         saveButton = new JButton("저장하기");
         
-        JPanel southPanel = new JPanel();
+        southPanel = new JPanel();
         southPanel.setBackground(lightGreen);
         southPanel.add(saveButton);
         
