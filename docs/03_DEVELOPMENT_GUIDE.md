@@ -1,443 +1,766 @@
-# 개발 가이드
+# 신규 개발자를 위한 개발 가이드
+
+## 목차
+1. [개발 환경 설정](#1-개발-환경-설정)
+2. [프로젝트 빌드 및 실행](#2-프로젝트-빌드-및-실행)
+3. [데이터베이스 설정](#3-데이터베이스-설정)
+4. [코드 구조 이해](#4-코드-구조-이해)
+5. [새 기능 개발 가이드](#5-새-기능-개발-가이드)
+6. [디버깅 방법](#6-디버깅-방법)
+7. [코딩 컨벤션](#7-코딩-컨벤션)
+8. [자주 묻는 질문](#8-자주-묻는-질문)
+
+---
 
 ## 1. 개발 환경 설정
 
-### 1.1 필수 요구사항
-- **JDK**: 17 이상
-- **Maven**: 3.6 이상
-- **MySQL**: 8.0 이상
-- **IDE**: IntelliJ IDEA 또는 Eclipse
+### 1.1 필수 소프트웨어 설치
 
-### 1.2 MySQL 설정
-```sql
--- MySQL 서버 실행 후
--- 데이터베이스는 자동 생성됨 (DatabaseUtil.createDatabase())
--- 초기 실행 시 root 계정 비밀번호 확인 필요
-```
-
-### 1.3 프로젝트 빌드
+#### Java 17
 ```bash
-# Maven 의존성 설치
-mvn clean install
+# macOS (Homebrew 사용)
+brew install openjdk@17
 
-# 프로젝트 실행
-mvn exec:java -Dexec.mainClass="com.diary.emotion.AppLauncher"
+# 환경 변수 설정
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk-17.jdk/Contents/Home
 ```
 
-## 2. 코딩 컨벤션
+#### Maven
+```bash
+# macOS (Homebrew 사용)
+brew install maven
 
-### 2.1 네이밍 규칙
-- **클래스명**: PascalCase (예: `UserModel`, `DiaryDAO`)
-- **메소드명**: camelCase (예: `getUserById`, `createDiary`)
-- **변수명**: camelCase (예: `userId`, `entryDate`)
-- **상수명**: UPPER_SNAKE_CASE (예: `PASTEL_BLUE`, `MAX_EMOTIONS`)
-- **패키지명**: 소문자, 점으로 구분 (예: `com.diary.emotion.auth`)
+# 설치 확인
+mvn -version
+```
 
-### 2.2 주석 규칙
+#### MySQL 8.0.33
+```bash
+# macOS (Homebrew 사용)
+brew install mysql@8.0
+
+# MySQL 서비스 시작
+brew services start mysql@8.0
+
+# root 비밀번호 설정
+mysql_secure_installation
+```
+
+#### IntelliJ IDEA
+- [JetBrains 공식 웹사이트](https://www.jetbrains.com/idea/)에서 다운로드
+- Community Edition 또는 Ultimate Edition 모두 사용 가능
+
+### 1.2 프로젝트 클론 및 열기
+
+```bash
+# 프로젝트 디렉토리로 이동
+cd /Users/iee12/IdeaProjects/emotion-diary-project
+
+# IntelliJ IDEA로 프로젝트 열기
+# File > Open > emotion-diary-project 폴더 선택
+```
+
+### 1.3 Maven 의존성 다운로드
+
+IntelliJ IDEA에서 자동으로 다운로드되지만, 수동으로 할 경우:
+```bash
+mvn clean install
+```
+
+---
+
+## 2. 프로젝트 빌드 및 실행
+
+### 2.1 Maven으로 빌드
+
+```bash
+# 프로젝트 루트에서 실행
+mvn clean compile
+```
+
+### 2.2 애플리케이션 실행
+
+#### 방법 1: IntelliJ IDEA에서 실행
+1. `AppLauncher.java` 파일 열기
+2. 파일 내의 `main` 메소드 옆의 ▶️ 버튼 클릭
+3. "Run 'AppLauncher.main()'" 선택
+
+#### 방법 2: Maven으로 실행
+```bash
+mvn clean compile exec:java -Dexec.mainClass="com.diary.emotion.AppLauncher"
+```
+
+#### 방법 3: 터미널에서 직접 실행
+```bash
+# 컴파일
+javac -cp "target/classes:~/.m2/repository/..." com/diary/emotion/AppLauncher.java
+
+# 실행
+java -cp "target/classes:..." com.diary.emotion.AppLauncher
+```
+
+### 2.3 구버전 실행 (MainView)
+
+```bash
+# Main.java 실행
+mvn clean compile exec:java -Dexec.mainClass="share.Main"
+```
+
+---
+
+## 3. 데이터베이스 설정
+
+### 3.1 MySQL 접속 정보 확인
+
+프로젝트의 DB 설정:
+- **호스트**: localhost
+- **포트**: 3306
+- **사용자**: root
+- **비밀번호**: U9Bsi7sj1* (실제 환경에 맞게 변경)
+- **데이터베이스**: emotion_diary
+
+### 3.2 데이터베이스 초기화
+
+애플리케이션을 처음 실행하면 `DatabaseUtil.createDatabase()`가 자동으로 호출되어:
+1. `emotion_diary` 데이터베이스 생성
+2. 4개 테이블 생성 (user, diary, emotion, question)
+
+수동으로 초기화하려면:
 ```java
-/**
- * 클래스/메소드 설명 (JavaDoc)
- * @param paramName 파라미터 설명
- * @return 반환값 설명
- */
-public ReturnType methodName(ParamType paramName) {
-    // 구현 로직 설명
-    // TODO: 미구현 기능 표시
+boolean success = DatabaseUtil.createDatabase();
+```
+
+### 3.3 MySQL 워크벤치로 확인
+
+```sql
+-- 데이터베이스 확인
+SHOW DATABASES;
+
+-- 테이블 확인
+USE emotion_diary;
+SHOW TABLES;
+
+-- 테이블 구조 확인
+DESC user;
+DESC diary;
+DESC emotion;
+DESC question;
+```
+
+### 3.4 비밀번호 변경 방법
+
+프로젝트에서 사용하는 모든 DB 연결 정보 변경:
+
+#### DatabaseUtil.java
+```java
+String pw = "여러분의_비밀번호";
+```
+
+#### StatisticsDAO.java
+```java
+private static final String DB_PASSWORD = "여러분의_비밀번호";
+```
+
+---
+
+## 4. 코드 구조 이해
+
+### 4.1 MVC 패턴 적용
+
+```
+┌─────────────┐
+│    View     │ (Swing GUI)
+│  (JPanel)   │
+└──────┬──────┘
+       │
+       ↓
+┌─────────────┐
+│ Controller  │ (비즈니스 로직)
+└──────┬──────┘
+       │
+       ↓
+┌─────────────┐
+│    Model    │ (DAO)
+│  (Database) │
+└─────────────┘
+```
+
+### 4.2 패키지 구조
+
+```
+com.diary.emotion/
+├── AppLauncher.java        # 메인 실행 파일
+├── MainApplication.java    # 메인 화면 (JPanel)
+└── (추가 클래스)
+
+share/
+├── DatabaseUtil.java       # DB 초기화
+├── MainView.java          # 구버전 메인 프레임
+├── StatisticsView.java    # 통계 화면 (View)
+├── StatisticsController.java  # 통계 컨트롤러
+└── StatisticsDAO.java     # 통계 데이터 액세스
+```
+
+### 4.3 클래스 간 관계
+
+```
+AppLauncher (main)
+    └─> JFrame 생성
+        └─> MainApplication (JPanel)
+            ├─> writePanel (일기 쓰기)
+            ├─> viewPanel (열람)
+            └─> statisticsPanel
+                └─> StatisticsView
+                    ↔ StatisticsController
+                        ↔ StatisticsDAO
+                            ↔ MySQL Database
+```
+
+---
+
+## 5. 새 기능 개발 가이드
+
+### 5.1 새 화면 추가하기
+
+#### Step 1: View 클래스 생성
+```java
+package com.diary.emotion.view;
+
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import java.awt.BorderLayout;
+
+public class WriteDiaryView extends JPanel {
+    
+    public WriteDiaryView() {
+        setLayout(new BorderLayout());
+        
+        // UI 컴포넌트 추가
+        JLabel titleLabel = new JLabel("일기 쓰기");
+        add(titleLabel, BorderLayout.NORTH);
+        
+        // ... 나머지 UI
+    }
+    
+    // Getter/Setter 메소드
 }
 ```
 
-### 2.3 코드 스타일
-- **들여쓰기**: 4 스페이스
-- **중괄호**: K&R 스타일 (같은 줄에 여는 중괄호)
-- **한 줄 길이**: 최대 120자
-- **import**: 와일드카드(*) 최소화, 사용하지 않는 import 제거
-
-### 2.4 MVC 패턴 준수
-- **View**: UI 로직만, 비즈니스 로직 금지
-- **Controller**: View와 Model 중재, 비즈니스 로직
-- **Model/DAO**: 데이터 접근만, UI 참조 금지
-
-## 3. 패키지 구조 및 역할
-
-### 3.1 com.diary.emotion (메인 패키지)
-```
-com.diary.emotion/
-├── AppLauncher.java          # 애플리케이션 진입점
-├── MainApplication.java      # 메인 화면 (CardLayout 관리)
-├── model/                    # 데이터 모델
-│   ├── UserModel.java
-│   ├── DiaryModel.java
-│   └── EmotionModel.java
-├── auth/                     # 인증 모듈
-│   ├── AuthView.java
-│   ├── AuthController.java
-│   └── UserDAO.java
-├── write/                    # 일기 작성 모듈
-│   ├── WriteView.java
-│   ├── EmotionSelectorPanel.java
-│   ├── EmotionInputPanel.java
-│   ├── WriteController.java
-│   ├── DiaryDAO.java
-│   └── EmotionDAO.java
-├── view/                     # 일기 열람 모듈
-│   ├── ViewPanel.java
-│   ├── DiaryListPanel.java
-│   ├── DiaryDetailPanel.java
-│   ├── DiaryEditPanel.java
-│   └── ViewController.java
-└── statistics/               # 통계 모듈
-    ├── StatisticsView.java
-    ├── StatisticsController.java
-    └── StatisticsDAO.java
-```
-
-### 3.2 share (공통 패키지)
-```
-share/
-├── DatabaseUtil.java         # DB 연결 유틸리티
-├── SessionManager.java       # 세션 관리 (싱글톤)
-└── Constants.java            # 상수 정의
-```
-
-## 4. 개발 순서 및 우선순위
-
-### 4.1 Phase 1: 공통 모듈 (우선순위: 높음)
-1. **Constants 클래스 작성**
-   - 색상, 폰트, 크기 상수 정의
-   - 감정 리스트 정의
-
-2. **SessionManager 클래스 작성**
-   - 싱글톤 패턴 구현
-   - 로그인/로그아웃 메소드
-
-3. **DatabaseUtil 개선**
-   - `getConnection()` 메소드 추가
-   - 리소스 정리 메소드 추가
-
-4. **Model 클래스 작성**
-   - UserModel, DiaryModel, EmotionModel
-   - Getter/Setter, toString() 구현
-
-### 4.2 Phase 2: 인증 모듈 (우선순위: 높음)
-1. **UserDAO 구현**
-   - createUser, authenticateUser, userExists
-
-2. **AuthView 구현**
-   - 로그인 패널, 회원가입 패널
-   - CardLayout으로 전환
-
-3. **AuthController 구현**
-   - 입력 검증, 로그인/회원가입 로직
-   - SessionManager 연동
-
-4. **AppLauncher 수정**
-   - 로그인 성공 시 MainApplication 표시
-   - 실패 시 AuthView 유지
-
-### 4.3 Phase 3: 일기 작성 모듈 (우선순위: 중간)
-1. **EmotionInputPanel 구현**
-   - 감정 선택 콤보박스
-   - 수치 입력 슬라이더
-   - 삭제 버튼
-
-2. **EmotionSelectorPanel 구현**
-   - 동적 EmotionInputPanel 추가/삭제
-   - 최대 4개 제한
-
-3. **WriteView 구현**
-   - 제목, 내용, 스트레스 입력
-   - EmotionSelectorPanel 통합
-   - 저장/초기화 버튼
-
-4. **DiaryDAO & EmotionDAO 구현**
-   - CRUD 메소드 구현
-   - 트랜잭션 처리
-
-5. **WriteController 구현**
-   - 입력 검증
-   - DAO 호출 및 저장
-
-6. **MainApplication 통합**
-   - writePanel을 WriteView로 교체
-
-### 4.4 Phase 4: 일기 열람 모듈 (우선순위: 중간)
-1. **DiaryListPanel 구현**
-   - JList로 일기 목록 표시
-   - 커스텀 렌더러 (날짜, 제목, 감정 아이콘)
-
-2. **DiaryDetailPanel 구현**
-   - 일기 상세 정보 표시
-   - 수정/삭제/뒤로가기 버튼
-
-3. **DiaryEditPanel 구현**
-   - WriteView와 유사하지만 기존 데이터 로드
-   - 업데이트 로직
-
-4. **ViewPanel 구현**
-   - 검색, 정렬 필터
-   - CardLayout으로 목록/상세/수정 전환
-
-5. **ViewController 구현**
-   - 목록 로드, 검색, 정렬, 삭제
-   - DiaryDAO, EmotionDAO 연동
-
-6. **MainApplication 통합**
-   - viewPanel을 ViewPanel로 교체
-
-### 4.5 Phase 5: 통계 모듈 완성 (우선순위: 낮음)
-1. **StatisticsDAO 완성**
-   - getEmotionData 실제 쿼리 구현
-   - getStressData 실제 쿼리 구현
-
-2. **StatisticsController 개선**
-   - SessionManager 연동 (임시 userId 제거)
-
-3. **통합 테스트**
-   - 실제 데이터로 차트 표시 확인
-
-## 5. 데이터베이스 연동 가이드
-
-### 5.1 Connection 사용 패턴
+#### Step 2: Controller 클래스 생성
 ```java
-// 권장 패턴: try-with-resources
-public List<DiaryModel> getDiaries(String userId) {
-    List<DiaryModel> diaries = new ArrayList<>();
-    String sql = "SELECT * FROM diary WHERE user_id = ?";
+package com.diary.emotion.controller;
+
+import com.diary.emotion.view.WriteDiaryView;
+import com.diary.emotion.model.DiaryDAO;
+
+public class WriteDiaryController {
+    private WriteDiaryView view;
+    private DiaryDAO dao;
     
-    try (Connection conn = DatabaseUtil.getConnection();
+    public WriteDiaryController(WriteDiaryView view, DiaryDAO dao) {
+        this.view = view;
+        this.dao = dao;
+        addListeners();
+    }
+    
+    private void addListeners() {
+        // 이벤트 리스너 연결
+    }
+}
+```
+
+#### Step 3: DAO 클래스 생성
+```java
+package com.diary.emotion.model;
+
+import java.sql.*;
+
+public class DiaryDAO {
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/emotion_diary";
+    
+    public boolean saveDiary(/* 파라미터 */) {
+        String sql = "INSERT INTO diary ...";
+        
+        try (Connection conn = DriverManager.getConnection(DB_URL, "root", "password");
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            // 파라미터 설정
+            pstmt.setString(1, ...);
+            
+            // 실행
+            int rows = pstmt.executeUpdate();
+            return rows > 0;
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+}
+```
+
+#### Step 4: MainApplication에 통합
+```java
+// MainApplication.java의 생성자에서
+
+// 새 패널 생성
+WriteDiaryView writeDiaryView = new WriteDiaryView();
+DiaryDAO diaryDAO = new DiaryDAO();
+WriteDiaryController writeDiaryController = new WriteDiaryController(writeDiaryView, diaryDAO);
+
+// 카드 패널에 추가
+mainCardPanel.add(writeDiaryView, "write");
+
+// 버튼 이벤트에서 화면 전환
+writeButton.addActionListener(e -> mainCardLayout.show(mainCardPanel, "write"));
+```
+
+### 5.2 데이터베이스 쿼리 작성
+
+#### SELECT 예시
+```java
+public List<Diary> getDiariesByDate(LocalDate date) {
+    String sql = "SELECT * FROM diary WHERE DATE(entry_date) = ?";
+    List<Diary> diaries = new ArrayList<>();
+    
+    try (Connection conn = getConnection();
          PreparedStatement pstmt = conn.prepareStatement(sql)) {
         
-        pstmt.setString(1, userId);
+        pstmt.setDate(1, java.sql.Date.valueOf(date));
         
         try (ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
-                DiaryModel diary = new DiaryModel();
+                Diary diary = new Diary();
                 diary.setEntryId(rs.getInt("entry_id"));
                 diary.setTitle(rs.getString("title"));
+                diary.setContent(rs.getString("content"));
                 // ...
                 diaries.add(diary);
             }
         }
     } catch (SQLException e) {
         e.printStackTrace();
-        // 사용자에게 오류 메시지 표시
     }
     
     return diaries;
 }
 ```
 
-### 5.2 트랜잭션 처리
+#### INSERT 예시
 ```java
-// 일기 + 감정 저장 (원자성 보장)
-public boolean saveDiaryWithEmotions(DiaryModel diary) {
-    Connection conn = null;
-    try {
-        conn = DatabaseUtil.getConnection();
-        conn.setAutoCommit(false); // 트랜잭션 시작
+public boolean insertDiary(String userId, String title, String content, int stressLevel) {
+    String sql = "INSERT INTO diary (user_id, title, content, stress_level, entry_date) " +
+                 "VALUES (?, ?, ?, ?, NOW())";
+    
+    try (Connection conn = getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
         
-        // 1. 일기 저장
-        int entryId = insertDiary(conn, diary);
+        pstmt.setString(1, userId);
+        pstmt.setString(2, title);
+        pstmt.setString(3, content);
+        pstmt.setInt(4, stressLevel);
         
-        // 2. 감정 저장
-        insertEmotions(conn, entryId, diary.getEmotions());
+        int rows = pstmt.executeUpdate();
         
-        conn.commit(); // 커밋
-        return true;
+        if (rows > 0) {
+            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    int entryId = rs.getInt(1);
+                    System.out.println("생성된 entry_id: " + entryId);
+                }
+            }
+            return true;
+        }
         
     } catch (SQLException e) {
-        if (conn != null) {
-            try {
-                conn.rollback(); // 롤백
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-        }
+        e.printStackTrace();
+    }
+    
+    return false;
+}
+```
+
+#### UPDATE 예시
+```java
+public boolean updateDiary(int entryId, String title, String content) {
+    String sql = "UPDATE diary SET title = ?, content = ? WHERE entry_id = ?";
+    
+    try (Connection conn = getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        
+        pstmt.setString(1, title);
+        pstmt.setString(2, content);
+        pstmt.setInt(3, entryId);
+        
+        int rows = pstmt.executeUpdate();
+        return rows > 0;
+        
+    } catch (SQLException e) {
         e.printStackTrace();
         return false;
-        
-    } finally {
-        if (conn != null) {
-            try {
-                conn.setAutoCommit(true);
-                conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }
 ```
 
-### 5.3 날짜 처리
+#### DELETE 예시
 ```java
-// LocalDateTime <-> java.sql.Timestamp 변환
-LocalDateTime now = LocalDateTime.now();
-Timestamp timestamp = Timestamp.valueOf(now);
-
-// DB에서 읽기
-Timestamp ts = rs.getTimestamp("entry_date");
-LocalDateTime dateTime = ts.toLocalDateTime();
+public boolean deleteDiary(int entryId) {
+    String sql = "DELETE FROM diary WHERE entry_id = ?";
+    
+    try (Connection conn = getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        
+        pstmt.setInt(1, entryId);
+        
+        int rows = pstmt.executeUpdate();
+        return rows > 0;
+        
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
 ```
 
-## 6. UI 개발 가이드
+### 5.3 Swing UI 컴포넌트 활용
 
-### 6.1 공통 스타일 적용
+#### JTextField (텍스트 입력)
 ```java
-// Constants에서 가져오기
-import static share.Constants.*;
-
-JPanel panel = new JPanel();
-panel.setBackground(PASTEL_BLUE);
-
-JLabel label = new JLabel("제목");
-label.setFont(TITLE_FONT);
+JTextField titleField = new JTextField(20);
+String title = titleField.getText();
+titleField.setText("새 제목");
 ```
 
-### 6.2 슬라이더 + 라벨 동기화
+#### JTextArea (여러 줄 텍스트)
 ```java
-JSlider slider = new JSlider(0, 100, 50);
-JLabel valueLabel = new JLabel("50");
+JTextArea contentArea = new JTextArea(10, 30);
+contentArea.setLineWrap(true);
+contentArea.setWrapStyleWord(true);
 
-slider.addChangeListener(e -> {
-    int value = slider.getValue();
-    valueLabel.setText(String.valueOf(value));
+JScrollPane scrollPane = new JScrollPane(contentArea);
+```
+
+#### JComboBox (드롭다운)
+```java
+String[] emotions = {"😊 행복", "😆 신남", "😍 설렘"};
+JComboBox<String> emotionCombo = new JComboBox<>(emotions);
+
+String selected = (String) emotionCombo.getSelectedItem();
+```
+
+#### JButton (버튼)
+```java
+JButton saveButton = new JButton("저장");
+saveButton.addActionListener(e -> {
+    // 저장 로직
+    saveDiary();
 });
 ```
 
-### 6.3 확인 다이얼로그
+#### JCheckBox (체크박스)
 ```java
-int result = JOptionPane.showConfirmDialog(
-    this,
-    "정말 삭제하시겠습니까?",
-    "삭제 확인",
-    JOptionPane.YES_NO_OPTION,
-    JOptionPane.WARNING_MESSAGE
-);
+JCheckBox happyCheck = new JCheckBox("😊 행복");
+boolean isSelected = happyCheck.isSelected();
+```
 
-if (result == JOptionPane.YES_OPTION) {
-    // 삭제 실행
+#### JSlider (슬라이더)
+```java
+JSlider stressSlider = new JSlider(0, 100, 50);
+stressSlider.setMajorTickSpacing(10);
+stressSlider.setPaintTicks(true);
+stressSlider.setPaintLabels(true);
+
+int value = stressSlider.getValue();
+```
+
+---
+
+## 6. 디버깅 방법
+
+### 6.1 콘솔 로그 활용
+
+```java
+// 변수 값 확인
+System.out.println("userId: " + userId);
+System.out.println("startDate: " + startDate);
+
+// 메소드 호출 추적
+System.out.println("[DEBUG] updateAllCharts() 시작");
+// ... 로직
+System.out.println("[DEBUG] updateAllCharts() 완료");
+
+// 조건문 분기 확인
+if (condition) {
+    System.out.println("[DEBUG] 조건 true");
+} else {
+    System.out.println("[DEBUG] 조건 false");
 }
 ```
 
-### 6.4 알림 다이얼로그
+### 6.2 IntelliJ IDEA 디버거 사용
+
+1. 브레이크포인트 설정: 코드 라인 번호 왼쪽 클릭
+2. 디버그 모드 실행: 🐞 버튼 클릭
+3. 변수 값 확인: Variables 패널
+4. 단계별 실행:
+   - **Step Over (F8)**: 다음 줄로
+   - **Step Into (F7)**: 메소드 안으로
+   - **Step Out (Shift+F8)**: 메소드 밖으로
+   - **Resume (F9)**: 다음 브레이크포인트까지
+
+### 6.3 예외 처리 및 로깅
+
 ```java
-// 성공
-JOptionPane.showMessageDialog(
-    this,
-    "일기가 저장되었습니다.",
-    "저장 완료",
-    JOptionPane.INFORMATION_MESSAGE
-);
-
-// 오류
-JOptionPane.showMessageDialog(
-    this,
-    "저장에 실패했습니다.",
-    "오류",
-    JOptionPane.ERROR_MESSAGE
-);
-```
-
-## 7. 테스트 가이드
-
-### 7.1 단위 테스트
-- 각 DAO 메소드별 테스트 케이스 작성
-- 정상 케이스 + 예외 케이스 모두 테스트
-
-### 7.2 통합 테스트
-- 전체 플로우 테스트 (로그인 → 작성 → 조회 → 수정 → 삭제)
-- 실제 DB 사용
-
-### 7.3 UI 테스트
-- 모든 버튼 클릭 테스트
-- 잘못된 입력 시나리오 테스트
-- 화면 전환 테스트
-
-## 8. 디버깅 팁
-
-### 8.1 로그 출력
-```java
-// 개발 중에는 System.out.println 사용
-System.out.println("[DEBUG] userId: " + userId);
-System.out.println("[DEBUG] diary saved: " + entryId);
-
-// 추후 Logger로 교체 가능
-```
-
-### 8.2 SQL 쿼리 확인
-```java
-// PreparedStatement 실행 전 쿼리 출력
-System.out.println("[SQL] " + pstmt.toString());
-```
-
-### 8.3 예외 스택 추적
-```java
-catch (SQLException e) {
-    e.printStackTrace(); // 전체 스택 출력
-    System.err.println("Error: " + e.getMessage());
+try {
+    // 위험한 작업
+    int result = riskyOperation();
+    System.out.println("성공: " + result);
+} catch (SQLException e) {
+    System.err.println("DB 오류 발생!");
+    System.err.println("메시지: " + e.getMessage());
+    e.printStackTrace();
+} catch (Exception e) {
+    System.err.println("예상치 못한 오류!");
+    e.printStackTrace();
 }
 ```
 
-## 9. 주의사항
+### 6.4 GUI 디버깅
 
-### 9.1 리소스 관리
-- **반드시** try-with-resources 사용
-- Connection, Statement, ResultSet 누수 방지
-
-### 9.2 NULL 체크
 ```java
-// 사용자 입력은 항상 NULL 체크
-if (title == null || title.trim().isEmpty()) {
-    showError("제목을 입력해주세요.");
-    return;
-}
+// 컴포넌트 크기 확인
+System.out.println("Panel size: " + panel.getSize());
+
+// 컴포넌트 가시성 확인
+System.out.println("Panel visible: " + panel.isVisible());
+
+// 레이아웃 확인
+System.out.println("Layout: " + panel.getLayout());
+
+// 자식 컴포넌트 개수
+System.out.println("Component count: " + panel.getComponentCount());
 ```
 
-### 9.3 SQL Injection 방지
-```java
-// ❌ 나쁜 예
-String sql = "SELECT * FROM user WHERE user_id = '" + userId + "'";
+---
 
-// ✅ 좋은 예
-String sql = "SELECT * FROM user WHERE user_id = ?";
-pstmt.setString(1, userId);
+## 7. 코딩 컨벤션
+
+### 7.1 네이밍 규칙
+
+#### 클래스명: PascalCase
+```java
+public class StatisticsView { }
+public class DiaryController { }
 ```
 
-### 9.4 UI 스레드 안전성
+#### 메소드명: camelCase
 ```java
-// DB 작업은 백그라운드 스레드에서
-SwingWorker<List<DiaryModel>, Void> worker = new SwingWorker<>() {
-    @Override
-    protected List<DiaryModel> doInBackground() {
-        return dao.getDiaries(userId);
+public void updateChart() { }
+public String getUserName() { }
+```
+
+#### 변수명: camelCase
+```java
+private int userId;
+private String userName;
+```
+
+#### 상수명: UPPER_SNAKE_CASE
+```java
+private static final String DB_URL = "...";
+private static final int MAX_EMOTIONS = 4;
+```
+
+### 7.2 주석 작성
+
+#### 클래스 주석
+```java
+/**
+ * [설명] 통계 데이터를 조회하는 DAO 클래스
+ * (수정) 2025-11-18: 평균 스트레스 계산 로직 추가
+ */
+public class StatisticsDAO { }
+```
+
+#### 메소드 주석
+```java
+/**
+ * 특정 기간의 평균 스트레스를 계산합니다.
+ * 
+ * @param userId 사용자 ID
+ * @param startDate 조회 시작일
+ * @param endDate 조회 종료일
+ * @return 평균 스트레스 지수 (0.0 ~ 100.0)
+ */
+public double getAverageStress(String userId, LocalDate startDate, LocalDate endDate) { }
+```
+
+#### 인라인 주석
+```java
+// (중요) 이 값은 임시 사용자 ID입니다
+String userId = "testuser";
+
+// (디버깅) 계산 결과 확인
+System.out.println("Result: " + result);
+
+// (TODO) 로그인 기능 완성 후 실제 userId 사용
+```
+
+### 7.3 코드 포맷팅
+
+#### 들여쓰기: 4칸 (스페이스)
+```java
+public void example() {
+    if (condition) {
+        doSomething();
     }
+}
+```
+
+#### 중괄호 위치
+```java
+// 올바른 예시
+public void method() {
+    // ...
+}
+
+// 잘못된 예시
+public void method()
+{
+    // ...
+}
+```
+
+#### 한 줄에 하나의 문장
+```java
+// 올바른 예시
+int a = 1;
+int b = 2;
+int c = 3;
+
+// 잘못된 예시
+int a = 1; int b = 2; int c = 3;
+```
+
+### 7.4 접근 제어자 사용
+
+```java
+public class Example {
+    // public: 외부에서 접근 필요한 경우
+    public void publicMethod() { }
     
-    @Override
-    protected void done() {
-        try {
-            List<DiaryModel> diaries = get();
-            updateUI(diaries); // UI 업데이트는 EDT에서
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-};
-worker.execute();
+    // private: 클래스 내부에서만 사용
+    private void helperMethod() { }
+    
+    // private: 모든 멤버 변수는 기본적으로 private
+    private int value;
+    
+    // public: getter/setter로 접근 제공
+    public int getValue() { return value; }
+    public void setValue(int value) { this.value = value; }
+}
 ```
 
-## 10. 최적화 가이드
+---
 
-### 10.1 Connection Pool (선택사항)
-- 현재는 단일 사용자이므로 불필요
-- 추후 다중 사용자 지원 시 HikariCP 고려
+## 8. 자주 묻는 질문
 
-### 10.2 쿼리 최적화
-- 필요한 컬럼만 SELECT
-- 인덱스 활용 (user_id, entry_date)
-- LIMIT 사용으로 불필요한 데이터 로드 방지
+### Q1: Maven 빌드가 실패합니다
+```bash
+# 캐시 정리 후 재빌드
+mvn clean
+mvn install
+```
 
-### 10.3 UI 반응성
-- 긴 작업은 SwingWorker 사용
-- 진행 표시기 표시 (ProgressBar)
+### Q2: MySQL 연결이 안 됩니다
+```bash
+# MySQL 서비스 상태 확인
+brew services list
+
+# MySQL 재시작
+brew services restart mysql@8.0
+
+# 연결 테스트
+mysql -u root -p
+```
+
+### Q3: 한글이 깨져서 나옵니다
+```java
+// 파일 인코딩을 UTF-8로 설정
+// IntelliJ IDEA: File > Settings > Editor > File Encodings
+// 모두 UTF-8로 설정
+```
+
+### Q4: UI가 제대로 표시되지 않습니다
+```java
+// EDT에서 실행되는지 확인
+SwingUtilities.invokeLater(() -> {
+    // GUI 코드
+});
+
+// 컴포넌트 갱신
+panel.revalidate();
+panel.repaint();
+```
+
+### Q5: 차트가 비어있습니다
+```java
+// DAO에서 실제 데이터를 반환하는지 확인
+System.out.println("[DEBUG] Dataset: " + dataset);
+
+// Controller에서 update 메소드가 호출되는지 확인
+System.out.println("[DEBUG] updateChart() called");
+```
+
+### Q6: 데이터베이스에 데이터가 없습니다
+```sql
+-- 테스트 데이터 삽입
+INSERT INTO user (user_id, user_pw) VALUES ('testuser', 'password123');
+
+INSERT INTO diary (user_id, title, content, stress_level, entry_date)
+VALUES ('testuser', '테스트 일기', '오늘은 좋은 날', 50, NOW());
+```
+
+### Q7: 패키지 구조를 변경하고 싶습니다
+```
+현재: share, com.diary.emotion 혼용
+권장: com.diary.emotion 통일
+
+com.diary.emotion/
+├── model/
+│   ├── DatabaseUtil.java
+│   ├── StatisticsDAO.java
+│   └── DiaryDAO.java
+├── view/
+│   ├── MainApplication.java
+│   ├── StatisticsView.java
+│   └── WriteDiaryView.java
+├── controller/
+│   ├── StatisticsController.java
+│   └── DiaryController.java
+└── AppLauncher.java
+```
+
+---
+
+## 9. 다음 단계
+
+### 9.1 학습 순서
+1. ✅ 개발 환경 설정
+2. ✅ 프로젝트 빌드 및 실행
+3. ✅ 데이터베이스 확인
+4. ✅ 코드 구조 이해
+5. 📝 TODO 리스트 확인 (`04_TODO_LIST.md`)
+6. 📝 현재 상태 파악 (`06_CURRENT_STATUS_REPORT.md`)
+7. 🔧 미완성 기능 구현 시작
+
+### 9.2 추천 학습 자료
+- **Java Swing**: [Oracle Java Swing Tutorial](https://docs.oracle.com/javase/tutorial/uiswing/)
+- **JDBC**: [Oracle JDBC Tutorial](https://docs.oracle.com/javase/tutorial/jdbc/)
+- **JFreeChart**: [JFreeChart Documentation](http://www.jfree.org/jfreechart/)
+- **Maven**: [Maven Getting Started](https://maven.apache.org/guides/getting-started/)
+
+---
+
+*이 가이드로 개발을 시작하기 충분합니다. 추가 질문이 있다면 `06_CURRENT_STATUS_REPORT.md`를 참조하거나 팀에 문의하세요.*
 
