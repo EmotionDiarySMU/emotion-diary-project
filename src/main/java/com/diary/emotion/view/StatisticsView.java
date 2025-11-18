@@ -1,4 +1,4 @@
-package share;
+package com.diary.emotion.view;
 
 // Java Swing GUI 컴포넌트 임포트
 import javax.swing.JLabel; // 텍스트 라벨 컴포넌트

@@ -98,5 +98,16 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <!-- Maven Exec Plugin for running the application -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.1.0</version>
+        <configuration>
+          <mainClass>com.diary.emotion.AppLauncher</mainClass>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 </project>

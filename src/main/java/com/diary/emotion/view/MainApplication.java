@@ -1,4 +1,4 @@
-package com.diary.emotion;
+package com.diary.emotion.view;
 
 // Java Swing(GUI) 라이브러리 임포트
 import javax.swing.JButton; // 버튼 컴포넌트
@@ -13,6 +13,15 @@ import java.awt.FlowLayout; // 컴포넌트를 왼쪽에서 오른쪽으로, 줄
 import java.awt.Color; // 색상(RGB)을 정의하기 위한 클래스
 import java.awt.event.ActionEvent; // 버튼 클릭 등 '이벤트'가 발생했음을 알리는 객체
 import java.awt.event.ActionListener; // '이벤트'가 발생했을 때 동작을 정의하는 인터페이스
+
+// MVC 패턴 임포트
+import com.diary.emotion.controller.StatisticsController;
+import com.diary.emotion.controller.WriteDiaryController;
+import com.diary.emotion.controller.ViewDiaryController;
+import com.diary.emotion.controller.EditDiaryController;
+import com.diary.emotion.model.StatisticsDAO;
+import com.diary.emotion.model.DiaryDAO;
+import com.diary.emotion.util.Session;
 
 /**
  * [V40 수정] 감정 일기장 메인 애플리케이션 클래스 (JPanel)
@@ -94,19 +103,70 @@ public class MainApplication extends JPanel { // [V40 수정] JFrame -> JPanel
         mainCardPanel.setOpaque(false); 
 
         
-        // 3-1. "일기 쓰기" 탭에 해당하는 패널 생성 (임시)
-        writePanel = new JPanel();
-        // 임시 텍스트 라벨을 추가합니다.
-        writePanel.add(new JLabel("일기 쓰기 화면 (구현 예정)"));
-        // (디자인) '일기 쓰기' 패널의 배경색을 파스텔 블루로 설정합니다.
-        writePanel.setBackground(PASTEL_BLUE); 
+        // 3-1. "일기 쓰기" 탭에 해당하는 패널 생성 (MVC 패턴 적용)
 
-        // 3-2. "열람" 탭에 해당하는 패널 생성 (임시)
-        viewPanel = new JPanel();
-        // 임시 텍스트 라벨을 추가합니다.
-        viewPanel.add(new JLabel("일기 열람 화면 (구현 예정)"));
-        // (디자인) '열람' 패널의 배경색을 파스텔 블루로 설정합니다.
-        viewPanel.setBackground(PASTEL_BLUE);
+        // --- MVC 컴포넌트 생성 및 연결 ---
+
+        // (1) View(화면) 객체 생성
+        WriteDiaryView writeDiaryView = new WriteDiaryView();
+
+        // (2) DAO(DB담당) 객체 생성
+        DiaryDAO diaryDAO = new DiaryDAO();
+
+        // (3) Controller(두뇌) 객체 생성 (View와 DAO를 연결)
+        WriteDiaryController writeDiaryController = new WriteDiaryController(writeDiaryView, diaryDAO);
+
+        // (4) 저장 성공/취소 시 통계 탭으로 이동하도록 설정
+        writeDiaryController.setOnSaveSuccess(() -> mainCardLayout.show(mainCardPanel, "STATS"));
+        writeDiaryController.setOnCancel(() -> mainCardLayout.show(mainCardPanel, "STATS"));
+
+        // (5) 메인 창에 표시될 'writePanel'은 View 객체 자체입니다.
+        writePanel = writeDiaryView;
+
+        // --- [연결 완료] ---
+
+        // 3-2. "열람" 탭에 해당하는 패널 생성 (MVC 패턴 적용)
+
+        // --- MVC 컴포넌트 생성 및 연결 ---
+
+        // (1) View(화면) 객체 생성
+        ViewDiaryListView viewDiaryListView = new ViewDiaryListView();
+
+        // (2) Controller(두뇌) 객체 생성 (View와 DAO를 연결)
+        String currentUserId = Session.getCurrentUserId();
+        ViewDiaryController viewDiaryController = new ViewDiaryController(viewDiaryListView, currentUserId);
+
+        // (3) EditDiaryView 및 Controller 생성
+        EditDiaryView editDiaryView = new EditDiaryView();
+        EditDiaryController editDiaryController = new EditDiaryController(editDiaryView);
+
+        // (4) 수정 화면 패널을 CardLayout에 추가
+        mainCardPanel.add(editDiaryView, "EDIT");
+
+        // (5) 수정 버튼 클릭 시 수정 화면으로 전환
+        viewDiaryController.setEditCallback(entryId -> {
+            editDiaryController.loadDiary(entryId);
+            mainCardLayout.show(mainCardPanel, "EDIT");
+        });
+
+        // (6) 수정 완료 또는 취소 시 열람 화면으로 복귀
+        editDiaryController.setUpdateCompleteCallback(new EditDiaryController.UpdateCompleteCallback() {
+            @Override
+            public void onUpdateComplete() {
+                viewDiaryController.loadAllDiaries(); // 목록 갱신
+                mainCardLayout.show(mainCardPanel, "VIEW");
+            }
+
+            @Override
+            public void onCancel() {
+                mainCardLayout.show(mainCardPanel, "VIEW");
+            }
+        });
+
+        // (7) 메인 창에 표시될 'viewPanel'은 View 객체 자체입니다.
+        viewPanel = viewDiaryListView;
+
+        // --- [연결 완료] ---
 
         // 3-3. "통계" 탭에 해당하는 패널 생성 (MVC 패턴 적용)
         

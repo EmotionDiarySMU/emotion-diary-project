@@ -7,137 +7,144 @@
 
 ## 1. 핵심 기능 (High Priority) 🔴
 
-### 1.1 로그인/회원가입 시스템
-- [ ] **LoginView 클래스 구현** (JPanel)
-  - [ ] 아이디 입력 필드 (JTextField)
-  - [ ] 비밀번호 입력 필드 (JPasswordField)
-  - [ ] 로그인 버튼
-  - [ ] 회원가입 버튼
-  - [ ] UI 디자인 (파스텔 톤 적용)
+### 1.1 로그인/회원가입 시스템 [진행 중 🔄]
+- [x] **UserDAO 클래스 구현** ✅
+  - [x] `authenticateUser(userId, password)` - 로그인 검증
+  - [x] `registerUser(userId, password)` - 회원가입
+  - [x] `userExists(userId)` - 아이디 중복 확인
 
-- [ ] **SignUpView 클래스 구현** (JPanel)
-  - [ ] 아이디 입력 필드
-  - [ ] 비밀번호 입력 필드
-  - [ ] 비밀번호 확인 필드
-  - [ ] 회원가입 버튼
-  - [ ] 뒤로가기 버튼
+- [x] **세션 관리 클래스 구현** (Session.java) ✅
+  - [x] 현재 로그인 사용자 ID 저장
+  - [x] `getCurrentUserId()` - 현재 사용자 ID 반환
+  - [x] `setCurrentUserId(userId)` - 로그인 시 사용자 설정
+  - [x] `logout()` - 로그아웃
+  - [x] `isLoggedIn()` - 로그인 상태 확인
 
-- [ ] **LoginController 클래스 구현**
-  - [ ] 로그인 검증 로직
-  - [ ] 세션 관리 (현재 로그인 사용자 저장)
-  - [ ] LoginView ↔ MainApplication 화면 전환
+- [x] **LoginView 클래스 구현** (JPanel) ✅
+  - [x] 아이디 입력 필드 (JTextField)
+  - [x] 비밀번호 입력 필드 (JPasswordField)
+  - [x] 로그인 버튼
+  - [x] 회원가입 버튼
+  - [x] UI 디자인 (파스텔 톤 적용)
 
-- [ ] **SignUpController 클래스 구현**
-  - [ ] 회원가입 검증 로직
-  - [ ] 아이디 중복 확인
-  - [ ] 비밀번호 일치 확인
+- [x] **SignUpView 클래스 구현** (JPanel) ✅
+  - [x] 아이디 입력 필드
+  - [x] 비밀번호 입력 필드
+  - [x] 비밀번호 확인 필드
+  - [x] 회원가입 버튼
+  - [x] 뒤로가기 버튼
 
-- [ ] **UserDAO 클래스 구현**
-  - [ ] `authenticateUser(userId, password)` - 로그인 검증
-  - [ ] `registerUser(userId, password)` - 회원가입
-  - [ ] `userExists(userId)` - 아이디 중복 확인
+- [x] **LoginController 클래스 구현** ✅
+  - [x] 로그인 검증 로직
+  - [x] 세션 관리 (현재 로그인 사용자 저장)
+  - [x] LoginView ↔ MainApplication 화면 전환
 
-- [ ] **세션 관리 클래스 구현** (Session.java)
-  - [ ] 현재 로그인 사용자 ID 저장
-  - [ ] `getCurrentUserId()` - 현재 사용자 ID 반환
-  - [ ] `setCurrentUserId(userId)` - 로그인 시 사용자 설정
-  - [ ] `logout()` - 로그아웃
+- [x] **SignUpController 클래스 구현** ✅
+  - [x] 회원가입 검증 로직
+  - [x] 아이디 중복 확인
+  - [x] 비밀번호 일치 확인
 
-- [ ] **AppLauncher 수정**
-  - [ ] 최초 실행 시 LoginView 표시
-  - [ ] 로그인 성공 시 MainApplication으로 전환
-
----
-
-### 1.2 일기 쓰기 기능
-- [ ] **WriteDiaryView 클래스 구현** (JPanel)
-  - [ ] 제목 입력 필드 (JTextField)
-  - [ ] 내용 입력 영역 (JTextArea + JScrollPane)
-  - [ ] 감정 선택 UI (12개 이모지 체크박스, 최대 4개)
-  - [ ] 선택된 감정별 수치 입력 슬라이더 (JSlider, 0-100)
-  - [ ] 스트레스 수치 입력 슬라이더 (JSlider, 0-100)
-  - [ ] 저장 버튼
-  - [ ] 취소 버튼
-
-- [ ] **WriteDiaryController 클래스 구현**
-  - [ ] 입력값 검증 (제목, 감정 개수 등)
-  - [ ] 감정 4개 제한 로직
-  - [ ] 저장 버튼 클릭 시 DiaryDAO 호출
-
-- [ ] **DiaryDAO 클래스 구현**
-  - [ ] `saveDiary(userId, title, content, stressLevel, date)` - 일기 저장
-  - [ ] `saveEmotion(entryId, emotionLevel, emojiIcon)` - 감정 저장 (4번 호출)
-  - [ ] 트랜잭션 처리 (일기 저장 실패 시 감정도 롤백)
-
-- [ ] **MainApplication에 WriteDiaryView 통합**
-  - [ ] "일기 쓰기" 버튼 클릭 시 WriteDiaryView 표시
-  - [ ] 임시 writePanel을 실제 WriteDiaryView로 교체
+- [x] **AppLauncher 수정** ✅
+  - [x] 최초 실행 시 LoginView 표시
+  - [x] 로그인 성공 시 MainApplication으로 전환
+  - [x] SignUpView 통합
 
 ---
 
-### 1.3 일기 열람 기능
-- [ ] **ViewDiaryListView 클래스 구현** (JPanel)
-  - [ ] 검색 패널 (상단)
-    - [ ] 제목 검색 입력 필드
-    - [ ] 날짜 검색 (시작일, 종료일) - JDatePicker 또는 JComboBox
-    - [ ] 검색 버튼
-  - [ ] 정렬 옵션 (오름차순/내림차순) - JComboBox
-  - [ ] 일기 목록 테이블 (JTable)
-    - 컬럼: 날짜, 제목, 스트레스, 감정 미리보기
-  - [ ] 수정 버튼
-  - [ ] 삭제 버튼
+### 1.2 일기 쓰기 기능 ✅ **완료!**
+- [x] **WriteDiaryView 클래스 구현** (JPanel) ✅
+  - [x] 제목 입력 필드 (JTextField)
+  - [x] 내용 입력 영역 (JTextArea + JScrollPane)
+  - [x] 감정 선택 UI (12개 이모지 체크박스, 최대 4개)
+  - [x] 선택된 감정별 수치 입력 슬라이더 (JSlider, 0-100)
+  - [x] 스트레스 수치 입력 슬라이더 (JSlider, 0-100)
+  - [x] 저장 버튼
+  - [x] 취소 버튼
 
-- [ ] **ViewDiaryController 클래스 구현**
-  - [ ] 일기 목록 로드
-  - [ ] 제목별 검색 로직
-  - [ ] 날짜별 검색 로직
-  - [ ] 정렬 로직 (오름차순/내림차순)
-  - [ ] 수정 버튼 클릭 시 EditDiaryView로 전환
+- [x] **WriteDiaryController 클래스 구현** ✅
+  - [x] 입력값 검증 (제목, 감정 개수 등)
+  - [x] 감정 4개 제한 로직
+  - [x] 저장 버튼 클릭 시 DiaryDAO 호출
 
-- [ ] **EditDiaryView 클래스 구현** (JPanel)
-  - [ ] WriteDiaryView와 유사한 UI
-  - [ ] 기존 데이터를 필드에 로드
-  - [ ] 수정 완료 버튼
-  - [ ] 취소 버튼
+- [x] **DiaryDAO 클래스 구현** ✅
+  - [x] `saveDiary(userId, title, content, stressLevel, date)` - 일기 저장
+  - [x] `saveEmotion(entryId, emotionLevel, emojiIcon)` - 감정 저장
+  - [x] `saveDiaryWithEmotions()` - 트랜잭션 처리 완료
+  - [x] 트랜잭션 처리 (일기 저장 실패 시 감정도 롤백)
 
-- [ ] **EditDiaryController 클래스 구현**
-  - [ ] 기존 일기 데이터 로드
-  - [ ] 수정 완료 시 DiaryDAO 호출
-
-- [ ] **DiaryDAO에 메소드 추가**
-  - [ ] `getDiariesByUserId(userId)` - 사용자별 일기 목록
-  - [ ] `searchByTitle(userId, keyword)` - 제목 검색
-  - [ ] `searchByDate(userId, startDate, endDate)` - 날짜 검색
-  - [ ] `getDiaryById(entryId)` - 특정 일기 조회
-  - [ ] `updateDiary(entryId, title, content, stressLevel)` - 일기 수정
-  - [ ] `deleteDiary(entryId)` - 일기 삭제
-  - [ ] `getEmotionsByEntryId(entryId)` - 일기별 감정 조회
-  - [ ] `updateEmotion(emotionId, level, emoji)` - 감정 수정
-  - [ ] `deleteEmotionsByEntryId(entryId)` - 감정 삭제
-
-- [ ] **MainApplication에 ViewDiaryListView 통합**
-  - [ ] "열람" 버튼 클릭 시 ViewDiaryListView 표시
-  - [ ] 임시 viewPanel을 실제 ViewDiaryListView로 교체
+- [x] **MainApplication에 WriteDiaryView 통합** ✅
+  - [x] "일기 쓰기" 버튼 클릭 시 WriteDiaryView 표시
+  - [x] 임시 writePanel을 실제 WriteDiaryView로 교체
 
 ---
 
-### 1.4 통계 기능 완성
-- [ ] **StatisticsDAO 완성**
-  - [ ] `getEmotionData()` 실제 DB 쿼리 구현
-    - [ ] 감정별 평균 계산
-    - [ ] 긍정/부정 분류
-  - [ ] `getStressData()` 실제 DB 쿼리 구현
-    - [ ] 주간: 7일치 데이터 (월~일)
-    - [ ] 월간: 해당 월의 모든 날짜
-    - [ ] 연간: 12개월 데이터
+### 1.3 일기 열람 기능 ✅ **완료!**
+- [x] **ViewDiaryListView 클래스 구현** (JPanel) ✅
+  - [x] 검색 패널 (상단)
+    - [x] 제목 검색 입력 필드
+    - [x] 검색 버튼 및 전체보기 버튼
+  - [x] 정렬 옵션 (최신순/오래된순) - JComboBox
+  - [x] 일기 목록 테이블 (JTable)
+    - 컬럼: 번호, 날짜, 제목, 스트레스, 감정
+  - [x] 상세보기 버튼
+  - [x] 수정 버튼
+  - [x] 삭제 버튼
 
-- [ ] **StatisticsView 개선**
-  - [ ] 빈 데이터 처리 (데이터 없을 때 안내 메시지)
-  - [ ] 차트 색상 최적화
+- [x] **ViewDiaryController 클래스 구현** ✅
+  - [x] 일기 목록 로드
+  - [x] 제목별 검색 로직
+  - [x] 정렬 로직 (최신순/오래된순)
+  - [x] 수정 버튼 클릭 시 EditDiaryView로 전환
+  - [x] 삭제 확인 및 처리
 
-- [ ] **StatisticsController 개선**
-  - [ ] TEMP_USER_ID를 Session.getCurrentUserId()로 변경
-  - [ ] 날짜 계산 로직 검증
+- [x] **EditDiaryView 클래스 구현** (JPanel) ✅
+  - [x] WriteDiaryView와 유사한 UI
+  - [x] 기존 데이터를 필드에 로드
+  - [x] 수정 완료 버튼
+  - [x] 취소 버튼
+
+- [x] **EditDiaryController 클래스 구현** ✅
+  - [x] 기존 일기 데이터 로드
+  - [x] 수정 완료 시 DiaryDAO 호출
+  - [x] 입력값 검증
+
+- [x] **DiaryDAO에 메소드 추가** ✅
+  - [x] `getDiariesByUserId(userId)` - 사용자별 일기 목록
+  - [x] `searchByTitle(userId, keyword)` - 제목 검색
+  - [x] `searchByDate(userId, startDate, endDate)` - 날짜 검색
+  - [x] `getDiaryById(entryId)` - 특정 일기 조회
+  - [x] `updateDiary(entryId, title, content, stressLevel)` - 일기 수정
+  - [x] `deleteDiary(entryId)` - 일기 삭제
+  - [x] `getEmotionsByEntryId(entryId)` - 일기별 감정 조회
+  - [x] `deleteEmotionsByEntryId(entryId)` - 감정 삭제
+  - [x] `updateDiaryWithEmotions(entryId, ...)` - 일기 및 감정 동시 수정
+
+- [x] **MainApplication에 ViewDiaryListView 통합** ✅
+  - [x] "열람" 버튼 클릭 시 ViewDiaryListView 표시
+  - [x] 임시 viewPanel을 실제 ViewDiaryListView로 교체
+  - [x] EditDiaryView를 CardLayout에 추가
+  - [x] 수정 완료/취소 시 화면 전환 처리
+
+---
+
+### 1.4 통계 기능 완성 ✅ **완료!**
+- [x] **StatisticsDAO 완성** ✅
+  - [x] `getEmotionData()` 실제 DB 쿼리 구현
+    - [x] 감정별 평균 계산
+    - [x] 긍정/부정 분류
+  - [x] `getStressData()` 실제 DB 쿼리 구현
+    - [x] 주간: 7일치 데이터 (일별)
+    - [x] 월간: 해당 월의 모든 날짜 (일별)
+    - [x] 연간: 12개월 데이터 (월별)
+
+- [x] **StatisticsView 개선** ✅
+  - [x] 빈 데이터 처리 기능 내장
+  - [x] 차트 색상 최적화
+
+- [x] **StatisticsController 개선** ✅
+  - [x] TEMP_USER_ID를 Session.getCurrentUserId()로 변경
+  - [x] 날짜 계산 로직 검증 완료
+  - [x] 감정 차트 데이터 로드 활성화
 
 ---
 
