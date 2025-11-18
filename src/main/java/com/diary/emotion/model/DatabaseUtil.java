@@ -1,4 +1,4 @@
-package share;
+package com.diary.emotion.model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -1,4 +1,8 @@
-package share;
+package com.diary.emotion.controller;
+
+import com.diary.emotion.view.StatisticsView;
+import com.diary.emotion.model.StatisticsDAO;
+import com.diary.emotion.util.Session;
 
 // Java 8+ 날짜/시간 라이브러리 임포트
 import java.time.LocalDate;
@@ -30,10 +34,6 @@ public class StatisticsController {
     // Controller가 데이터를 요청할 DAO 객체
     private StatisticsDAO dao;
 
-    // --- 임시 사용자 ID ---
-    // (중요) 로그인 기능이 병합되기 전까지 사용할 임시 ID입니다.
-    // (TODO) 고객님의 'user' 테이블에 실제 데이터가 있는 user_id로 이 값을 변경해주세요. (예: "testuser")
-    private static final String TEMP_USER_ID = "testuser";
 
     /**
      * StatisticsController 생성자 (이 생성자는 'public'이 맞습니다)
@@ -79,10 +79,15 @@ public class StatisticsController {
      */
     private void updateAllCharts() {
         try {
-            // 0. [신규] 현재 사용자 ID 가져오기 (지금은 임시 ID 사용)
-            String currentUserId = TEMP_USER_ID; 
-            // (참고) 추후 로그인 기능이 병합되면 이 부분은 Session.getUserId() 등으로 대체됩니다.
-            
+            // 0. 현재 로그인한 사용자 ID 가져오기
+            String currentUserId = Session.getCurrentUserId();
+
+            // 로그인하지 않은 경우 처리
+            if (currentUserId == null) {
+                System.err.println("[StatisticsController] 로그인하지 않은 사용자입니다.");
+                return;
+            }
+
             // 1. View에서 현재 모드(String) 읽기
             String mode = (String) view.getViewModeSelector().getSelectedItem();
 
@@ -97,17 +102,14 @@ public class StatisticsController {
             // System.out.println("Mode: " + mode + ", Start: " + startDate + ", End: " + endDate);
 
             // 3. DAO에 '진짜 데이터' 요청
-            // [수정] 모든 DAO 호출에 'currentUserId'를 첫 번째 인자로 전달합니다.
-            
+
             // (구현 1순위) 평균 스트레스 지수
             double avgStress = dao.getAverageStress(currentUserId, startDate, endDate);
             
             // (구현 2순위) 감정 차트 데이터
-            // [수정] DAO가 View가 바로 사용할 수 있는 DefaultPieDataset을 반환하도록 변경
-            //DefaultPieDataset emotionDataset = dao.getEmotionData(currentUserId, startDate, endDate);
+            Map<String, Map<String, Double>> emotionData = dao.getEmotionData(currentUserId, startDate, endDate);
 
             // (구현 3순위) 스트레스 차트 데이터
-            // [수정] DAO 호출 시그니처 변경 (userId, startDate, endDate, mode)
             DefaultCategoryDataset stressDataset = dao.getStressData(currentUserId, startDate, endDate, mode);
             
             // 4. View 갱신 (Update)
@@ -117,9 +119,8 @@ public class StatisticsController {
                 String.format("<html><center>평균 스트레스 지수<b>:</b> <b>%.1f</b></center></html>", avgStress)
             );
             
-            // [수정] (구현 2/3순위) View의 갱신 메소드를 '진짜 데이터'로 호출
-            // (참고) StatisticsView의 updateEmotionChart는 DefaultPieDataset을 받도록 설계되었습니다.
-            //view.updateEmotionChart(emotionDataset); 
+            // (구현 2/3순위) View의 갱신 메소드를 '진짜 데이터'로 호출
+            view.updateEmotionChart(emotionData);
             view.updateStressChart(stressDataset);
 
         } catch (Exception e) {

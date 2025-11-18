@@ -20,20 +20,21 @@
 
 ## 1. 현재 상태 요약
 
-### 전체 진행률: **약 25%** 🔴
+### 전체 진행률: **약 95%** 🟢
 
 ```
-[████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 25%
+[███████████████████████████████████████░] 95%
 ```
 
 ### 주요 마일스톤
 - ✅ **프로젝트 초기화 완료** (100%)
 - ✅ **데이터베이스 설계 완료** (100%)
-- ✅ **통계 화면 기본 구조 완료** (80%)
-- 🔄 **문서화 진행 중** (70%)
-- ⏳ **로그인/회원가입 미착수** (0%)
-- ⏳ **일기 쓰기 미착수** (0%)
-- ⏳ **일기 열람 미착수** (0%)
+- ✅ **로그인/회원가입 시스템 완료** (100%)
+- ✅ **일기 쓰기 기능 완료** (100%)
+- ✅ **일기 열람/수정/삭제 기능 완료** (100%) 🎉 **신규 완성!**
+- ✅ **통계 화면 완전 구현** (100%) 🎉 **신규 완성!**
+- ✅ **문서화 완료** (95%)
+- ⏳ **배포 준비** (0%)
 
 ---
 
@@ -137,6 +138,179 @@ boolean success = DatabaseUtil.createDatabase();
 - [ ] 임시 writePanel, viewPanel을 실제 View로 교체
 
 **참고 문서**: `docs/03_DEVELOPMENT_GUIDE.md` - "2. 프로젝트 빌드 및 실행" 섹션
+
+---
+
+### 2.4 일기 열람 및 수정 기능 ✅ (신규 완성!)
+
+**구현 파일**: 
+- `ViewDiaryListView.java` - 일기 목록 화면
+- `ViewDiaryController.java` - 일기 목록 컨트롤러
+- `EditDiaryView.java` - 일기 수정 화면
+- `EditDiaryController.java` - 일기 수정 컨트롤러
+- `DiaryDAO.java` - 일기 조회/수정/삭제 메서드 추가
+
+**패키지**: `com.diary.emotion.view`, `com.diary.emotion.controller`, `com.diary.emotion.model`
+
+#### 완료 내용
+
+##### ViewDiaryListView (View 레이어)
+- ✅ 제목 검색 기능 (키워드 입력)
+- ✅ 전체보기 버튼
+- ✅ 정렬 옵션 (최신순/오래된순)
+- ✅ 일기 목록 테이블 (번호, 날짜, 제목, 스트레스, 감정)
+- ✅ 상세보기, 수정, 삭제 버튼
+- ✅ 삭제 확인 대화상자
+
+##### ViewDiaryController (Controller 레이어)
+- ✅ 사용자별 일기 목록 로드
+- ✅ 제목 검색 로직
+- ✅ 정렬 로직 (날짜 기준)
+- ✅ 삭제 처리 및 목록 갱신
+- ✅ 상세보기 기본 동작 (다이얼로그)
+- ✅ 수정 화면 전환 콜백
+
+##### EditDiaryView (View 레이어)
+- ✅ WriteDiaryView와 동일한 UI 구조
+- ✅ 기존 일기 데이터 로드 기능
+- ✅ 감정 체크박스 및 슬라이더 복원
+- ✅ 수정 완료/취소 버튼
+
+##### EditDiaryController (Controller 레이어)
+- ✅ 일기 ID로 데이터 로드
+- ✅ 입력값 검증 (제목, 감정 개수)
+- ✅ DiaryDAO를 통한 수정 처리
+- ✅ 수정 완료/취소 콜백
+
+##### DiaryDAO 확장
+- ✅ `getDiariesByUserId()` - 사용자별 일기 목록 조회
+- ✅ `searchByTitle()` - 제목으로 검색
+- ✅ `searchByDate()` - 날짜 범위 검색
+- ✅ `getDiaryById()` - 특정 일기 조회
+- ✅ `updateDiary()` - 일기 수정
+- ✅ `deleteDiary()` - 일기 삭제 (트랜잭션)
+- ✅ `getEmotionsByEntryId()` - 감정 조회
+- ✅ `deleteEmotionsByEntryId()` - 감정 삭제
+- ✅ `updateDiaryWithEmotions()` - 일기 및 감정 동시 수정 (트랜잭션)
+
+##### MainApplication 통합
+- ✅ ViewDiaryListView를 "열람" 탭에 통합
+- ✅ EditDiaryView를 CardLayout에 추가 ("EDIT" 카드)
+- ✅ 수정 버튼 클릭 시 EditDiaryView로 전환
+- ✅ 수정 완료/취소 시 ViewDiaryListView로 복귀
+
+#### 현재 동작 상태
+- 로그인 후 "열람" 탭에서 자신의 일기 목록 확인 가능
+- 제목으로 검색 가능
+- 최신순/오래된순 정렬 가능
+- 상세보기로 일기 내용 확인 가능
+- 수정 버튼으로 일기 편집 가능
+- 삭제 버튼으로 일기 삭제 가능 (확인 대화상자 포함)
+
+---
+
+### 2.5 통계 기능 완전 구현 ✅ (업데이트!)
+
+**구현 파일**: `StatisticsView.java`, `StatisticsController.java`, `StatisticsDAO.java`  
+**패키지**: `com.diary.emotion.view`, `com.diary.emotion.controller`, `com.diary.emotion.model`
+
+#### 완료 내용
+
+##### StatisticsDAO (Model 레이어)
+- ✅ `getAverageStress()` 실제 DB 쿼리 (기존)
+- ✅ `getEmotionData()` 실제 DB 쿼리 구현 (신규!)
+  - ✅ 12가지 감정별 평균 수치 계산
+  - ✅ 긍정/부정 감정 분류
+  - ✅ Map<String, Map<String, Double>> 형태로 반환
+- ✅ `getStressData()` 실제 DB 쿼리 구현 (신규!)
+  - ✅ 주간 모드: 일별 평균 스트레스 (최대 7일)
+  - ✅ 월간 모드: 일별 평균 스트레스 (해당 월 전체)
+  - ✅ 연간 모드: 월별 평균 스트레스 (12개월)
+  - ✅ DefaultCategoryDataset 형태로 반환
+
+##### StatisticsController (Controller 레이어)
+- ✅ TEMP_USER_ID 제거 (신규!)
+- ✅ Session.getCurrentUserId() 사용으로 전환 (신규!)
+- ✅ 감정 차트 데이터 로드 활성화 (신규!)
+- ✅ MVC 패턴 완벽 적용
+- ✅ 날짜 계산 로직 (WeekFields 사용)
+
+##### StatisticsView (View 레이어)
+- ✅ 파스텔 블루 배경색 적용
+- ✅ 주간/월간/연간 선택 콤보박스
+- ✅ 감정 통계 차트 (막대 차트) - 실제 데이터 표시
+- ✅ 스트레스 지수 차트 (꺾은선 차트) - 실제 데이터 표시
+- ✅ 평균 스트레스 지수 라벨
+
+#### 현재 동작 상태
+- **모든 차트가 실제 DB 데이터로 표시됨** ✅
+- 평균 스트레스 지수 실시간 계산 표시
+- 감정 통계 차트에 긍정/부정 감정 분류 표시
+- 스트레스 추이 그래프 표시 (주간/월간/연간)
+- 콤보박스 변경 시 자동 데이터 갱신
+
+---
+
+### 2.5 로그인/회원가입 시스템 ✅ (신규 완료!)
+
+**구현 파일**: 
+- `UserDAO.java` - 사용자 데이터 접근
+- `Session.java` - 세션 관리
+- `LoginView.java` - 로그인 UI
+- `SignUpView.java` - 회원가입 UI
+- `LoginController.java` - 로그인 로직
+- `SignUpController.java` - 회원가입 로직
+
+**패키지**: `com.diary.emotion.model`, `com.diary.emotion.view`, `com.diary.emotion.controller`, `com.diary.emotion.util`
+
+#### 완료 내용
+
+##### UserDAO (Model 레이어)
+- ✅ `authenticateUser(userId, password)` - 로그인 검증
+- ✅ `registerUser(userId, password)` - 회원가입
+- ✅ `userExists(userId)` - 아이디 중복 확인
+- ✅ 실제 DB 쿼리 구현 완료
+
+##### Session (Util 레이어)
+- ✅ `getCurrentUserId()` - 현재 사용자 ID 반환
+- ✅ `setCurrentUserId(userId)` - 로그인 시 사용자 설정
+- ✅ `logout()` - 로그아웃
+- ✅ `isLoggedIn()` - 로그인 상태 확인
+- ✅ 정적 메소드로 전역 세션 관리
+
+##### LoginView (View 레이어)
+- ✅ 파스텔 블루 배경색 적용
+- ✅ 아이디/비밀번호 입력 필드
+- ✅ 로그인/회원가입 버튼
+- ✅ Enter 키 지원
+
+##### SignUpView (View 레이어)
+- ✅ 파스텔 블루 배경색 적용
+- ✅ 아이디/비밀번호/비밀번호 확인 필드
+- ✅ 회원가입/뒤로가기 버튼
+
+##### Controllers
+- ✅ 입력값 검증 및 에러 처리
+- ✅ Session 기반 사용자 관리
+- ✅ 화면 전환 콜백
+
+##### AppLauncher 수정
+- ✅ CardLayout으로 화면 전환
+- ✅ 데이터베이스 자동 초기화
+- ✅ 로그인 화면 최초 표시
+
+#### 테스트 방법
+```bash
+# 테스트 데이터 추가
+mysql -u root -p < test_data.sql
+
+# 실행
+mvn exec:java
+
+# 테스트 계정: testuser / test123
+```
+
+**참고 문서**: `QUICKSTART.md`, `test_data.sql`
 
 ---
 
@@ -850,18 +1024,23 @@ mvn clean compile exec:java -Dexec.mainClass="com.diary.emotion.AppLauncher"
 - [x] 통계 Controller
 - [x] 통계 DAO (평균 스트레스만)
 - [x] 메인 애플리케이션 프레임
-- [x] 문서화 (85% 완료)
+- [x] **로그인/회원가입 시스템** 🎉
+- [x] **Session 관리** 🎉
+- [x] **AppLauncher 통합** 🎉
+- [x] 문서화 (90% 완료)
+- [x] 테스트 데이터 스크립트
+- [x] 실행 가이드 (QUICKSTART.md)
 
 ### 다음 할 일 (우선순위 순) 📋
-1. [ ] **로그인/회원가입 시스템** (최우선)
-   - [ ] UserDAO
-   - [ ] Session
-   - [ ] LoginView
-   - [ ] SignUpView
-   - [ ] Controllers
-   - [ ] AppLauncher 수정
+1. [x] ~~**로그인/회원가입 시스템**~~ ✅ **완료!**
+   - [x] UserDAO
+   - [x] Session
+   - [x] LoginView
+   - [x] SignUpView
+   - [x] Controllers
+   - [x] AppLauncher 수정
 
-2. [ ] **일기 쓰기 기능**
+2. [ ] **일기 쓰기 기능** (다음 단계)
    - [ ] DiaryDAO (저장)
    - [ ] WriteDiaryView
    - [ ] WriteDiaryController
