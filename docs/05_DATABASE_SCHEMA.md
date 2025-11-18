@@ -1,108 +1,87 @@
-# 데이터베이스 스키마 문서
+# 데이터베이스 스키마
+
+## 목차
+1. [데이터베이스 개요](#1-데이터베이스-개요)
+2. [테이블 상세 설명](#2-테이블-상세-설명)
+3. [관계도 (ERD)](#3-관계도-erd)
+4. [SQL 스크립트](#4-sql-스크립트)
+5. [인덱스 및 최적화](#5-인덱스-및-최적화)
+6. [샘플 데이터](#6-샘플-데이터)
+
+---
 
 ## 1. 데이터베이스 개요
 
-### 1.1 데이터베이스명
-`emotion_diary`
+### 1.1 기본 정보
+- **데이터베이스명**: `emotion_diary`
+- **문자셋**: `utf8mb4` (이모지 저장 지원)
+- **Collation**: `utf8mb4_unicode_ci` (대소문자 구분 없는 유니코드)
+- **엔진**: InnoDB (기본)
+- **MySQL 버전**: 8.0.33
 
-### 1.2 문자셋
-- **Character Set**: `utf8mb4`
-- **Collation**: `utf8mb4_unicode_ci`
-- **이유**: 이모지 저장 지원, 대소문자 구분 없는 검색
+### 1.2 생성 시점
+- 애플리케이션 최초 실행 시 `DatabaseUtil.createDatabase()` 호출
+- 데이터베이스가 이미 존재하면 생성 건너뜀
+- 자동으로 4개의 테이블 생성
 
-### 1.3 ERD (Entity Relationship Diagram)
-
+### 1.3 연결 정보
 ```
-┌─────────────────┐
-│     user        │
-│─────────────────│
-│ user_id (PK)    │
-│ user_pw         │
-└─────────────────┘
-         │
-         │ 1:N
-         │
-         ▼
-┌─────────────────┐
-│     diary       │
-│─────────────────│
-│ entry_id (PK)   │
-│ user_id (FK)    │
-│ title           │
-│ content         │
-│ stress_level    │
-│ entry_date      │
-└─────────────────┘
-         │
-         │ 1:N (최대 4개)
-         │
-         ▼
-┌─────────────────┐
-│    emotion      │
-│─────────────────│
-│ emotion_id (PK) │
-│ entry_id (FK)   │
-│ emoji_icon      │
-│ emotion_level   │
-└─────────────────┘
-
-┌─────────────────┐
-│   question      │
-│─────────────────│
-│ question_id (PK)│
-│ question_text   │
-└─────────────────┘
-(향후 확장용)
+URL: jdbc:mysql://localhost:3306/emotion_diary?serverTimezone=UTC
+User: root
+Password: REMOVED_PASSWORD (환경에 맞게 변경 필요)
 ```
+
+---
 
 ## 2. 테이블 상세 설명
 
-### 2.1 user (사용자 테이블)
+### 2.1 user 테이블
 
-#### 테이블 설명
-애플리케이션 사용자 정보를 저장하는 테이블
+**목적**: 사용자 계정 정보 저장
 
-#### DDL
+#### 스키마
+| 컬럼명 | 데이터 타입 | 제약 조건 | 설명 |
+|--------|-------------|-----------|------|
+| user_id | VARCHAR(20) | PRIMARY KEY | 사용자 아이디 (로그인 ID) |
+| user_pw | VARCHAR(20) | NOT NULL | 사용자 비밀번호 (평문 저장 - 추후 암호화 필요) |
+
+#### SQL
 ```sql
 CREATE TABLE user (
     user_id VARCHAR(20) PRIMARY KEY,
     user_pw VARCHAR(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 ```
 
-#### 컬럼 설명
-| 컬럼명 | 데이터 타입 | NULL 허용 | 키 | 기본값 | 설명 |
-|--------|------------|----------|-----|--------|------|
-| user_id | VARCHAR(20) | NO | PK | - | 사용자 아이디 (4-20자) |
-| user_pw | VARCHAR(20) | NO | - | - | 비밀번호 (평문, 추후 해싱 예정) |
-
-#### 제약 조건
-- **PRIMARY KEY**: user_id
-- **UNIQUE**: user_id (중복 불가)
-
-#### 인덱스
-- PRIMARY KEY 인덱스: user_id
+#### 특징
+- **기본키**: `user_id`
+- **보안 이슈**: 비밀번호가 평문으로 저장됨
+  - **TODO**: SHA-256 또는 BCrypt로 암호화 필요
+  - **권장 컬럼 타입**: VARCHAR(64) 이상
 
 #### 샘플 데이터
 ```sql
-INSERT INTO user (user_id, user_pw) VALUES 
-('testuser', 'password123'),
-('john_doe', 'mypass456');
+INSERT INTO user (user_id, user_pw) VALUES ('testuser', 'password123');
+INSERT INTO user (user_id, user_pw) VALUES ('john', 'john1234');
 ```
-
-#### 비즈니스 룰
-- 아이디는 4-20자 영문, 숫자, 언더스코어만 허용 (애플리케이션 레벨에서 검증)
-- 비밀번호는 6-20자 (애플리케이션 레벨에서 검증)
-- **보안 주의**: 현재는 평문 저장, 추후 BCrypt 해싱 적용 필요
 
 ---
 
-### 2.2 diary (일기 테이블)
+### 2.2 diary 테이블
 
-#### 테이블 설명
-사용자가 작성한 일기 엔트리를 저장하는 메인 테이블
+**목적**: 일기 본문 및 스트레스 수치 저장
 
-#### DDL
+#### 스키마
+| 컬럼명 | 데이터 타입 | 제약 조건 | 설명 |
+|--------|-------------|-----------|------|
+| entry_id | INTEGER | PRIMARY KEY, AUTO_INCREMENT | 일기 고유 ID (자동 증가) |
+| user_id | VARCHAR(20) | NOT NULL, FOREIGN KEY | 작성자 ID (user 테이블 참조) |
+| title | VARCHAR(50) | NOT NULL | 일기 제목 |
+| content | TEXT | | 일기 본문 (긴 텍스트 저장) |
+| stress_level | INTEGER | NOT NULL | 스트레스 수치 (0~100) |
+| entry_date | DATETIME | NOT NULL | 일기 작성 날짜 및 시간 |
+
+#### SQL
 ```sql
 CREATE TABLE diary (
     entry_id INTEGER AUTO_INCREMENT PRIMARY KEY,
@@ -111,407 +90,234 @@ CREATE TABLE diary (
     content TEXT,
     stress_level INTEGER NOT NULL,
     entry_date DATETIME NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    FOREIGN KEY (user_id) REFERENCES user(user_id)
+);
 ```
 
-#### 컬럼 설명
-| 컬럼명 | 데이터 타입 | NULL 허용 | 키 | 기본값 | 설명 |
-|--------|------------|----------|-----|--------|------|
-| entry_id | INTEGER | NO | PK | AUTO_INCREMENT | 일기 고유 ID |
-| user_id | VARCHAR(20) | NO | FK | - | 작성자 아이디 |
-| title | VARCHAR(50) | NO | - | - | 일기 제목 (최대 50자) |
-| content | TEXT | YES | - | NULL | 일기 내용 (최대 65,535자) |
-| stress_level | INTEGER | NO | - | - | 스트레스 수치 (0-100) |
-| entry_date | DATETIME | NO | - | - | 작성 일시 |
+#### 특징
+- **기본키**: `entry_id` (자동 증가)
+- **외래키**: `user_id` → `user(user_id)`
+- **제약 조건**:
+  - `stress_level`: 0~100 범위 (애플리케이션 레벨에서 검증)
+  - `entry_date`: 일기 작성 시점 저장 (검색/정렬 기준)
 
-#### 제약 조건
-- **PRIMARY KEY**: entry_id
-- **FOREIGN KEY**: user_id → user(user_id)
-  - ON DELETE CASCADE: 사용자 삭제 시 해당 일기도 삭제
-- **CHECK** (애플리케이션 레벨): 
-  - stress_level BETWEEN 0 AND 100
-  - title 길이 1-50자
+#### 인덱스 권장
+```sql
+-- 사용자별 일기 조회 최적화
+CREATE INDEX idx_user_id ON diary(user_id);
 
-#### 인덱스
-- PRIMARY KEY 인덱스: entry_id
-- 외래 키 인덱스: user_id
-- **권장 추가 인덱스**:
-  ```sql
-  CREATE INDEX idx_user_date ON diary(user_id, entry_date DESC);
-  ```
-  (사용자별 최신 일기 조회 최적화)
+-- 날짜별 조회 최적화
+CREATE INDEX idx_entry_date ON diary(entry_date);
+
+-- 복합 인덱스 (사용자 + 날짜)
+CREATE INDEX idx_user_date ON diary(user_id, entry_date);
+```
 
 #### 샘플 데이터
 ```sql
-INSERT INTO diary (user_id, title, content, stress_level, entry_date) VALUES 
-('testuser', '행복한 하루', '오늘은 친구들과 즐거운 시간을 보냈다.', 20, '2024-11-13 14:30:00'),
-('testuser', '힘든 하루', '업무가 많아서 스트레스를 많이 받았다.', 80, '2024-11-12 22:00:00');
-```
+INSERT INTO diary (user_id, title, content, stress_level, entry_date)
+VALUES ('testuser', '좋은 하루', '오늘은 날씨가 좋았다.', 30, '2025-11-18 14:30:00');
 
-#### 비즈니스 룰
-- 제목은 필수 입력
-- 내용은 선택 입력 (NULL 허용)
-- 스트레스 수치는 0-100 범위
-- 작성 일시는 서버 시간 기준 자동 설정
+INSERT INTO diary (user_id, title, content, stress_level, entry_date)
+VALUES ('testuser', '힘든 하루', '오늘은 일이 많았다.', 75, '2025-11-17 20:00:00');
+```
 
 ---
 
-### 2.3 emotion (감정 테이블)
+### 2.3 emotion 테이블
 
-#### 테이블 설명
-일기에 연결된 감정 정보를 저장하는 테이블 (일기당 최대 4개)
+**목적**: 일기별 감정 정보 저장 (최대 4개)
 
-#### DDL
+#### 스키마
+| 컬럼명 | 데이터 타입 | 제약 조건 | 설명 |
+|--------|-------------|-----------|------|
+| emotion_id | INTEGER | PRIMARY KEY, AUTO_INCREMENT | 감정 레코드 고유 ID |
+| entry_id | INTEGER | NOT NULL, FOREIGN KEY | 일기 ID (diary 테이블 참조) |
+| emotion_level | INTEGER | NOT NULL | 감정 수치 (0~100) |
+| emoji_icon | VARCHAR(10) | NOT NULL | 감정 이모지 (😊, 😢 등) |
+
+#### SQL
 ```sql
 CREATE TABLE emotion (
     emotion_id INTEGER AUTO_INCREMENT PRIMARY KEY,
     entry_id INTEGER NOT NULL,
     emotion_level INTEGER NOT NULL,
     emoji_icon VARCHAR(10) NOT NULL,
-    FOREIGN KEY (entry_id) REFERENCES diary(entry_id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    FOREIGN KEY (entry_id) REFERENCES diary(entry_id)
+);
 ```
 
-#### 컬럼 설명
-| 컬럼명 | 데이터 타입 | NULL 허용 | 키 | 기본값 | 설명 |
-|--------|------------|----------|-----|--------|------|
-| emotion_id | INTEGER | NO | PK | AUTO_INCREMENT | 감정 고유 ID |
-| entry_id | INTEGER | NO | FK | - | 연결된 일기 ID |
-| emotion_level | INTEGER | NO | - | - | 감정 강도 (0-100) |
-| emoji_icon | VARCHAR(10) | NO | - | - | 감정 이모지 (예: "😊 기쁨") |
+#### 특징
+- **기본키**: `emotion_id` (자동 증가)
+- **외래키**: `entry_id` → `diary(entry_id)`
+- **1:N 관계**: 하나의 일기(diary)는 최대 4개의 감정(emotion)을 가짐
+- **이모지 저장**: UTF8MB4 문자셋 필수
+- **제약 조건**:
+  - `emotion_level`: 0~100 범위
+  - 하나의 `entry_id`에 최대 4개 레코드 (애플리케이션 레벨 검증)
 
-#### 제약 조건
-- **PRIMARY KEY**: emotion_id
-- **FOREIGN KEY**: entry_id → diary(entry_id)
-  - ON DELETE CASCADE: 일기 삭제 시 연결된 감정도 삭제
-- **CHECK** (애플리케이션 레벨):
-  - emotion_level BETWEEN 0 AND 100
-  - 한 일기당 최대 4개 감정
+#### 인덱스 권장
+```sql
+-- 일기별 감정 조회 최적화
+CREATE INDEX idx_entry_id ON emotion(entry_id);
 
-#### 인덱스
-- PRIMARY KEY 인덱스: emotion_id
-- 외래 키 인덱스: entry_id
+-- 이모지별 통계 조회 최적화
+CREATE INDEX idx_emoji ON emotion(emoji_icon);
+```
+
+#### 감정 이모지 목록
+
+##### 긍정적 감정
+| 감정명 | 이모지 | emoji_icon 값 |
+|--------|--------|---------------|
+| 행복 | 😊 | 😊 |
+| 신남 | 😆 | 😆 |
+| 설렘 | 😍 | 😍 |
+| 편안 | 😌 | 😌 |
+| 재미 | 😂 | 😂 |
+| 고마움 | 🤗 | 🤗 |
+
+##### 부정적 감정
+| 감정명 | 이모지 | emoji_icon 값 |
+|--------|--------|---------------|
+| 슬픔 | 😢 | 😢 |
+| 분노 | 😠 | 😠 |
+| 불안 | 😰 | 😰 |
+| 민망 | 😅 | 😅 |
+| 당황 | 😧 | 😧 |
+| 미안함 | 😔 | 😔 |
 
 #### 샘플 데이터
 ```sql
-INSERT INTO emotion (entry_id, emoji_icon, emotion_level) VALUES 
-(1, '😊 기쁨', 80),
-(1, '😌 평온', 70),
-(2, '😔 우울', 60),
-(2, '😖 좌절', 50);
-```
+-- entry_id = 1 (좋은 하루)에 대한 감정들
+INSERT INTO emotion (entry_id, emotion_level, emoji_icon)
+VALUES (1, 80, '😊');  -- 행복: 80
 
-#### 비즈니스 룰
-- 감정 이모지는 Constants.EMOTIONS 배열에서 선택
-- 일기당 최소 1개, 최대 4개의 감정 저장
-- 감정 레벨은 0-100 범위
-- 동일한 entry_id에 대해 같은 emoji_icon 중복 허용 (사용자가 재선택 가능)
+INSERT INTO emotion (entry_id, emotion_level, emoji_icon)
+VALUES (1, 60, '😆');  -- 신남: 60
+
+INSERT INTO emotion (entry_id, emotion_level, emoji_icon)
+VALUES (1, 70, '🤗');  -- 고마움: 70
+
+-- entry_id = 2 (힘든 하루)에 대한 감정들
+INSERT INTO emotion (entry_id, emotion_level, emoji_icon)
+VALUES (2, 65, '😢');  -- 슬픔: 65
+
+INSERT INTO emotion (entry_id, emotion_level, emoji_icon)
+VALUES (2, 50, '😰');  -- 불안: 50
+```
 
 ---
 
-### 2.4 question (질문 테이블) - 향후 확장용
+### 2.4 question 테이블
 
-#### 테이블 설명
-사용자에게 제공할 일기 작성 가이드 질문을 저장하는 테이블 (현재 미사용)
+**목적**: 사용자에게 제시할 질문 저장 (추후 확장용)
 
-#### DDL
+#### 스키마
+| 컬럼명 | 데이터 타입 | 제약 조건 | 설명 |
+|--------|-------------|-----------|------|
+| question_id | INTEGER | PRIMARY KEY, AUTO_INCREMENT | 질문 고유 ID |
+| question_text | VARCHAR(100) | NOT NULL | 질문 내용 |
+
+#### SQL
 ```sql
 CREATE TABLE question (
     question_id INTEGER AUTO_INCREMENT PRIMARY KEY,
     question_text VARCHAR(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 ```
 
-#### 컬럼 설명
-| 컬럼명 | 데이터 타입 | NULL 허용 | 키 | 기본값 | 설명 |
-|--------|------------|----------|-----|--------|------|
-| question_id | INTEGER | NO | PK | AUTO_INCREMENT | 질문 고유 ID |
-| question_text | VARCHAR(100) | NO | - | - | 질문 내용 |
+#### 특징
+- **기본키**: `question_id` (자동 증가)
+- **용도**: 일기 작성 시 감정 유도 질문 표시
+- **현재 상태**: 미사용 (추후 확장 예정)
 
-#### 샘플 데이터 (예시)
+#### 샘플 데이터
 ```sql
-INSERT INTO question (question_text) VALUES 
-('오늘 가장 기뻤던 순간은 언제였나요?'),
-('오늘 어떤 일로 스트레스를 받으셨나요?'),
-('내일은 어떤 하루를 보내고 싶으신가요?');
-```
-
-#### 향후 확장 계획
-- 일기 작성 시 랜덤 질문 제공
-- 사용자 맞춤형 질문 추천
-- 질문-답변 매칭 테이블 추가
-
----
-
-## 3. 관계 및 제약 조건
-
-### 3.1 관계 정의
-
-#### user ↔ diary (1:N)
-- 한 사용자는 여러 일기를 작성할 수 있음
-- 사용자 삭제 시 모든 일기 자동 삭제 (CASCADE)
-
-#### diary ↔ emotion (1:N, 최대 4개)
-- 한 일기는 최대 4개의 감정을 가질 수 있음
-- 일기 삭제 시 모든 감정 자동 삭제 (CASCADE)
-
-### 3.2 CASCADE 동작
-
-```sql
--- 사용자 삭제 시
-DELETE FROM user WHERE user_id = 'testuser';
--- → 해당 사용자의 모든 diary 레코드 삭제
--- → 해당 diary의 모든 emotion 레코드 삭제
-
--- 일기 삭제 시
-DELETE FROM diary WHERE entry_id = 1;
--- → 해당 일기의 모든 emotion 레코드 삭제
-```
-
-### 3.3 참조 무결성
-- 모든 외래 키는 참조 무결성을 보장
-- 존재하지 않는 user_id로 diary 삽입 불가
-- 존재하지 않는 entry_id로 emotion 삽입 불가
-
----
-
-## 4. 쿼리 예제
-
-### 4.1 사용자별 일기 통계
-```sql
--- 사용자별 총 일기 수 및 평균 스트레스
-SELECT 
-    u.user_id,
-    COUNT(d.entry_id) AS total_diaries,
-    AVG(d.stress_level) AS avg_stress
-FROM user u
-LEFT JOIN diary d ON u.user_id = d.user_id
-GROUP BY u.user_id;
-```
-
-### 4.2 최근 일기 조회 (감정 포함)
-```sql
--- testuser의 최근 10개 일기 + 감정
-SELECT 
-    d.entry_id,
-    d.title,
-    d.entry_date,
-    d.stress_level,
-    GROUP_CONCAT(e.emoji_icon) AS emotions
-FROM diary d
-LEFT JOIN emotion e ON d.entry_id = e.entry_id
-WHERE d.user_id = 'testuser'
-GROUP BY d.entry_id
-ORDER BY d.entry_date DESC
-LIMIT 10;
-```
-
-### 4.3 기간별 감정 분석
-```sql
--- 특정 기간 동안 가장 많이 느낀 감정
-SELECT 
-    e.emoji_icon,
-    COUNT(*) AS frequency,
-    AVG(e.emotion_level) AS avg_level
-FROM emotion e
-JOIN diary d ON e.entry_id = d.entry_id
-WHERE d.user_id = 'testuser'
-  AND d.entry_date BETWEEN '2024-11-01' AND '2024-11-30'
-GROUP BY e.emoji_icon
-ORDER BY frequency DESC;
-```
-
-### 4.4 스트레스 추이 (주간)
-```sql
--- 최근 7일간 일별 평균 스트레스
-SELECT 
-    DATE(entry_date) AS date,
-    AVG(stress_level) AS avg_stress
-FROM diary
-WHERE user_id = 'testuser'
-  AND entry_date >= DATE_SUB(NOW(), INTERVAL 7 DAY)
-GROUP BY DATE(entry_date)
-ORDER BY date;
+INSERT INTO question (question_text) VALUES ('오늘 하루 중 가장 기억에 남는 순간은?');
+INSERT INTO question (question_text) VALUES ('오늘 나에게 고마운 사람은 누구인가요?');
+INSERT INTO question (question_text) VALUES ('오늘의 스트레스 원인은 무엇인가요?');
 ```
 
 ---
 
-## 5. 인덱스 전략
+## 3. 관계도 (ERD)
 
-### 5.1 현재 인덱스
-```sql
--- user 테이블
-PRIMARY KEY (user_id)
+```
+┌──────────────┐
+│     user     │
+├──────────────┤
+│ user_id (PK) │◄─────┐
+│ user_pw      │      │
+└──────────────┘      │
+                      │ 1
+                      │
+                      │
+                      │ N
+┌──────────────────┐  │
+│      diary       │  │
+├──────────────────┤  │
+│ entry_id (PK)    │◄─┼─────┐
+│ user_id (FK)     │──┘     │
+│ title            │        │
+│ content          │        │ 1
+│ stress_level     │        │
+│ entry_date       │        │
+└──────────────────┘        │
+                            │
+                            │ N
+                  ┌─────────────────┐
+                  │    emotion      │
+                  ├─────────────────┤
+                  │ emotion_id (PK) │
+                  │ entry_id (FK)   │──┘
+                  │ emotion_level   │
+                  │ emoji_icon      │
+                  └─────────────────┘
 
--- diary 테이블
-PRIMARY KEY (entry_id)
-INDEX (user_id)
-
--- emotion 테이블
-PRIMARY KEY (emotion_id)
-INDEX (entry_id)
+┌──────────────────┐
+│    question      │  (독립 테이블)
+├──────────────────┤
+│ question_id (PK) │
+│ question_text    │
+└──────────────────┘
 ```
 
-### 5.2 권장 추가 인덱스
-```sql
--- 일기 조회 성능 향상
-CREATE INDEX idx_diary_user_date ON diary(user_id, entry_date DESC);
+### 관계 설명
+1. **user ↔ diary**: 1:N
+   - 한 사용자는 여러 개의 일기를 작성할 수 있음
+   - `diary.user_id` → `user.user_id`
 
--- 제목 검색 성능 향상 (FULLTEXT 인덱스)
-CREATE FULLTEXT INDEX idx_diary_title ON diary(title);
+2. **diary ↔ emotion**: 1:N (최대 4)
+   - 하나의 일기는 최대 4개의 감정을 가짐
+   - `emotion.entry_id` → `diary.entry_id`
 
--- 감정 통계 성능 향상
-CREATE INDEX idx_emotion_icon ON emotion(emoji_icon);
-```
-
-### 5.3 인덱스 사용 쿼리
-```sql
--- idx_diary_user_date 사용
-EXPLAIN SELECT * FROM diary 
-WHERE user_id = 'testuser' 
-ORDER BY entry_date DESC 
-LIMIT 10;
-
--- idx_diary_title 사용 (FULLTEXT 검색)
-SELECT * FROM diary 
-WHERE MATCH(title) AGAINST('행복' IN NATURAL LANGUAGE MODE);
-```
+3. **question**: 독립
+   - 현재는 다른 테이블과 관계 없음
+   - 추후 `diary_question` 중간 테이블 추가 예정
 
 ---
 
-## 6. 데이터 마이그레이션
+## 4. SQL 스크립트
 
-### 6.1 초기 데이터베이스 생성
-```java
-// DatabaseUtil.createDatabase() 실행
-// 또는 MySQL 클라이언트에서 직접 실행
-```
-
-### 6.2 백업
-```bash
-# 전체 데이터베이스 백업
-mysqldump -u root -p emotion_diary > emotion_diary_backup.sql
-
-# 특정 테이블만 백업
-mysqldump -u root -p emotion_diary user diary emotion > partial_backup.sql
-```
-
-### 6.3 복원
-```bash
-# 백업 파일로부터 복원
-mysql -u root -p emotion_diary < emotion_diary_backup.sql
-```
-
----
-
-## 7. 보안 고려사항
-
-### 7.1 현재 상태
-- ❌ 비밀번호 평문 저장 (개발 단계)
-- ✅ PreparedStatement 사용 (SQL Injection 방지)
-- ✅ 외래 키 제약 조건 설정
-
-### 7.2 개선 필요 사항
-```sql
--- 비밀번호 컬럼 길이 확장 (해싱 후 저장 위해)
-ALTER TABLE user MODIFY user_pw VARCHAR(255);
-
--- 비밀번호 해싱 적용 (Java 코드)
--- BCrypt 라이브러리 사용 권장
-```
-
-### 7.3 접근 제어
-```sql
--- 애플리케이션 전용 DB 사용자 생성
-CREATE USER 'emotion_app'@'localhost' IDENTIFIED BY 'secure_password';
-GRANT SELECT, INSERT, UPDATE, DELETE ON emotion_diary.* TO 'emotion_app'@'localhost';
-FLUSH PRIVILEGES;
-```
-
----
-
-## 8. 성능 최적화
-
-### 8.1 쿼리 최적화
-- 필요한 컬럼만 SELECT (SELECT * 지양)
-- LIMIT 사용으로 불필요한 데이터 로드 방지
-- JOIN 시 인덱스 활용
-
-### 8.2 Connection Pool
-```xml
-<!-- pom.xml에 HikariCP 추가 (선택사항) -->
-<dependency>
-    <groupId>com.zaxxer</groupId>
-    <artifactId>HikariCP</artifactId>
-    <version>5.0.1</version>
-</dependency>
-```
-
-### 8.3 캐싱 전략 (향후)
-- 자주 조회되는 데이터 메모리 캐싱
-- 통계 데이터 미리 계산 후 저장
-
----
-
-## 9. 데이터 타입 선택 이유
-
-### 9.1 VARCHAR vs TEXT
-- **VARCHAR(50)**: 제목 - 길이 제한 명확, 인덱스 효율
-- **TEXT**: 내용 - 길이 제한 없음, 유연성
-
-### 9.2 INTEGER vs TINYINT
-- **INTEGER**: ID 필드 - AUTO_INCREMENT 범위 충분
-- **INTEGER**: stress_level, emotion_level - 통일성 (0-100이지만 INT 사용)
-
-### 9.3 DATETIME vs TIMESTAMP
-- **DATETIME**: 타임존 무관, 범위 넓음 (1000-9999년)
-- LocalDateTime과 호환성 좋음
-
----
-
-## 10. 트러블슈팅
-
-### 10.1 외래 키 오류
-```
-ERROR 1452: Cannot add or update a child row: a foreign key constraint fails
-```
-**해결**: 참조되는 부모 레코드 먼저 삽입
-
-### 10.2 이모지 저장 오류
-```
-ERROR 1366: Incorrect string value
-```
-**해결**: utf8mb4 문자셋 사용 확인
-
-### 10.3 AUTO_INCREMENT 리셋
-```sql
--- AUTO_INCREMENT 값 확인
-SELECT AUTO_INCREMENT FROM information_schema.TABLES 
-WHERE TABLE_SCHEMA = 'emotion_diary' AND TABLE_NAME = 'diary';
-
--- 리셋 (주의: 데이터 삭제 후에만)
-ALTER TABLE diary AUTO_INCREMENT = 1;
-```
-
----
-
-## 부록: DDL 전체 스크립트
+### 4.1 전체 데이터베이스 생성 스크립트
 
 ```sql
 -- 데이터베이스 생성
 CREATE DATABASE IF NOT EXISTS emotion_diary 
-CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CHARACTER SET utf8mb4 
+COLLATE utf8mb4_unicode_ci;
 
+-- 데이터베이스 선택
 USE emotion_diary;
 
--- user 테이블
+-- user 테이블 생성
 CREATE TABLE user (
     user_id VARCHAR(20) PRIMARY KEY,
     user_pw VARCHAR(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 
--- diary 테이블
+-- diary 테이블 생성
 CREATE TABLE diary (
     entry_id INTEGER AUTO_INCREMENT PRIMARY KEY,
     user_id VARCHAR(20) NOT NULL,
@@ -519,25 +325,243 @@ CREATE TABLE diary (
     content TEXT,
     stress_level INTEGER NOT NULL,
     entry_date DATETIME NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    FOREIGN KEY (user_id) REFERENCES user(user_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
 
--- emotion 테이블
+-- emotion 테이블 생성
 CREATE TABLE emotion (
     emotion_id INTEGER AUTO_INCREMENT PRIMARY KEY,
     entry_id INTEGER NOT NULL,
     emotion_level INTEGER NOT NULL,
     emoji_icon VARCHAR(10) NOT NULL,
-    FOREIGN KEY (entry_id) REFERENCES diary(entry_id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    FOREIGN KEY (entry_id) REFERENCES diary(entry_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
 
--- question 테이블
+-- question 테이블 생성
 CREATE TABLE question (
     question_id INTEGER AUTO_INCREMENT PRIMARY KEY,
     question_text VARCHAR(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 
--- 인덱스 생성 (권장)
-CREATE INDEX idx_diary_user_date ON diary(user_id, entry_date DESC);
+-- 인덱스 생성
+CREATE INDEX idx_user_id ON diary(user_id);
+CREATE INDEX idx_entry_date ON diary(entry_date);
+CREATE INDEX idx_entry_id ON emotion(entry_id);
+CREATE INDEX idx_emoji ON emotion(emoji_icon);
 ```
+
+### 4.2 테이블 삭제 스크립트
+
+```sql
+-- 외래키 제약으로 순서 중요
+DROP TABLE IF EXISTS emotion;
+DROP TABLE IF EXISTS diary;
+DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS question;
+```
+
+### 4.3 데이터베이스 완전 삭제
+
+```sql
+DROP DATABASE IF EXISTS emotion_diary;
+```
+
+---
+
+## 5. 인덱스 및 최적화
+
+### 5.1 현재 인덱스
+
+| 테이블 | 인덱스명 | 컬럼 | 타입 |
+|--------|----------|------|------|
+| user | PRIMARY | user_id | PRIMARY KEY |
+| diary | PRIMARY | entry_id | PRIMARY KEY |
+| diary | idx_user_id | user_id | INDEX |
+| diary | idx_entry_date | entry_date | INDEX |
+| emotion | PRIMARY | emotion_id | PRIMARY KEY |
+| emotion | idx_entry_id | entry_id | INDEX |
+| emotion | idx_emoji | emoji_icon | INDEX |
+| question | PRIMARY | question_id | PRIMARY KEY |
+
+### 5.2 쿼리 최적화 가이드
+
+#### 사용자별 일기 조회
+```sql
+-- 인덱스 활용: idx_user_id
+SELECT * FROM diary 
+WHERE user_id = 'testuser'
+ORDER BY entry_date DESC;
+```
+
+#### 날짜별 일기 조회
+```sql
+-- 인덱스 활용: idx_entry_date
+SELECT * FROM diary 
+WHERE entry_date BETWEEN '2025-11-01' AND '2025-11-30'
+ORDER BY entry_date;
+```
+
+#### 감정별 통계
+```sql
+-- 인덱스 활용: idx_emoji
+SELECT emoji_icon, AVG(emotion_level) as avg_level
+FROM emotion
+WHERE entry_id IN (
+    SELECT entry_id FROM diary WHERE user_id = 'testuser'
+)
+GROUP BY emoji_icon;
+```
+
+#### JOIN 쿼리 최적화
+```sql
+-- 일기와 감정 정보 함께 조회
+SELECT d.*, e.emoji_icon, e.emotion_level
+FROM diary d
+LEFT JOIN emotion e ON d.entry_id = e.entry_id
+WHERE d.user_id = 'testuser'
+ORDER BY d.entry_date DESC;
+```
+
+### 5.3 성능 모니터링
+
+```sql
+-- 쿼리 실행 계획 확인
+EXPLAIN SELECT * FROM diary WHERE user_id = 'testuser';
+
+-- 인덱스 사용 통계
+SHOW INDEX FROM diary;
+
+-- 테이블 통계 업데이트
+ANALYZE TABLE diary;
+```
+
+---
+
+## 6. 샘플 데이터
+
+### 6.1 테스트 데이터 생성
+
+```sql
+-- 사용자 생성
+INSERT INTO user (user_id, user_pw) VALUES 
+('testuser', 'password123'),
+('john', 'john1234'),
+('alice', 'alice5678');
+
+-- testuser의 일기 데이터
+INSERT INTO diary (user_id, title, content, stress_level, entry_date) VALUES
+('testuser', '프로젝트 시작', '오늘부터 감정 일기 프로젝트를 시작했다.', 45, '2025-11-01 09:00:00'),
+('testuser', '좋은 뉴스', '프로젝트 진행이 순조롭다!', 25, '2025-11-05 14:30:00'),
+('testuser', '스트레스받는 날', '버그 수정에 시간이 너무 오래 걸렸다.', 80, '2025-11-10 18:00:00'),
+('testuser', '성공적인 배포', '드디어 첫 번째 버전을 배포했다!', 20, '2025-11-15 16:00:00');
+
+-- 감정 데이터 (일기별 2-4개)
+-- entry_id = 1 (프로젝트 시작)
+INSERT INTO emotion (entry_id, emotion_level, emoji_icon) VALUES
+(1, 70, '😆'),  -- 신남
+(1, 50, '😰'),  -- 불안
+(1, 60, '😍');  -- 설렘
+
+-- entry_id = 2 (좋은 뉴스)
+INSERT INTO emotion (entry_id, emotion_level, emoji_icon) VALUES
+(2, 85, '😊'),  -- 행복
+(2, 75, '🤗'),  -- 고마움
+(2, 80, '😌');  -- 편안
+
+-- entry_id = 3 (스트레스받는 날)
+INSERT INTO emotion (entry_id, emotion_level, emoji_icon) VALUES
+(3, 70, '😢'),  -- 슬픔
+(3, 65, '😠'),  -- 분노
+(3, 80, '😰'),  -- 불안
+(3, 55, '😔');  -- 미안함
+
+-- entry_id = 4 (성공적인 배포)
+INSERT INTO emotion (entry_id, emotion_level, emoji_icon) VALUES
+(4, 95, '😊'),  -- 행복
+(4, 90, '😂'),  -- 재미
+(4, 85, '🤗'),  -- 고마움
+(4, 88, '😆');  -- 신남
+
+-- 질문 데이터
+INSERT INTO question (question_text) VALUES
+('오늘 하루 중 가장 기억에 남는 순간은?'),
+('오늘 나에게 고마운 사람은 누구인가요?'),
+('오늘의 스트레스 원인은 무엇인가요?'),
+('내일은 어떤 하루가 되길 바라나요?'),
+('오늘 나는 어떤 감정을 가장 많이 느꼈나요?');
+```
+
+### 6.2 데이터 확인 쿼리
+
+```sql
+-- 전체 데이터 개수 확인
+SELECT 
+    (SELECT COUNT(*) FROM user) as users,
+    (SELECT COUNT(*) FROM diary) as diaries,
+    (SELECT COUNT(*) FROM emotion) as emotions,
+    (SELECT COUNT(*) FROM question) as questions;
+
+-- testuser의 일기와 감정 조회
+SELECT d.entry_id, d.title, d.stress_level, d.entry_date,
+       GROUP_CONCAT(CONCAT(e.emoji_icon, ':', e.emotion_level) SEPARATOR ', ') as emotions
+FROM diary d
+LEFT JOIN emotion e ON d.entry_id = e.entry_id
+WHERE d.user_id = 'testuser'
+GROUP BY d.entry_id
+ORDER BY d.entry_date;
+```
+
+---
+
+## 7. 향후 개선 사항
+
+### 7.1 보안 개선
+```sql
+-- user 테이블 비밀번호 암호화
+ALTER TABLE user MODIFY user_pw VARCHAR(64) NOT NULL COMMENT 'SHA-256 해시';
+
+-- 비밀번호 솔트 컬럼 추가
+ALTER TABLE user ADD COLUMN password_salt VARCHAR(32);
+```
+
+### 7.2 기능 확장
+```sql
+-- 일기 카테고리 테이블
+CREATE TABLE category (
+    category_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    category_name VARCHAR(20) NOT NULL
+);
+
+-- diary 테이블에 카테고리 추가
+ALTER TABLE diary ADD COLUMN category_id INTEGER;
+ALTER TABLE diary ADD FOREIGN KEY (category_id) REFERENCES category(category_id);
+
+-- 일기 공유 기능
+CREATE TABLE diary_share (
+    share_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    entry_id INTEGER NOT NULL,
+    shared_with VARCHAR(20) NOT NULL,
+    shared_date DATETIME NOT NULL,
+    FOREIGN KEY (entry_id) REFERENCES diary(entry_id),
+    FOREIGN KEY (shared_with) REFERENCES user(user_id)
+);
+```
+
+### 7.3 성능 개선
+```sql
+-- 파티셔닝 (날짜별)
+ALTER TABLE diary PARTITION BY RANGE (YEAR(entry_date)) (
+    PARTITION p2024 VALUES LESS THAN (2025),
+    PARTITION p2025 VALUES LESS THAN (2026),
+    PARTITION p2026 VALUES LESS THAN (2027)
+);
+```
+
+---
+
+*이 스키마 문서는 데이터베이스의 모든 구조를 상세히 설명합니다. 실제 구현 시 `DatabaseUtil.java`의 `createDatabase()` 메소드를 참조하세요.*
 
