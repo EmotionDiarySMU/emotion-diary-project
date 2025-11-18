@@ -25,6 +25,12 @@ public class ViewDiaryPanel extends WriteDiaryGUI {
         
         // 각 컴포넌트들 수정 불가 상태로 만듦
         titleField.setEditable(false);
+        /*
+        수정 불가능 & 커서 안 보임 & 복사 가능 상태로 만들고 싶은데 잘 안 된다..
+        titleField.getCaret().setVisible(false);
+        titleField.getCaret().setBlinkRate(0);
+        titleField.setFocusable(false);
+        */
         contentArea.setEditable(false);
         for (JTextField tf : valueFields) tf.setEditable(false);
         stressSlider.setFocusable(false);
