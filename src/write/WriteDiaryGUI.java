@@ -7,6 +7,10 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
 
+import DB.DatabaseManager;
+import DB.DiaryEntry;
+import view.SearchDiaryPanel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,9 +44,10 @@ public class WriteDiaryGUI extends JPanel {
     public JSlider stressSlider;
     public JTextField stressValueField;
 
+    public JButton newPostButton;
     public JButton saveButton;
 
-    int[] emotionValues = new int[4];
+    public int[] emotionValues = new int[4];
     public boolean isModified = false;
     
     Color lightGreen = new Color(240, 255, 240);
@@ -59,16 +64,28 @@ public class WriteDiaryGUI extends JPanel {
         mainPanel.setBackground(lightGreen); 
         
         gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.insets = new Insets(15, 15, 15, 15);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // --- GBC row 0: 오늘의 질문 ---
+     // --- GBC row 0: 오늘의 질문 ---
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 2; // 2열 병합
-        questionLabel = new JLabel("오늘의 질문: ");
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        
+        // 질문
+        String randomQuestion;
+        try {
+            randomQuestion = QuestionDBManager.getTodaysQuestion();
+        } catch (Exception e) {
+            randomQuestion = "오늘의 질문을 불러오지 못했습니다.";
+        }
+        
+        questionLabel = new JLabel("Q. " + randomQuestion);
         questionLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+        questionLabel.setForeground(new Color(50, 50, 50)); 
         questionLabel.setHorizontalAlignment(JLabel.CENTER);
+        
         mainPanel.add(questionLabel, gbc);
         
         // --- GBC row 1: 제목 ---
@@ -197,11 +214,13 @@ public class WriteDiaryGUI extends JPanel {
         gbc.gridy = 4;
         mainPanel.add(stressPanel, gbc);
 
-        // --- 하단 저장 버튼 ---
+        // --- 하단 다시쓰기, 저장 버튼 ---
+        newPostButton = new JButton("다시 쓰기");
         saveButton = new JButton("저장하기");
         
         southPanel = new JPanel();
         southPanel.setBackground(lightGreen);
+        southPanel.add(newPostButton);
         southPanel.add(saveButton);
         
         // --- 프레임에 최종 조립 ---
@@ -210,6 +229,7 @@ public class WriteDiaryGUI extends JPanel {
 
         // --- 이벤트 리스너 연결 ---
 
+        // 스트레스 슬라이더
         stressSlider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
@@ -220,15 +240,23 @@ public class WriteDiaryGUI extends JPanel {
             }
         });
         
+        // 스트레스 필드
         stressValueField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 validateAndSaveStressValue(); // ♦️
             }
         });
-
-        // 저장 버튼 액션
         
+        // 다시쓰기 버튼
+        newPostButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                checkAndClear(); 
+            }
+        });
+
+        // 저장 버튼
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -262,6 +290,8 @@ public class WriteDiaryGUI extends JPanel {
                         // 성공 시
                         JOptionPane.showMessageDialog(WriteDiaryGUI.this, "일기가 성공적으로 저장되었습니다.");
                         
+                        SearchDiaryPanel.refreshDiaryList();
+                        
                         // 3. 저장 후 '수정됨' 플래그 리셋
                         isModified = false; 
                         
@@ -287,7 +317,7 @@ public class WriteDiaryGUI extends JPanel {
     
     
     // 감정 수치 텍스트필드 값 검증/저장 (0-100)
-    void validateAndSaveEmotionValue(int slotIndex) {
+    public void validateAndSaveEmotionValue(int slotIndex) {
         try {
             String text = valueFields[slotIndex].getText();
             int value = 0;
@@ -305,7 +335,7 @@ public class WriteDiaryGUI extends JPanel {
     }
     
     // 스트레스 수치 텍스트필드 값 검증/저장 및 슬라이더 동기화
-    void validateAndSaveStressValue() {
+    public void validateAndSaveStressValue() {
         try {
             String text = stressValueField.getText();
             int value = 0;
@@ -331,4 +361,66 @@ public class WriteDiaryGUI extends JPanel {
         @Override
         public void changedUpdate(DocumentEvent e) { /* (무시) */ }
     }
+    
+ // [추가] 현 페이지에 작성한 내용을 다 지우고 다시 쓰는 기능
+    public void checkAndClear() {
+        if (isModified) {
+            int result = JOptionPane.showConfirmDialog(this, 
+                    "작성 중인 일기가 있습니다.\n저장하고 새 일기를 쓰시겠습니까?", 
+                    "새 일기 작성", 
+                    JOptionPane.YES_NO_CANCEL_OPTION);
+
+            if (result == JOptionPane.YES_OPTION) {
+                saveButton.doClick(); 
+                if (!isModified) { 
+                    clearAllFields(); 
+                }
+            } else if (result == JOptionPane.NO_OPTION) {
+                clearAllFields(); 
+            }
+        } else {
+            clearAllFields();
+        }
+    }
+
+    public void clearAllFields() {
+        titleField.setText("");
+        contentArea.setText("");
+        
+        stressSlider.setValue(50);
+        stressValueField.setText("50");
+        
+        for (int i = 0; i < 4; i++) {
+            iconLabels[i].setText("[ ]");
+            valueFields[i].setText("0");
+            emotionValues[i] = 0;
+        }
+        isModified = false; 
+    }
+    
+    // 자식 클래스에서 쓸 메서드
+    public void fillEntry(DiaryEntry entry) {
+        // 제목/내용/시간/스트레스
+        titleField.setText(entry.getTitle());
+        contentArea.setText(entry.getContent());
+        stressSlider.setValue(entry.getStress_level());
+
+        // 감정(최대 4개) 채우기: 안전하게 범위 검사
+        List<DB.Emotion> emotions = entry.getEmotions();
+        for (int i = 0; i < valueFields.length; i++) {
+            if (i < emotions.size()) {
+                iconLabels[i].setText(emotions.get(i).getEmoji_icon());
+                valueFields[i].setText(String.valueOf(emotions.get(i).getEmotion_level()));
+            } else {
+                iconLabels[i].setText("[ ]");
+                valueFields[i].setText("0");
+            }
+        }
+        isModified = false;
+    }
+    // SaveQuestion 클래스에서 쓸 것
+    public void saveOrFinish() {
+        saveButton.doClick();
+    }
+
 }

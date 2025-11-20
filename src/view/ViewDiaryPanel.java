@@ -19,9 +19,10 @@ public class ViewDiaryPanel extends WriteDiaryGUI {
         // 질문 라벨 안 보이게
         questionLabel.setVisible(false);
         
-        southPanel.remove(saveButton);	// 저장 버튼 삭제
-        southPanel.revalidate();        // 레이아웃 다시 계산
-        southPanel.repaint();           // 화면 갱신
+        southPanel.remove(newPostButton);	// 다시쓰 버튼 삭제
+        southPanel.remove(saveButton);		// 저장 버튼 삭제
+        southPanel.revalidate();        	// 레이아웃 다시 계산
+        southPanel.repaint();           	// 화면 갱신
         
         // 각 컴포넌트들 수정 불가 상태로 만듦
         titleField.setEditable(false);

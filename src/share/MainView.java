@@ -21,7 +21,8 @@ public class MainView extends JFrame {
 	public MainView() {
 		// 창 설정
 		setTitle("Emotion Diary");
-        setSize(550, 700);
+        setSize(495, 630);
+        setLocationRelativeTo(null);
         
         // 메뉴바 생성 후 창에 추가
         JMenuBar menuBar = new JMenuBar();
