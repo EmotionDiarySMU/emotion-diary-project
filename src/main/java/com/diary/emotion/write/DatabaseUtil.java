@@ -1,5 +1,3 @@
-package com.diary.emotion.model;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -9,7 +7,7 @@ public class DatabaseUtil {
 	public static boolean createDatabase() {
 		String url = "jdbc:mysql://localhost:3306/?serverTimezone=UTC"; // JDBC 연결 URL (MySQL, 로컬, 3306, UTC)
 		String id = "root"; //데이터베이스 root id 
-		String pw = "REMOVED_PASSWORD"; //패스워드
+		String pw = " "; //패스워드(수정하세요)
 	
 	    try (Connection conn = DriverManager.getConnection(url, id, pw);
 	        Statement stmt = conn.createStatement()) {
@@ -73,7 +71,7 @@ public class DatabaseUtil {
 	        return true;
 	        
 	    } catch (Exception e) {
-	    	e.printStackTrace(); // 오류 콘솔에 출력 (디버깅용)
+//	    	e.printStackTrace(); // 오류 콘솔에 출력 (디버깅용)
 	    	
 	    	return false;
 	    }
