@@ -1,57 +1,16 @@
-# Maven
-target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
-
-# Eclipse
-.classpath
-.project
-.settings/
-bin/
-
-# IntelliJ IDEA
-.idea/
-*.iml
-*.iws
-*.ipr
-out/
-
-# NetBeans
-nbproject/private/
-build/
-nbbuild/
-dist/
-nbdist/
-.nb-gradle/
-
-# macOS
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Windows
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-
-# Database files (optional - 제거하려면 주석 해제)
-# *.db
-# *.sqlite
-
-# Compiled class files
+# Compiled class file
 *.class
 
-# Log files
+# Log file
 *.log
 
-# Package Files
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
 *.jar
 *.war
 *.nar
@@ -60,3 +19,6 @@ Desktop.ini
 *.tar.gz
 *.rar
 
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+replay_pid*
