@@ -31,7 +31,8 @@ git checkout login    # 로그인 담당
 
 **⭐ 반드시 읽어야 할 문서:**
 1. **[HELP_ME.md](HELP_ME.md)** ← 빠른 참고 가이드 (3분 완독)
-2. **[HOW_TO_COLLABORATE.md](HOW_TO_COLLABORATE.md)** ← 초보자용 완전 가이드 (10분)
+2. **[ECLIPSE_GUIDE.md](ECLIPSE_GUIDE.md)** ← Eclipse 사용자 전용 ⭐ **NEW!**
+3. **[HOW_TO_COLLABORATE.md](HOW_TO_COLLABORATE.md)** ← 초보자용 완전 가이드 (10분)
 
 **추가 문서:**
 - [NEXT_STEPS.md](NEXT_STEPS.md) - 프로젝트 다음 단계
@@ -73,6 +74,7 @@ src/main/java/com/diary/emotion/
 - **GUI**: Swing
 - **데이터베이스**: MySQL
 - **의존성**: JFreeChart (통계용)
+- **IDE**: Eclipse 또는 IntelliJ (Eclipse 사용자는 [ECLIPSE_GUIDE.md](ECLIPSE_GUIDE.md) 참고)
 
 ---
 

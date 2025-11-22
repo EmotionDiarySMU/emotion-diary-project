@@ -5,8 +5,10 @@
 ### 1️⃣ 코드 수정하기
 ```bash
 git checkout login  # 자기 브랜치 (write, View, stats)
-# IntelliJ에서 코드 수정...
+# Eclipse 또는 IntelliJ에서 코드 수정...
 ```
+
+**Eclipse 사용자?** → **[ECLIPSE_GUIDE.md](ECLIPSE_GUIDE.md)** 먼저 읽으세요!
 
 ### 2️⃣ PR 만들기 (자동!)
 ```bash
@@ -24,6 +26,7 @@ git checkout login  # 자기 브랜치 (write, View, stats)
 
 ## 📚 자세한 설명
 
+- **ECLIPSE_GUIDE.md** ← Eclipse 사용자 전용 가이드 ⭐ **NEW!**
 - **HOW_TO_COLLABORATE.md** ← 초보자용 완전 가이드 (꼭 읽으세요!)
 - **NEXT_STEPS.md** ← 프로젝트 다음 단계
 
@@ -70,6 +73,7 @@ git push origin login  # 자기 브랜치명
 ```
 
 ### "충돌(conflict)이 났어요!"
+**IntelliJ 사용자:**
 1. IntelliJ에서 빨간색 파일 열기
 2. "Accept Yours" 또는 "Accept Theirs" 선택
 3. 저장 후:
@@ -78,6 +82,12 @@ git push origin login  # 자기 브랜치명
    git commit -m "merge: 충돌 해결"
    git push origin login
    ```
+
+**Eclipse 사용자:**
+1. 파일 우클릭 → Team → Merge Tool
+2. 좌측(Local) 또는 우측(Remote) 선택
+3. Save → 파일 우클릭 → Team → Add to Index
+4. Team → Commit → Push
 
 ### "GitHub CLI가 없어요!"
 ```bash
