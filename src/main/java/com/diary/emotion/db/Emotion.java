@@ -20,6 +20,3 @@ public class Emotion{
     public void setEmoji_icon(String emoji_icon) {
     	this.emoji_icon = emoji_icon;
     }
-    
-}
-

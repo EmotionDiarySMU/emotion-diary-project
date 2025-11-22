@@ -2,33 +2,26 @@ package com.diary.emotion.db;
 
 import java.util.List;
 
-// DB 테이블 구조에 맞게 필드 추가 및 수정
 public class DiaryEntry {
-    
-    // 필드 정의 (DB 컬럼과 1:1 매칭)
-    private int entry_id;       // int, Primary Key, auto_increment
-    private String user_id;     // varchar(20)
-    private String title;       // varchar(50)
-    private String content;     // text
-    private int stress_level;   // int
-    private String entry_date;  // datetime (DB에서 가져온 날짜/시간 문자열)
+
+    private int entry_id;
+    private String user_id;
+    private String title;
+    private String content;
+    private int stress_level;
+    private String entry_date;
     private List<Emotion> emotions;
 
     public DiaryEntry() {
     }
-    
-    // 2. 데이터 삽입 시 사용할 생성자 (entry_id와 entry_date는 DB가 처리)
-    // user_id, title, content, stress_level을 인자로 받음
+
     public DiaryEntry(String user_id, String title, String content, int stress_level) {
         this.user_id = user_id;
         this.title = title;
         this.content = content;
         this.stress_level = stress_level;
     }
-    
-    // --- Getter 및 Setter 메서드 ---
 
-    // entry_id
     public int getEntry_id() {
         return entry_id;
     }
@@ -37,7 +30,6 @@ public class DiaryEntry {
         this.entry_id = entry_id;
     }
 
-    // user_id
     public String getUser_id() {
         return user_id;
     }
@@ -46,7 +38,6 @@ public class DiaryEntry {
         this.user_id = user_id;
     }
 
-    // title
     public String getTitle() {
         return title;
     }
@@ -55,7 +46,6 @@ public class DiaryEntry {
         this.title = title;
     }
 
-    // content
     public String getContent() {
         return content;
     }
@@ -64,7 +54,6 @@ public class DiaryEntry {
         this.content = content;
     }
 
-    // stress_level
     public int getStress_level() {
         return stress_level;
     }
@@ -73,7 +62,6 @@ public class DiaryEntry {
         this.stress_level = stress_level;
     }
 
-    // entry_date
     public String getEntry_date() {
         return entry_date;
     }
@@ -81,7 +69,7 @@ public class DiaryEntry {
     public void setEntry_date(String entry_date) {
         this.entry_date = entry_date;
     }
-    
+
     public List<Emotion> getEmotions() {
         return emotions;
     }

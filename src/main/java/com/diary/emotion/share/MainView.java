@@ -1,5 +1,9 @@
 package com.diary.emotion.share;
 
+import com.diary.emotion.stats.StatisticsController;
+import com.diary.emotion.stats.StatisticsDAO;
+import com.diary.emotion.stats.StatisticsView;
+
 import java.awt.CardLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -7,9 +11,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
-import com.diary.emotion.view.SearchDiaryPanel;
-import com.diary.emotion.write.WriteDiaryGUI;
 
 public class MainView extends JFrame {
 	
@@ -19,44 +20,38 @@ public class MainView extends JFrame {
 	JPanel cardPanel;
 	
 	public MainView() {
-		// 창 설정
 		setTitle("Emotion Diary");
         setSize(495, 630);
         setLocationRelativeTo(null);
         
-        // 메뉴바 생성 후 창에 추가
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
         
-        // 버튼 생성
 		JButton write = new JButton("쓰기");
 		JButton view = new JButton("열람");
 		JButton chart = new JButton("통계");
 		
-		// 버튼 메뉴바에 추가
 		JButton[] buttons = {write, view, chart};
         for (JButton b : buttons) {
             menuBar.add(b);
         }
         
-        // cardLayout 패널 생성
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
         
-        // 쓰기, 열람, 통계 패널 생성
-        WriteDiaryGUI writePanel = new WriteDiaryGUI();
-        SearchDiaryPanel viewPanel = new SearchDiaryPanel();
-        JPanel chartPanel = new JPanel();
-        
-        // 각 3개의 패널을 cardLayout 패널에 추가
+        JPanel writePanel = new JPanel();
+        JPanel viewPanel = new JPanel();
+
+        StatisticsView chartPanel = new StatisticsView();
+        StatisticsDAO dao = new StatisticsDAO();
+        new StatisticsController(chartPanel, dao);
+
         cardPanel.add(writePanel, "write");
         cardPanel.add(viewPanel, "view");
         cardPanel.add(chartPanel, "chart");
         
-        // cardLayout 패널 창에 추가
         add(cardPanel);
 
-        // 버튼 클릭 시 화면 전환
         write.addActionListener(e -> cardLayout.show(cardPanel, "write"));
         view.addActionListener(e -> cardLayout.show(cardPanel, "view"));
         chart.addActionListener(e -> cardLayout.show(cardPanel, "chart"));
@@ -64,7 +59,6 @@ public class MainView extends JFrame {
         setVisible(true);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         
-        // 닫기전에 "저장하시겠습니까?" 창 띄우기
         addWindowListener(new WindowAdapter() {
         	public void windowClosing(WindowEvent e) {
         		SaveQuestion.handleWindowClosing(MainView.this, writePanel, true);
@@ -73,5 +67,3 @@ public class MainView extends JFrame {
         
 	}
 }
-	
-	
