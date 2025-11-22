@@ -1,4 +1,4 @@
-package view;
+package com.diary.emotion.view;
 
 import java.awt.CardLayout;
 import java.awt.event.WindowAdapter;
@@ -8,8 +8,8 @@ import java.util.List;
 
 import javax.swing.*;
 
-import DB.DiaryEntry;
-import share.SaveQuestion;
+import com.diary.emotion.db.DiaryEntry;
+import com.diary.emotion.share.SaveQuestion;
 
 public class ExtraWindow extends JFrame{
 	

@@ -1,7 +1,7 @@
-package share;
+package com.diary.emotion.share;
 
 import javax.swing.*;
-import write.WriteDiaryGUI;
+import com.diary.emotion.write.WriteDiaryGUI;
 
 public class SaveQuestion {
     public static boolean handleWindowClosing(JFrame frame, WriteDiaryGUI panel, boolean exitProgram) {

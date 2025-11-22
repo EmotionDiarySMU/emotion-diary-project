@@ -1,8 +1,8 @@
-package view;
+package com.diary.emotion.view;
 
 import javax.swing.JButton;
 
-import write.WriteDiaryGUI;
+import com.diary.emotion.write.WriteDiaryGUI;
 
 public class ModifyPanel extends WriteDiaryGUI {
 	

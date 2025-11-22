@@ -57,7 +57,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>share.Main</mainClass>
+                            <mainClass>com.diary.emotion.share.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -71,7 +71,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>share.Main</mainClass>
+                            <mainClass>com.diary.emotion.share.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

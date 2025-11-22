@@ -1,15 +1,15 @@
-package login;
+package com.diary.emotion.login;
 
 import javax.swing.*;
 
-import DB.DatabaseManager;
+import com.diary.emotion.db.DatabaseManager;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 // [추가됨] 팀원의 메인 화면을 띄우기 위해 임포트
-import share.MainView;
+import com.diary.emotion.share.MainView;
 
 public class AuthenticationFrame extends JFrame {
 

@@ -1,4 +1,4 @@
-package write;
+package com.diary.emotion.write;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.util.Arrays;
 import java.util.List;
 
-import DB.DatabaseManager;
+import com.diary.emotion.db.DatabaseManager;
 
 /**
  * 'question' DB 테이블 관리 클래스

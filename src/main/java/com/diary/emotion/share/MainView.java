@@ -1,4 +1,4 @@
-package share;
+package com.diary.emotion.share;
 
 import java.awt.CardLayout;
 import javax.swing.JButton;
@@ -8,8 +8,8 @@ import javax.swing.JPanel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import view.SearchDiaryPanel;
-import write.WriteDiaryGUI;
+import com.diary.emotion.view.SearchDiaryPanel;
+import com.diary.emotion.write.WriteDiaryGUI;
 
 public class MainView extends JFrame {
 	

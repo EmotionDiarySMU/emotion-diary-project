@@ -1,10 +1,10 @@
-package view;
+package com.diary.emotion.view;
 
 import java.awt.event.MouseListener;
 
 import javax.swing.*;
 
-import write.WriteDiaryGUI;
+import com.diary.emotion.write.WriteDiaryGUI;
 
 public class ViewDiaryPanel extends WriteDiaryGUI {
 	
