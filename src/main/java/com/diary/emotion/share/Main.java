@@ -1,7 +1,7 @@
-package share;
+package com.diary.emotion.share;
 
-import DB.DatabaseManager;
-import login.AuthenticationFrame;
+import com.diary.emotion.db.DatabaseManager;
+import com.diary.emotion.login.AuthenticationFrame;
 
 public class Main {
 	public static void main(String[] args) {

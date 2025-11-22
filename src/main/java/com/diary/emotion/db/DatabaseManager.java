@@ -1,4 +1,4 @@
-package DB;
+package com.diary.emotion.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import login.AuthenticationFrame;
+import com.diary.emotion.login.AuthenticationFrame;
 
 // ⭐️ 프로그램 실행 중 DB 연결/삽입/조회/수정 등을 관리하는 전용 클래스
 public class DatabaseManager {

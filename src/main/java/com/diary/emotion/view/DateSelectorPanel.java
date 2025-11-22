@@ -1,4 +1,4 @@
-package view;
+package com.diary.emotion.view;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,4 +1,4 @@
-package view;
+package com.diary.emotion.view;
 
 import java.awt.*;
 import javax.swing.*;
@@ -10,8 +10,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import DB.DiaryEntry;
-import DB.DatabaseManager;
+import com.diary.emotion.db.DiaryEntry;
+import com.diary.emotion.db.DatabaseManager;
 
 public class SearchDiaryPanel extends JPanel{
 	private static final long serialVersionUID = 1L;

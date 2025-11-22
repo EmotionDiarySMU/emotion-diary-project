@@ -7,9 +7,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
 
-import DB.DatabaseManager;
-import DB.DiaryEntry;
-import view.SearchDiaryPanel;
+import com.diary.emotion.db.DatabaseManager;
+import com.diary.emotion.db.DiaryEntry;
+import com.diary.emotion.view.SearchDiaryPanel;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
