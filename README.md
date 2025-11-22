@@ -1,196 +1,224 @@
-# 감정 일기장 통계 기능 (Emotion Diary Statistics)
+# 🎯 감정 일기장 프로젝트
 
-**Stats 브랜치** - 감정 일기 데이터를 분석하여 시각화된 통계 그래프로 제공
-
----
-
-## 📊 주요 기능
-
-### 통계 분석
-- **감정 통계**: 선택한 기간 동안의 감정별 횟수와 평균 수치를 막대 차트로 표시
-- **스트레스 추이**: 시간에 따른 스트레스 변화를 꺾은선 그래프로 표시
-- **평균 스트레스 지수**: 선택한 기간의 평균 스트레스 수치 계산
-
-### 기간 선택
-- **주간**: 특정 주의 일별 통계 (월~일)
-- **월간**: 특정 달의 주별 통계 (1주~5주)
-- **연간**: 특정 년도의 월별 통계 (1월~12월)
+**Java Swing 기반 감정 일기 애플리케이션**
 
 ---
 
-## 🛠 기술 스택
+## ⚡ 빠른 시작 (팀원용)
 
-- **언어**: Java 17
-- **GUI**: Java Swing
-- **차트**: JFreeChart 1.5.3
-- **데이터베이스**: MySQL 8.0
-- **JDBC**: MySQL Connector/J 8.0.33
-- **빌드**: Maven
+### 🚨 처음 보는 분은 여기부터!
 
----
+**1분 만에 시작하기:**
 
-## 🚀 빠른 시작
-
-### 1. 사전 준비
-- Java 17 이상
-- MySQL 8.0 이상 (실행 중이어야 함)
-
-### 2. 프로젝트 클론
 ```bash
-git clone <repository-url>
+# 1. 프로젝트 클론 (처음 한 번만)
+git clone https://github.com/EmotionDiarySMU/emotion-diary-project.git
 cd emotion-diary-project
-git checkout stats
+
+# 2. 자기 브랜치로 이동
+git checkout login    # 로그인 담당
+# git checkout write  # 일기 작성 담당
+# git checkout View   # 일기 열람 담당
+# git checkout stats  # 통계 담당
+
+# 3. IntelliJ에서 프로젝트 열기
+# File → Open → emotion-diary-project 폴더 선택
+
+# 4. 작업 시작!
 ```
 
-### 3. 데이터베이스 설정
-프로젝트 루트에 `db.properties` 파일 생성:
+### 📚 필수 문서
 
-```bash
-cp db.properties.example db.properties
-```
+**⭐ 반드시 읽어야 할 문서:**
+1. **[HELP_ME.md](HELP_ME.md)** ← 빠른 참고 가이드 (3분 완독)
+2. **[HOW_TO_COLLABORATE.md](HOW_TO_COLLABORATE.md)** ← 초보자용 완전 가이드 (10분)
 
-`db.properties` 파일 편집:
-```properties
-db.url=jdbc:mysql://localhost:3306/emotion_diary?serverTimezone=UTC
-db.user=root
-db.password=YOUR_MYSQL_PASSWORD_HERE
-```
-
-### 4. 실행
-```
-IDE에서 Main.java 실행:
-src/main/java/com/diary/emotion/Main.java
-```
-
-프로그램 실행 시 자동으로:
-- emotion_diary 데이터베이스 생성
-- 필요한 테이블 생성 (user, diary, emotion, question)
-- 통계 GUI 창 표시
+**추가 문서:**
+- [NEXT_STEPS.md](NEXT_STEPS.md) - 프로젝트 다음 단계
+- [create-pr.sh](create-pr.sh) - PR 자동 생성 스크립트
+- [update-from-master.sh](update-from-master.sh) - Master 코드 업데이트 스크립트
 
 ---
 
-## 📁 데이터베이스 구조
+## 🎯 프로젝트 구조
 
-### 테이블
+### 브랜치별 담당 기능
 
-#### 1. user (사용자)
-- `user_id` VARCHAR(20) PRIMARY KEY
-- `user_pw` VARCHAR(20)
+| 브랜치 | 담당 기능 | 주요 파일 |
+|--------|----------|----------|
+| **master** | 전체 통합 | 모든 기능 포함 (배포용) |
+| **login** | 로그인/회원가입 | `AuthenticationFrame.java` |
+| **write** | 일기 작성 | `WriteDiaryGUI.java` |
+| **View** | 일기 열람/수정 | `ViewDiaryPanel.java` |
+| **stats** | 통계/차트 | `StatisticsView.java` |
 
-#### 2. diary (일기)
-- `entry_id` INTEGER PRIMARY KEY AUTO_INCREMENT
-- `user_id` VARCHAR(20) FOREIGN KEY
-- `title` VARCHAR(50)
-- `content` TEXT
-- `stress_level` INTEGER
-- `entry_date` DATETIME
-
-#### 3. emotion (감정)
-- `emotion_id` INTEGER PRIMARY KEY AUTO_INCREMENT
-- `entry_id` INTEGER FOREIGN KEY
-- `emotion_level` INTEGER
-- `emoji_icon` VARCHAR(10)
-
-#### 4. question (질문)
-- `question_id` INTEGER PRIMARY KEY AUTO_INCREMENT
-- `question_text` VARCHAR(100)
-
----
-
-## 📦 패키지 구조
+### 폴더 구조
 
 ```
 src/main/java/com/diary/emotion/
-├── Main.java                   - 프로그램 실행 진입점
-├── DatabaseUtil.java           - DB 초기화 및 연결
-├── MainView.java               - 메인 GUI 창
-├── StatisticsView.java         - 통계 차트 UI (View)
-├── StatisticsController.java   - 이벤트 처리 및 로직 (Controller)
-└── StatisticsDAO.java          - ���이터베이스 조회 (DAO)
+├── login/          # 로그인 기능
+├── write/          # 일기 작성 기능
+├── view/           # 일기 열람 기능
+├── stats/          # 통계 기능
+├── db/             # 데이터베이스 (공통)
+└── share/          # 공통 유틸리티
 ```
-
-**MVC 패턴** 적용:
-- **Model**: StatisticsDAO (데이터 접근)
-- **View**: StatisticsView (UI 표시)
-- **Controller**: StatisticsController (비즈니스 로직)
 
 ---
 
-## 🧪 테스트 데이터
+## 💻 개발 환경
 
-테스트용 샘플 데이터는 `test` 디렉토리에 있습니다:
-- `TestDataInserter.java`: 테스트 데이터 자동 생성
-- `IntegrationTest.java`: 통합 테스트 실행
+- **Java**: 21
+- **빌드 도구**: Maven
+- **GUI**: Swing
+- **데이터베이스**: MySQL
+- **의존성**: JFreeChart (통계용)
+
+---
+
+## 🚀 작업 워크플로우
+
+### 일반적인 하루 작업
 
 ```bash
-# 테스트 데이터 삽입
-Run: src/main/java/com/diary/emotion/test/TestDataInserter.java
+# 1. 아침: 최신 코드 받기
+./update-from-master.sh
 
-# 통합 테스트
-Run: src/main/java/com/diary/emotion/test/IntegrationTest.java
+# 2. 코드 수정 (IntelliJ)
+# ...작업...
+
+# 3. 저녁: PR 만들기
+./create-pr.sh
+
+# 끝!
+```
+
+### 규칙
+
+✅ **해야 할 것**
+- 자기 브랜치에서만 작업
+- 완성되면 PR 생성
+- 다른 사람 코드는 master를 통해 받기
+
+❌ **하지 말아야 할 것**
+- master에 직접 푸시 (차단됨)
+- 파일 복사-붙여넣기로 코드 합치기
+- 다른 사람 브랜치 수정
+
+---
+
+## 🔧 유용한 명령어
+
+### 자주 사용하는 Git 명령어
+
+```bash
+# 현재 브랜치 확인
+git branch
+
+# 자기 브랜치로 이동
+git checkout login  # 또는 write, View, stats
+
+# 변경사항 확인
+git status
+
+# 최신 코드 받기
+git pull origin login
+
+# 커밋 & 푸시
+git add .
+git commit -m "feat: 기능 설명"
+git push origin login
+```
+
+### 자동화 스크립트 사용
+
+```bash
+# PR 자동 생성
+./create-pr.sh
+
+# Master 최신 코드 받기
+./update-from-master.sh
 ```
 
 ---
 
-## 📚 문서
+## 📖 Pull Request (PR) 생성하기
 
-- **STATS_TEST_RESULT.md**: 통계 기능 테스트 결과 및 검증
-- **REQUIREMENTS.md**: 프로젝트 요구사항 명세
+### 방법 1: 스크립트 사용 (추천!)
 
----
+```bash
+./create-pr.sh
+```
 
-## ⚙️ 설정 파일
+### 방법 2: GitHub 웹사이트
 
-### db.properties
-데이터베이스 연결 정보를 담고 있습니다.
-- `.gitignore`에 등록되어 있어 Git에 커밋되지 않습니다
-- 보안을 위해 비밀번호는 절대 공개하지 마세요
+1. 코드 푸시 후 나오는 링크 클릭
+2. 제목/설명 입력
+3. "Create pull request" 클릭
 
----
+### 방법 3: GitHub CLI
 
-## 📊 통계 기능 상세
-
-### 감정 차트
-- **X축**: 12가지 감정 (😊행복, 😆신남, 😍설렘, 😌편안, 😂재미, 🤗고마움, 😢슬픔, 😠분노, 😰불안, 😅민망, 😧당황, 😔미안함)
-- **Y축**: 퍼센트 (0-100%)
-- **막대**: 파란색(횟수), 연한 파란색(평균 수치)
-
-### 스트레스 차트
-- **X축**: 시간 단위 (요일/주차/월)
-- **Y축**: 스트레스 수치 (0-100)
-- **그래프**: 파란색 꺾은선
-
-### 평균 스트레스
-- 선택한 기간의 모든 일기 스트레스 지수 평균
-- 화면 하단에 표시
+```bash
+gh pr create --base master --head login --fill
+```
 
 ---
 
-## 🔧 문제 해결
+## 🐛 문제 해결
 
-### MySQL 연결 오류
-- MySQL 서버가 실행 중인지 확인
-- `db.properties` 파일의 비밀번호가 정확한지 확인
-- 포트 번호 확인 (기본: 3306)
+### "master에 푸시가 안 돼요!"
+→ 정상입니다! master는 PR로만 수정 가능. 자기 브랜치에서 작업하세요.
 
-### 데이터가 표시되지 않음
-- 데이터베이스에 일기 데이터가 있는지 확인
-- TestDataInserter.java로 샘플 데이터 생성
+### "다른 팀원 코드가 필요해요"
+```bash
+./update-from-master.sh
+```
 
-### 차트가 비어있음
-- 선택한 기간에 데이터가 있는지 확인
-- 주간/월간/연간 콤보박스에서 올바른 날짜 선택
+### "충돌이 났어요!"
+1. IntelliJ에서 충돌 파일 열기
+2. "Accept Yours" 또는 "Accept Theirs" 선택
+3. 저장 후 커밋
 
----
-
-## 🎯 개발 정보
-
-- **브랜치**: stats
-- **목적**: 감정 일기 데이터 시각화 및 통계 분석
-- **상태**: 테스트 완료
+자세한 내용은 **[HOW_TO_COLLABORATE.md](HOW_TO_COLLABORATE.md)** 참고
 
 ---
 
-**개발자**: 감정 일기장 팀  
-**최종 업데이트**: 2025년 11월 20일
+## 👥 팀원 정보
+
+각자 담당 브랜치에서 작업해주세요:
+
+- **로그인**: `login` 브랜치
+- **일기 작성**: `write` 브랜치
+- **일기 열람**: `View` 브랜치
+- **통계**: `stats` 브랜치
+
+---
+
+## 📞 도움이 필요하면?
+
+1. **[HELP_ME.md](HELP_ME.md)** 확인
+2. **[HOW_TO_COLLABORATE.md](HOW_TO_COLLABORATE.md)** 읽기
+3. 팀 채팅방에 질문
+4. Google 검색: "git [문제]"
+
+---
+
+## 🎉 시작하기
+
+```bash
+# 1. 프로젝트 클론
+git clone https://github.com/EmotionDiarySMU/emotion-diary-project.git
+cd emotion-diary-project
+
+# 2. 자기 브랜치로 이동
+git checkout login  # 자기 담당 브랜치
+
+# 3. IntelliJ에서 열기
+# File → Open → emotion-diary-project
+
+# 4. HELP_ME.md 읽기!
+cat HELP_ME.md
+```
+
+**Happy Coding! 🚀**
 
