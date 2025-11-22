@@ -1,22 +1,24 @@
-package share;
+package com.diary.emotion;
 
 import java.awt.CardLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
-
-import view.ViewWindow;
-import write.WriteDiaryGUI;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class MainView extends JFrame {
+	
+	private static final long serialVersionUID = 1L;
 	
 	CardLayout cardLayout;
 	JPanel cardPanel;
 	
 	public MainView() {
 		setTitle("Emotion Diary");
-        setSize(550, 700);
+        setSize(495, 630);
+        setLocationRelativeTo(null);
         
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
@@ -33,22 +35,31 @@ public class MainView extends JFrame {
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
         
-        JPanel writePanel = new WriteDiaryGUI();
-        JPanel viewPanel = new ViewWindow();
-        JPanel chartPanel = new MainApplication();
-        
+        JPanel writePanel = new JPanel();
+        JPanel viewPanel = new JPanel();
+
+        StatisticsView chartPanel = new StatisticsView();
+        StatisticsDAO dao = new StatisticsDAO();
+        new StatisticsController(chartPanel, dao);
+
         cardPanel.add(writePanel, "write");
         cardPanel.add(viewPanel, "view");
         cardPanel.add(chartPanel, "chart");
         
         add(cardPanel);
 
-        // 버튼 클릭 시 화면 전환
         write.addActionListener(e -> cardLayout.show(cardPanel, "write"));
         view.addActionListener(e -> cardLayout.show(cardPanel, "view"));
         chart.addActionListener(e -> cardLayout.show(cardPanel, "chart"));
 
         setVisible(true);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        
+        addWindowListener(new WindowAdapter() {
+        	public void windowClosing(WindowEvent e) {
+        		SaveQuestion.handleWindowClosing(MainView.this, writePanel, true);
+            }
+        });
+        
 	}
 }

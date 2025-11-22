@@ -1,0 +1,28 @@
+# Database Configuration for Emotion Diary Stats Testing
+# 사용법: 이 파일을 'db.properties'로 복사하고 본인의 MySQL 정보로 수정하세요!
+# Usage: Copy this file to 'db.properties' and update with your MySQL credentials!
+
+# MySQL Connection Settings
+db.url=jdbc:mysql://localhost:3306/emotion_diary?serverTimezone=UTC
+db.user=root
+db.password=YOUR_MYSQL_PASSWORD_HERE
+
+# 보안 안내 / Security Notice:
+# - db.properties 파일은 .gitignore에 추가되어 Git에 커밋되지 않습니다.
+# - 절대로 실제 비밀번호를 이 예제 파일에 입력하지 마세요!
+# - The db.properties file should be added to .gitignore to prevent committing to Git.
+# - Never put your actual password in this example file!
+
+# 설정 방법 / Setup Instructions:
+# 1. 이 파일(db.properties.example)을 복사하여 'db.properties' 파일 생성
+#    Copy this file (db.properties.example) to create 'db.properties'
+#
+#    명령어 / Command:
+#    cp db.properties.example db.properties
+#
+# 2. db.properties 파일을 열고 YOUR_MYSQL_PASSWORD_HERE를 실제 MySQL 비밀번호로 변경
+#    Open db.properties and replace YOUR_MYSQL_PASSWORD_HERE with your actual MySQL password
+#
+# 3. 필요시 db.user와 db.url도 수정
+#    Optionally modify db.user and db.url if needed
+
