@@ -1,4 +1,4 @@
-package com.diary.emotion;
+package com.diary.emotion.db;
 
 import java.util.List;
 

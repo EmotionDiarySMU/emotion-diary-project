@@ -33,3 +33,15 @@ db.properties
 .DS_Store
 **/.DS_Store
 
+# Backup files
+*.backup
+# Password removal scripts (로컬 전용)
+remove_password_*.sh
+PASSWORD_REMOVAL_GUIDE.md
+diagnose_db.sh
+# Test and verification scripts
+verify_*.sh
+# Build output
+target/
+# Database files
+*.sql

@@ -1,4 +1,4 @@
-package com.diary.emotion;
+package com.diary.emotion.share;
 
 import javax.swing.*;
 

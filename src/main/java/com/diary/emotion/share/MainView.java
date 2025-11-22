@@ -1,4 +1,8 @@
-package com.diary.emotion;
+package com.diary.emotion.share;
+
+import com.diary.emotion.stats.StatisticsController;
+import com.diary.emotion.stats.StatisticsDAO;
+import com.diary.emotion.stats.StatisticsView;
 
 import java.awt.CardLayout;
 import javax.swing.JButton;

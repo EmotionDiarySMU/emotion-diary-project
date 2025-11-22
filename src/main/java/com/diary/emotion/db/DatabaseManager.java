@@ -1,4 +1,4 @@
-package com.diary.emotion;
+package com.diary.emotion.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,7 +15,7 @@ public class DatabaseManager {
 
     private static final String DB_URL = "jdbc:mysql://localhost:3306/emotion_diary?serverTimezone=UTC";
 	private static final String DB_ID = "root";
-	private static final String DB_PW = "REMOVED_PASSWORD";
+	private static final String DB_PW = "your_password_here";
 
     public static String loggedInUserId = "test_user";
 

@@ -1,4 +1,4 @@
-package com.diary.emotion;
+package com.diary.emotion.stats;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;

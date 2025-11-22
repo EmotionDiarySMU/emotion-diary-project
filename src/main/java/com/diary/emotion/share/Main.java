@@ -1,4 +1,9 @@
-package com.diary.emotion;
+package com.diary.emotion.share;
+
+import com.diary.emotion.stats.StatisticsController;
+import com.diary.emotion.stats.StatisticsDAO;
+import com.diary.emotion.stats.StatisticsView;
+import com.diary.emotion.db.DatabaseManager;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -16,7 +21,7 @@ public class Main {
 			System.err.println("      터미널에서: mysql -u root -p");
 			System.err.println("");
 			System.err.println("   2. DatabaseManager.java의 DB_PW가 올바른지 확인하세요");
-			System.err.println("      현재 설정: DB_ID=root, DB_PW=REMOVED_PASSWORD");
+			System.err.println("      현재 설정: DB_ID=root, DB_PW=your_password_here");
 			System.err.println("");
 			System.err.println("   3. MySQL이 localhost:3306에서 실행 중인지 확인하세요");
 			return;

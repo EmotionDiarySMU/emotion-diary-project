@@ -1,4 +1,4 @@
-package com.diary.emotion;
+package com.diary.emotion.stats;
 
 import java.time.LocalDate;
 import java.time.YearMonth;

@@ -1,4 +1,4 @@
-package com.diary.emotion;
+package com.diary.emotion.stats;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.HashMap;
+
+import com.diary.emotion.db.DatabaseManager;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 public class StatisticsDAO {
