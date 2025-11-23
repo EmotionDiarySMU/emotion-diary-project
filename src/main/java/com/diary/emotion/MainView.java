@@ -7,7 +7,11 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.HashSet;
 
+import com.diary.emotion.ExtraWindow;
+import com.diary.emotion.SearchDiaryPanel;
+import com.diary.emotion.WriteDiaryGUI;
 
 public class MainView extends JFrame {
 	
@@ -16,6 +20,10 @@ public class MainView extends JFrame {
 	CardLayout cardLayout;
 	JPanel cardPanel;
 	
+	int flag;
+	
+	public static StatisticsController statisticsController;
+
 	public MainView() {
 		// 창 설정
 		setTitle("Emotion Diary");
@@ -44,11 +52,11 @@ public class MainView extends JFrame {
         // 쓰기, 열람, 통계 패널 생성
         WriteDiaryGUI writePanel = new WriteDiaryGUI();
         SearchDiaryPanel viewPanel = new SearchDiaryPanel();
-
-        // 통계 패널 초기화
         StatisticsView chartPanel = new StatisticsView();
+
+        // 통계 컨트롤러 초기화
         StatisticsDAO statisticsDAO = new StatisticsDAO();
-        StatisticsController statisticsController = new StatisticsController(chartPanel, statisticsDAO);
+        statisticsController = new StatisticsController(chartPanel, statisticsDAO);
 
         // 각 3개의 패널을 cardLayout 패널에 추가
         cardPanel.add(writePanel, "write");
@@ -62,17 +70,27 @@ public class MainView extends JFrame {
         write.addActionListener(e -> cardLayout.show(cardPanel, "write"));
         view.addActionListener(e -> cardLayout.show(cardPanel, "view"));
         chart.addActionListener(e -> {
-            statisticsController.refresh(); // 통계 데이터 새로고침
             cardLayout.show(cardPanel, "chart");
+            // 통계 탭으로 전환할 때마다 데이터 새로고침
+            if (statisticsController != null) {
+                statisticsController.refresh();
+            }
         });
 
         setVisible(true);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         
+        
         // 닫기전에 "저장하시겠습니까?" 창 띄우기
         addWindowListener(new WindowAdapter() {
         	public void windowClosing(WindowEvent e) {
-        		SaveQuestion.handleWindowClosing(MainView.this, writePanel, true);
+        		flag = 0;
+        		
+    			for (ExtraWindow win : new HashSet<>(SearchDiaryPanel.openWindows)) {
+    				flag = SaveQuestion.handleWindowClosing(win, win.modifyPanel, 2);
+    				if (flag == 1) return;
+    			}
+        		SaveQuestion.handleWindowClosing(MainView.this, writePanel, 1);
             }
         });
         

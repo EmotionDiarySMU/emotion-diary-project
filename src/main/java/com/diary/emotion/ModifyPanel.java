@@ -2,6 +2,7 @@ package com.diary.emotion;
 
 import javax.swing.JButton;
 
+import com.diary.emotion.WriteDiaryGUI;
 
 public class ModifyPanel extends WriteDiaryGUI {
 	

@@ -45,6 +45,13 @@
     </dependencies>
 
     <build>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+
         <plugins>
             <!-- Maven Compiler Plugin -->
             <plugin>
@@ -56,26 +63,16 @@
                     <source>21</source>
                     <target>21</target>
                     <encoding>UTF-8</encoding>
-                    <compilerArgs>
-                        <arg>-Xlint:unchecked</arg>
-                    </compilerArgs>
-                    <fork>true</fork>
-                    <executable>/Library/Java/JavaVirtualMachines/jdk-21.jdk/Contents/Home/bin/javac</executable>
                 </configuration>
             </plugin>
 
-            <!-- Maven JAR Plugin (실행 가능한 JAR 생성) -->
+            <!-- Exec Maven Plugin (IntelliJ에서 직접 실행) -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.4.2</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
                 <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>com.diary.emotion.Main</mainClass>
-                            <addClasspath>true</addClasspath>
-                        </manifest>
-                    </archive>
+                    <mainClass>com.diary.emotion.Main</mainClass>
                 </configuration>
             </plugin>
         </plugins>

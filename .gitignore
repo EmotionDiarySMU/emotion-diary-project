@@ -9,7 +9,7 @@ out/
 .project
 .settings/
 
-# IntelliJ IDEA
+# IntelliJ IDEA (전체 무시 - Maven이 자동 생성)
 .idea/
 *.iml
 *.iws

@@ -143,18 +143,4 @@ public class DateSelectorPanel extends JPanel {
         return (d instanceof Integer) ? (int) d : -1;
     }
     
-    // 🟡 선택된 날짜를 YYYY-MM-DD 형식 문자열로 반환 (선택 안 되면 null)
-    public String getSelectedDate() {
-        int year = getYear();
-        int month = getMonth();
-        int day = getDay();
-
-        // 연도, 월, 일이 모두 선택되었을 때만 반환
-        if (year != -1 && month != -1 && day != -1) {
-            return String.format("%04d-%02d-%02d", year, month, day);
-        }
-
-        return null;
-    }
-
 }
