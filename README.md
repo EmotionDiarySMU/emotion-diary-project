@@ -30,12 +30,14 @@ git checkout login    # 로그인 담당
 ### 📚 필수 문서
 
 **⭐ 반드시 읽어야 할 문서:**
-1. **[HELP_ME.md](HELP_ME.md)** ← 빠른 참고 가이드 (3분 완독)
-2. **[ECLIPSE_GUIDE.md](ECLIPSE_GUIDE.md)** ← Eclipse 사용자 전용 ⭐ **NEW!**
-3. **[HOW_TO_COLLABORATE.md](HOW_TO_COLLABORATE.md)** ← 초보자용 완전 가이드 (10분)
+1. **[START_HERE.md](START_HERE.md)** ← 완전 통합 협업 가이드 (Eclipse 기준)
+
+**🚨 문제 해결 가이드:**
+- **[CLASS_FILE_PUSH_PROBLEM.md](CLASS_FILE_PUSH_PROBLEM.md)** ← `.class` 파일 푸시 안 될 때 ⭐ **NEW!**
+- **[FORCE_PUSH_RECOVERY_GUIDE.md](FORCE_PUSH_RECOVERY_GUIDE.md)** ← 강제 푸시 문제 해결 ⭐ **NEW!**
 
 **추가 문서:**
-- [NEXT_STEPS.md](NEXT_STEPS.md) - 프로젝트 다음 단계
+- [REQUIREMENTS.md](REQUIREMENTS.md) - 프로젝트 요구사항 명세서
 - [create-pr.sh](create-pr.sh) - PR 자동 생성 스크립트
 - [update-from-master.sh](update-from-master.sh) - Master 코드 업데이트 스크립트
 
