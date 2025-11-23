@@ -611,7 +611,85 @@ git config pull.rebase false
 
 ## 7. 자주 묻는 질문 (FAQ)
 
-### Q1: git pull을 했는데도 src 폴더가 안 보여요
+### Q1: .class 파일을 푸시하려고 하는데 안 돼요 / git clone 후에도 푸시가 안 돼요
+
+**A**: **컴파일된 파일(`.class`)은 Git에 올리면 안 됩니다!**
+
+**문제 원인**:
+- `.class` 파일, `bin/`, `target/` 등 컴파일된 파일들을 Git에 추가하려고 시도
+- 이런 파일들은 매번 컴파일할 때마다 변경되어 충돌을 일으킴
+- 파일 크기가 커서 푸시가 느리거나 거부될 수 있음
+
+**해결 방법**:
+
+```bash
+# 1단계: .gitignore 파일이 있는지 확인
+ls -la .gitignore
+
+# 2단계: .gitignore 파일 생성 (없다면)
+cat > .gitignore << 'EOF'
+# Compiled class files
+*.class
+bin/
+target/
+out/
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+
+# Mac
+.DS_Store
+
+# Database
+*.db
+*.sqlite
+
+# Logs
+*.log
+EOF
+
+# 3단계: 이미 staging된 불필요한 파일 제거
+git restore --staged bin/
+git restore --staged *.class
+git restore --staged .classpath
+git restore --staged .project
+
+# 4단계: .gitignore 추가
+git add .gitignore
+
+# 5단계: Java 소스 파일만 추가
+git add src/
+
+# 6단계: 커밋
+git commit -m "fix: .gitignore 추가 및 소스 파일만 커밋"
+
+# 7단계: 푸시
+git push origin <브랜치명>
+```
+
+**주의사항**:
+- Git에는 **소스 코드(.java)만** 올려야 합니다
+- 컴파일된 파일(.class)은 각자 로컬에서 빌드합니다
+- Eclipse/IntelliJ 설정 파일(.classpath, .project, .idea/)도 제외합니다
+
+**팀원에게 전달할 메시지**:
+```
+.gitignore 파일을 추가했습니다.
+git pull origin <브랜치명>
+명령어로 최신 .gitignore를 받은 후 작업하세요.
+앞으로는 .class 파일이 자동으로 제외됩니다.
+```
+
+---
+
+### Q2: git pull을 했는데도 src 폴더가 안 보여요
 
 **A**: 다음을 확인하세요:
 
@@ -634,7 +712,7 @@ git reset --hard origin/<브랜치명>
 
 ---
 
-### Q2: git stash pop 했는데 충돌이 나요
+### Q3: git stash pop 했는데 충돌이 나요
 
 **A**: 
 
@@ -654,7 +732,7 @@ git stash drop
 
 ---
 
-### Q3: 강제 푸시를 실수로 했어요. 되돌릴 수 있나요?
+### Q4: 강제 푸시를 실수로 했어요. 되돌릴 수 있나요?
 
 **A**: 가능합니다!
 
@@ -677,7 +755,7 @@ git push --force origin <브랜치명>
 
 ---
 
-### Q4: 여러 명이 동시에 같은 파일을 수정했어요
+### Q5: 여러 명이 동시에 같은 파일을 수정했어요
 
 **A**: Pull → 충돌 해결 → Push 순서로:
 
@@ -699,7 +777,7 @@ git push origin <브랜치명>
 
 ---
 
-### Q5: git reset --hard를 실수로 했어요. 작업이 날아갔어요
+### Q6: git reset --hard를 실수로 했어요. 작업이 날아갔어요
 
 **A**: Reflog로 복구 가능:
 
@@ -723,7 +801,7 @@ git log --oneline
 
 ---
 
-### Q6: main 브랜치와 master 브랜치가 모두 있어요
+### Q7: main 브랜치와 master 브랜치가 모두 있어요
 
 **A**: 프로젝트에 따라 다릅니다:
 
@@ -740,7 +818,7 @@ git remote show origin
 
 ---
 
-### Q7: 커밋 메시지를 잘못 썼어요
+### Q8: 커밋 메시지를 잘못 썼어요
 
 **A**: 
 
@@ -758,7 +836,7 @@ git push origin <브랜치명>
 
 ---
 
-### Q8: 브랜치 이름을 바꾸고 싶어요
+### Q9: 브랜치 이름을 바꾸고 싶어요
 
 **A**:
 
@@ -778,7 +856,7 @@ git push --set-upstream origin <새이름>
 
 ---
 
-### Q9: 커밋을 취소하고 싶어요 (아직 푸시 안 함)
+### Q10: 커밋을 취소하고 싶어요 (아직 푸시 안 함)
 
 **A**:
 
@@ -795,7 +873,7 @@ git reset --hard HEAD~1
 
 ---
 
-### Q10: 다른 사람의 커밋을 내 브랜치에 가져오고 싶어요
+### Q11: 다른 사람의 커밋을 내 브랜치에 가져오고 싶어요
 
 **A**:
 
