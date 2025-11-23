@@ -1,0 +1,34 @@
+# Compiled class files
+*.class
+bin/
+target/
+out/
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+
+# Mac
+.DS_Store
+
+# Database
+*.db
+*.sqlite
+
+# Logs
+*.log
+
+# Package Files
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
