@@ -12,7 +12,5 @@ public class Main {
 		
 		new AuthenticationFrame();
 		
-		
-		
 	}
 }
