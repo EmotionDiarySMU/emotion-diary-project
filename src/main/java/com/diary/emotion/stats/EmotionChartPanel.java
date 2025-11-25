@@ -98,16 +98,24 @@ public class EmotionChartPanel extends JPanel {
         Map<String, Double> counts = emotionData.get("횟수");
         Map<String, Double> values = emotionData.get("수치");
 
+        double totalCounts = (counts != null) ? counts.values().stream().mapToDouble(Double::doubleValue).sum() : 0.0;
+        double totalValues = (values != null) ? values.values().stream().mapToDouble(Double::doubleValue).sum() : 0.0;
+
         for (String emotion : OFFICIAL_EMOTIONS) {
             double countValue = (counts != null) ? counts.getOrDefault(emotion, 0.0) : 0.0;
             double valueValue = (values != null) ? values.getOrDefault(emotion, 0.0) : 0.0;
-            dataset.setValue(countValue, "횟수", emotion);
-            dataset.setValue(valueValue, "수치", emotion);
+
+            double countPercentage = (totalCounts > 0) ? (countValue / totalCounts) * 100 : 0.0;
+            double valuePercentage = (totalValues > 0) ? (valueValue / totalValues) * 100 : 0.0;
+
+            dataset.setValue(countPercentage, "횟수(%)", emotion);
+            dataset.setValue(valuePercentage, "수치(%)", emotion);
         }
 
         CategoryPlot plot = barChart.getCategoryPlot();
         plot.setDataset(dataset);
     }
+
 
     /**
      * 범례 패널 생성
