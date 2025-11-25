@@ -4,14 +4,14 @@ import javax.swing.*;
 import write.WriteDiaryGUI;
 
 public class SaveQuestion {
-    public static boolean handleWindowClosing(JFrame frame, WriteDiaryGUI panel, boolean exitProgram) {
+    public static Integer handleWindowClosing(JFrame frame, WriteDiaryGUI panel, int exitProgram) {
         
         // 1. 일기가 수정되지 않았을 경우, 즉시 종료 또는 창 닫기
         if (!panel.isModified) {
-            if (exitProgram) System.exit(0);
-            else frame.dispose();
-
-            return true; // 수정되지 않았으면 여기서 함수 종료
+            if (exitProgram == 1) System.exit(0);
+            else if (exitProgram == 2) frame.dispose();
+            
+            return 0;
         }
 
         // 2. 수정되었을 경우, 사용자에게 저장 여부 확인
@@ -32,13 +32,13 @@ public class SaveQuestion {
                 break;
                 
             case JOptionPane.CANCEL_OPTION:
-                return false;
+                return 1;
         }
 
         // 4. 공통 종료/닫기 로직
-        if (exitProgram) System.exit(0);
-        else frame.dispose();
-		return true;
-
+        if (exitProgram == 1) System.exit(0);
+        else if (exitProgram == 2) frame.dispose();
+        
+        return 0;
     }
 }

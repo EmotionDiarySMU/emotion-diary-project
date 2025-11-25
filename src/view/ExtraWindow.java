@@ -3,11 +3,14 @@ package view;
 import java.awt.CardLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
 
+import DB.DatabaseManager;
 import DB.DiaryEntry;
 import share.SaveQuestion;
 
@@ -25,9 +28,9 @@ public class ExtraWindow extends JFrame{
 	
 	public ExtraWindow(DiaryEntry entry) {
 		
-		this.entryId = entry.getEntry_id();
+		entryId = entry.getEntry_id();
         
-		setTitle("[ " + entry.getTitle() + " ]" + "   " + entry.getEntry_date());
+		updateTitleBar(entry);
         setSize(495, 630);
         
         cardLayout = new CardLayout();
@@ -45,29 +48,34 @@ public class ExtraWindow extends JFrame{
         
         add(cardPanel);
         
-        // 수정하기 버튼 누르면 modify 창 띄움
+        // 수정하기 버튼 → modify 창 띄움
         viewPanel.editBtn.addActionListener(e -> cardLayout.show(cardPanel, "modify"));
         
         // 수정 완료 버튼 → DB 저장 후 view 창 띄움
         modifyPanel.fineditBtn.addActionListener(e -> {
         	
-            for(int i=0;i<4;i++) modifyPanel.validateAndSaveEmotionValue(i); // 감정 수치 검증
             modifyPanel.validateAndSaveStressValue(); // 스트레스 수치 검증
             
             // 2. 감정 아이콘과 값 리스트 생성
             List<String> emotionIcons = new ArrayList<>();
             List<Integer> emotionValuesList = new ArrayList<>();
             for (int i = 0; i < modifyPanel.iconLabels.length; i++) {
-                emotionIcons.add(modifyPanel.iconLabels[i].getText());
-                emotionValuesList.add(modifyPanel.emotionValues[i]);
+            	String icon = modifyPanel.iconLabels[i].getText();
+            	if (!icon.equals("[ ]") && !icon.equals(" ")) {
+	                emotionIcons.add(icon);
+	                modifyPanel.validateAndSaveEmotionValue(i);
+	                emotionValuesList.add(modifyPanel.emotionValues[i]);
+            	}
             }
             
             try{
+            	Timestamp TS = Timestamp.from(Instant.now());
                 boolean success = DB.DatabaseManager.updateDiaryEntry(
                     entry.getEntry_id(),
                     modifyPanel.titleField.getText(),
                     modifyPanel.contentArea.getText(),
                     modifyPanel.stressSlider.getValue(),
+                    TS,
                     emotionIcons,
                     emotionValuesList
                 );
@@ -76,6 +84,7 @@ public class ExtraWindow extends JFrame{
                     entry.setTitle(modifyPanel.titleField.getText());
                     entry.setContent(modifyPanel.contentArea.getText());
                     entry.setStress_level(modifyPanel.stressSlider.getValue());
+                    entry.setModify_date(TS);
 
                     List<DB.Emotion> newEmotions = new ArrayList<>();
                     for (int i = 0; i < emotionIcons.size(); i++) {
@@ -93,9 +102,11 @@ public class ExtraWindow extends JFrame{
                     
                     viewPanel.fillEntry(entry); // viewPanel에 수정된 값 반영
                     
-                    SearchDiaryPanel.refreshDiaryList(); // 목록 패널도 갱신
+                    SearchDiaryPanel.refreshDiaryModel(true); // 목록 패널도 갱신
                     
                     cardLayout.show(cardPanel,"view");
+                    
+                    updateTitleBar(entry); // 수정일도 나오게끔
                 }else{
                     JOptionPane.showMessageDialog(modifyPanel,"DB 수정 실패","오류",JOptionPane.ERROR_MESSAGE);
                 }
@@ -116,16 +127,45 @@ public class ExtraWindow extends JFrame{
             cardLayout.show(cardPanel, "view");
         });
         
+        // 삭제 버튼
+        viewPanel.deleteBtn.addActionListener(e -> {
+
+            // 정말 삭제할지 확인
+            int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "정말 삭제하시겠습니까?",
+                    "삭제 확인",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (confirm == JOptionPane.NO_OPTION) return;
+            
+            DatabaseManager.deleteEntry(entry.getEntry_id()); // DB에서 삭제
+            JOptionPane.showMessageDialog(this, "삭제되었습니다.");
+            SearchDiaryPanel.refreshDiaryModel(true); // 일기 목록 새로고침
+            SearchDiaryPanel.openWindows.remove(this); // openWindows Set에서 제거
+            dispose();
+        });
+
+        
         setVisible(true);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         
         // 닫기전에 "저장하시겠습니까?" 창 띄우기
         addWindowListener(new WindowAdapter() {
         	public void windowClosing(WindowEvent e) {
-        		SaveQuestion.handleWindowClosing(ExtraWindow.this, modifyPanel, false);
+        		SaveQuestion.handleWindowClosing(ExtraWindow.this, modifyPanel, 2);
             }
         });
-
-        
     }
+	
+	// ExtraWindow의 제목 설정
+	public void updateTitleBar(DiaryEntry entry) {
+        String titleText = "[ " + entry.getTitle() + " ]" + "  (작성일: " + entry.getEntry_date().toLocalDateTime().toLocalDate().toString() + ")";
+        if (entry.getModify_date() != null) {
+            titleText += " (수정일: " + entry.getModify_date().toLocalDateTime().toLocalDate().toString() + ")";
+        }
+        setTitle(titleText);
+    }
+	
 }

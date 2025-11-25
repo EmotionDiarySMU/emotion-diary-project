@@ -13,7 +13,9 @@ import share.MainView;
 
 public class AuthenticationFrame extends JFrame {
 
-	public static String loggedInUserId = null; // 🔸
+	private static final long serialVersionUID = 1L;
+
+	public static String loggedInUserId = null;
 	
     public static final Color PASTEL_YELLOW = new Color(255, 255, 220);
   
@@ -25,6 +27,7 @@ public class AuthenticationFrame extends JFrame {
     public AuthenticationFrame() {
         setTitle("Emotion Diary");
         setSize(495, 630);
+        
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -53,42 +56,86 @@ public class AuthenticationFrame extends JFrame {
     // 1. 로그인 패널 
     // =========================================================
     public class LoginPanel extends JPanel implements ActionListener {
-        AuthenticationFrame authFrame;
+  
+		private static final long serialVersionUID = 1L;
+		AuthenticationFrame authFrame;
         JTextField idField;
         JPasswordField passwordField;
         JButton loginButton, signUpButton;
 
         public LoginPanel(AuthenticationFrame frame) {
-            this.authFrame = frame;
-            setLayout(null);
-            setBackground(PASTEL_YELLOW);
+                this.authFrame = frame;
+                
+                // ⭐ 1. BorderLayout으로 변경하고 배경색 설정
+                setLayout(new BorderLayout()); 
+                setBackground(PASTEL_YELLOW);
+                
+                // --- 중앙에 위치할 컴포넌트들을 담을 패널 생성 ---
+                JPanel centerPanel = new JPanel(new GridBagLayout()); // GridBagLayout 사용
+                centerPanel.setBackground(PASTEL_YELLOW);
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.insets = new Insets(10, 5, 10, 5); // 컴포넌트 간 간격 설정
 
-            // (GUI 디자인 코드는 기존과 동일)
-            JLabel titleLabel = new JLabel("로그인");
-            titleLabel.setFont(new Font("SansSerif", Font.BOLD, 24));
-            titleLabel.setBounds(225, 150, 100, 30);
-            
-            JLabel idLabel = new JLabel("ID:");
-            idLabel.setBounds(150, 230, 80, 30);
-            idField = new JTextField(20);
-            idField.setBounds(240, 230, 160, 30);
-            
-            JLabel pwLabel = new JLabel("Password:");
-            pwLabel.setBounds(150, 280, 80, 30);
-            passwordField = new JPasswordField(20);
-            passwordField.setBounds(240, 280, 160, 30);
+                // 2. GUI 컴포넌트들을 GBC로 추가
 
-            loginButton = new JButton("로그인");
-            loginButton.setBounds(150, 360, 250, 40);
-            loginButton.addActionListener(this);
+                // 제목
+                JLabel titleLabel = new JLabel("로그인");
+                titleLabel.setFont(new Font("SansSerif", Font.BOLD, 24));
+                gbc.gridx = 0;
+                gbc.gridy = 0;
+                gbc.gridwidth = 2; // 2열 차지
+                centerPanel.add(titleLabel, gbc);
+                
+                // 빈 공간을 위한 패딩
+                gbc.gridwidth = 2;
+                gbc.gridy = 1;
+                centerPanel.add(new JLabel(" "), gbc); // 빈 라벨로 상단 여백 추가
 
-            signUpButton = new JButton("회원가입");
-            signUpButton.setBounds(150, 420, 250, 40);
-            signUpButton.addActionListener(this);
-            
-            add(titleLabel); add(idLabel); add(idField);
-            add(pwLabel); add(passwordField);
-            add(loginButton); add(signUpButton);
+                // ID 라벨 및 필드
+                gbc.gridwidth = 1; // 1열로 복구
+                gbc.anchor = GridBagConstraints.EAST; // ID: 라벨을 오른쪽(필드쪽)으로 붙임
+                gbc.gridx = 0;
+                gbc.gridy = 2;
+                JLabel idLabel = new JLabel("ID:");
+                centerPanel.add(idLabel, gbc);
+                
+                gbc.anchor = GridBagConstraints.WEST; // 필드를 왼쪽(라벨쪽)으로 붙임
+                gbc.gridx = 1;
+                gbc.gridy = 2;
+                idField = new JTextField(15); // 크기 변경
+                centerPanel.add(idField, gbc);
+
+                // Password 라벨 및 필드
+                gbc.anchor = GridBagConstraints.EAST;
+                gbc.gridx = 0;
+                gbc.gridy = 3;
+                JLabel pwLabel = new JLabel("Password:");
+                centerPanel.add(pwLabel, gbc);
+                
+                gbc.anchor = GridBagConstraints.WEST;
+                gbc.gridx = 1;
+                gbc.gridy = 3;
+                passwordField = new JPasswordField(15); // 크기 변경
+                centerPanel.add(passwordField, gbc);
+
+                // 로그인 버튼
+                gbc.gridx = 0;
+                gbc.gridy = 4;
+                gbc.gridwidth = 2;
+                gbc.fill = GridBagConstraints.HORIZONTAL; // 가로로 늘어나게 설정
+                loginButton = new JButton("로그인");
+                centerPanel.add(loginButton, gbc);
+                loginButton.addActionListener(this);
+
+                // 회원가입 버튼
+                gbc.gridx = 0;
+                gbc.gridy = 5;
+                signUpButton = new JButton("회원가입");
+                centerPanel.add(signUpButton, gbc);
+                signUpButton.addActionListener(this);
+
+                // 3. 전체 패널에 중앙 패널 추가
+                add(centerPanel, BorderLayout.CENTER);
         }
 
         @Override
@@ -97,19 +144,19 @@ public class AuthenticationFrame extends JFrame {
                 String id = idField.getText();
                 String pw = new String(passwordField.getPassword());
 
-                // [수정됨] 직접 DB를 만지지 않고 매니저를 부릅니다.
+                // [수정됨] 직접 DB를 만지지 않고 매니저를 부름.
                 DatabaseManager dbManager = new DatabaseManager();
                 boolean isSuccess = dbManager.checkLogin(id, pw);
 
                 if (isSuccess) {
                     JOptionPane.showMessageDialog(this, id + "님 환영합니다!");
                     
-                    loggedInUserId = id; // 🔸
+                    loggedInUserId = id;
                     
-                    // [추가됨] 팀원의 메인 화면 실행
+                    // [추가] 팀원의 메인 화면 실행
                     new MainView();
                     
-                    // [추가됨] 로그인 창 닫기
+                    // [추가] 로그인 창 닫기
                     authFrame.dispose(); 
                 } else {
                     JOptionPane.showMessageDialog(this, "아이디 또는 비밀번호가 틀렸습니다.", "로그인 실패", JOptionPane.ERROR_MESSAGE);
@@ -125,7 +172,9 @@ public class AuthenticationFrame extends JFrame {
     // 2. 회원가입 패널 (DB 로직 분리)
     // =========================================================
     public class SignUpPanel extends JPanel implements ActionListener {
-        AuthenticationFrame authFrame;
+
+		private static final long serialVersionUID = 1L;
+		AuthenticationFrame authFrame;
         JTextField idField;
         JPasswordField passwordField, confirmPasswordField;
         JButton signUpButton, backButton;
@@ -185,7 +234,7 @@ public class AuthenticationFrame extends JFrame {
                     return;
                 }
 
-                // [수정됨] DB 매니저에게 회원가입 요청
+                // [수정] DB 매니저에게 회원가입 요청
                 DatabaseManager dbManager = new DatabaseManager();
                 int result = dbManager.registerUser(id, pw);
 
@@ -210,7 +259,9 @@ public class AuthenticationFrame extends JFrame {
     // 3. 성공 화면 (변경사항 거의 없음)
     // =========================================================
     public class SignUpSuccessPanel extends JPanel implements ActionListener {
-        AuthenticationFrame authFrame;
+
+		private static final long serialVersionUID = 1L;
+		AuthenticationFrame authFrame;
         JLabel successMessageLabel;
         JButton goToLoginButton;
         Timer timer;

@@ -9,6 +9,7 @@ import javax.swing.text.*;
 
 import DB.DatabaseManager;
 import DB.DiaryEntry;
+import DB.QuestionDBManager;
 import view.SearchDiaryPanel;
 
 import java.awt.*;
@@ -25,17 +26,17 @@ import java.util.List;
  */
 public class WriteDiaryGUI extends JPanel { 
 
-	private static final long serialVersionUID = 1L;
-	
-	public JPanel mainPanel;
-	public JPanel southPanel;
-	
-	public GridBagConstraints gbc;
-	
-	public JLabel questionLabel;
-	public JTextField titleField;
+   private static final long serialVersionUID = 1L;
+   
+   public JPanel mainPanel;
+   public JPanel southPanel;
+   
+   public GridBagConstraints gbc;
+   
+   public JLabel questionLabel;
+   public JTextField titleField;
     public JTextArea contentArea;
-    JScrollPane contentScrollPane;
+    public JScrollPane contentScrollPane;
     
     public JLabel[] iconLabels = new JLabel[4];
     public JTextField[] valueFields = new JTextField[4]; 
@@ -100,7 +101,7 @@ public class WriteDiaryGUI extends JPanel {
         gbc.gridy = 1; 
         gbc.weightx = 1.0; // 가로로 꽉 차도록
         titleField = new JTextField();
-        titleField.getDocument().addDocumentListener(new SimpleModifyListener()); //♦️
+        titleField.getDocument().addDocumentListener(new SimpleModifyListener());
         mainPanel.add(titleField, gbc);
 
         // --- GBC row 2: 내용 ---
@@ -114,15 +115,15 @@ public class WriteDiaryGUI extends JPanel {
 
         gbc.gridx = 1;
         gbc.gridy = 2;
-//      gbc.weightx = 1.0; 왜 이걸 쓰면 오히려 문제가 생기는거지..? ♦️
+//      gbc.weightx = 1.0; 왜 이걸 쓰면 오히려 문제가 생기는거지..?️
         gbc.weighty = 1.0; // 세로로 꽉 차도록
         gbc.fill = GridBagConstraints.BOTH; 
         contentArea = new JTextArea(); 
         contentArea.setLineWrap(true);
         contentArea.setWrapStyleWord(true);
         contentScrollPane = new JScrollPane(contentArea);
-        contentArea.getDocument().addDocumentListener(new SimpleModifyListener()); // ♦️
-        ((AbstractDocument) contentArea.getDocument()).setDocumentFilter(new LengthFilter(30000)); // ♦️ 
+        contentArea.getDocument().addDocumentListener(new SimpleModifyListener());
+        ((AbstractDocument) contentArea.getDocument()).setDocumentFilter(new LengthFilter(30000));
         mainPanel.add(contentScrollPane, gbc);
         
         // --- GBC row 3: 감정 (아이콘 + 수치 4칸) ---
@@ -138,10 +139,10 @@ public class WriteDiaryGUI extends JPanel {
         iconDisplayPanel.setBackground(lightGreen); 
         
         // 아이콘 선택 팝업창 초기화
-        iconDialog = new SingleIconChooserDialog(this, iconLabels, lightYellow); // ♦️
+        iconDialog = new SingleIconChooserDialog(this, iconLabels, lightYellow);
         
-        // 0-100 숫자만 입력받는 필터 생성
-        NumericRangeFilter filter = new NumericRangeFilter(); // ♦️
+        // 숫자만 입력받는 필터 생성
+        NumericRangeFilter filter = new NumericRangeFilter();
         
         // 4개의 감정 슬롯(아이콘+텍스트필드) 생성
         for (int i = 0; i < 4; i++) {
@@ -154,8 +155,8 @@ public class WriteDiaryGUI extends JPanel {
             
             valueFields[i] = new JTextField(String.valueOf(emotionValues[i]), 3);
             valueFields[i].setHorizontalAlignment(JTextField.CENTER);
-            ((AbstractDocument) valueFields[i].getDocument()).setDocumentFilter(filter); // ♦️
-            valueFields[i].getDocument().addDocumentListener(new SimpleModifyListener()); // ♦️
+            ((AbstractDocument) valueFields[i].getDocument()).setDocumentFilter(filter);
+            valueFields[i].getDocument().addDocumentListener(new SimpleModifyListener());
             
             slotPanel.add(iconLabels[i], BorderLayout.CENTER);
             slotPanel.add(valueFields[i], BorderLayout.SOUTH);
@@ -164,18 +165,40 @@ public class WriteDiaryGUI extends JPanel {
             
             final int slotIndex = i;
             
+         // 클릭 이벤트: 같은 아이콘 선택 시 삭제(토글), 다르면 변경
             iconLabels[i].addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    iconDialog.setCurrentSlot(slotIndex, iconLabels[slotIndex].getText()); // ♦️
+                    // 1. 현재 설정되어 있는 아이콘을 저장해둡니다.
+                    String currentIcon = iconLabels[slotIndex].getText();
+                    
+                    // 2. 팝업창을 띄웁니다.
+                    iconDialog.setCurrentSlot(slotIndex, currentIcon); 
                     iconDialog.setVisible(true);
                     
+                    // 3. 팝업창에서 선택해온 아이콘을 가져옵니다.
                     String selectedIcon = iconDialog.getSelectedIcon();
+                    
                     if (selectedIcon != null) {
-                        if (!iconLabels[slotIndex].getText().equals(selectedIcon)) {
-                            iconLabels[slotIndex].setText(selectedIcon);
-                            isModified = true; // ♦️
+                      
+                        // 만약 방금 선택한 아이콘이 원래 있던 아이콘과 "똑같다면" -> 삭제 (토글 OFF)
+                        if (currentIcon.equals(selectedIcon)) {
+                            iconLabels[slotIndex].setText("[ ]"); // 빈칸으로 되돌림
+                            valueFields[slotIndex].setText("0");  // 수정 0으로 돌림
+                            emotionValues[slotIndex] = 0;
+                            isModified = true;
+                        } 
+                        // 다른 아이콘을 선택했다면 -> 변경 (Update)
+                        else {
+                           iconLabels[slotIndex].setText(selectedIcon);
+                            
+                            
+                            valueFields[slotIndex].setText("1"); // 1점으로 자동 설정
+                            emotionValues[slotIndex] = 1;
+                            
+                            isModified = true;
                         }
+                        
                     }
                 }
             });
@@ -183,7 +206,7 @@ public class WriteDiaryGUI extends JPanel {
             valueFields[i].addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    validateAndSaveEmotionValue(slotIndex); // ♦️
+                    validateAndSaveEmotionValue(slotIndex);
                 }
             });
         }
@@ -282,7 +305,7 @@ public class WriteDiaryGUI extends JPanel {
                 // ⭐️ --- 2. DB에 저장 ---
                 try {
                     // DatabaseUtil의 새 메소드 호출!
-                	boolean success = DatabaseManager.insertDiaryEntry( // ♦️
+                   boolean success = DatabaseManager.insertDiaryEntry( // ♦️
                             title, content, stressLevel, emotions, emotionValuesList
                         );
 
@@ -290,7 +313,9 @@ public class WriteDiaryGUI extends JPanel {
                         // 성공 시
                         JOptionPane.showMessageDialog(WriteDiaryGUI.this, "일기가 성공적으로 저장되었습니다.");
                         
-                        SearchDiaryPanel.refreshDiaryList();
+                        clearAllFields();
+                        
+                        SearchDiaryPanel.refreshDiaryModel(true);
                         
                         // 3. 저장 후 '수정됨' 플래그 리셋
                         isModified = false; 
@@ -309,14 +334,14 @@ public class WriteDiaryGUI extends JPanel {
                         "DB 연결 중 심각한 오류가 발생했습니다.\n" + ex.getMessage(), 
                         "DB 오류", 
                         JOptionPane.ERROR_MESSAGE);
-            	}
-        	}
+               }
+           }
         });
         
     }
     
     
-    // 감정 수치 텍스트필드 값 검증/저장 (0-100)
+    // 감정 수치 텍스트필드 값 검증/저장 (1-100)
     public void validateAndSaveEmotionValue(int slotIndex) {
         try {
             String text = valueFields[slotIndex].getText();
@@ -324,7 +349,7 @@ public class WriteDiaryGUI extends JPanel {
             if (text != null && !text.isEmpty()) {
                 value = Integer.parseInt(text);
             }
-            if (value < 0) value = 0;
+            if (value < 1) value = 1;
             if (value > 100) value = 100;
             
             emotionValues[slotIndex] = value;

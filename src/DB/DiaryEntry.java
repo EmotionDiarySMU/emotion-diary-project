@@ -1,5 +1,6 @@
 package DB;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 // DB 테이블 구조에 맞게 필드 추가 및 수정
@@ -11,7 +12,8 @@ public class DiaryEntry {
     private String title;       // varchar(50)
     private String content;     // text
     private int stress_level;   // int
-    private String entry_date;  // datetime (DB에서 가져온 날짜/시간 문자열)
+    private Timestamp entry_date;  // datetime (DB에서 가져온 날짜/시간 문자열)
+    private Timestamp modify_date;  // datetime (DB에서 가져온 날짜/시간 문자열)
     private List<Emotion> emotions;
 
     public DiaryEntry() {
@@ -74,12 +76,21 @@ public class DiaryEntry {
     }
 
     // entry_date
-    public String getEntry_date() {
+    public Timestamp getEntry_date() {
         return entry_date;
     }
 
-    public void setEntry_date(String entry_date) {
+    public void setEntry_date(Timestamp entry_date) {
         this.entry_date = entry_date;
+    }
+    
+    // modify_date
+    public Timestamp getModify_date() {
+        return modify_date;
+    }
+    
+    public void setModify_date(Timestamp modify_date) {
+        this.modify_date = modify_date;
     }
     
     public List<Emotion> getEmotions() {
