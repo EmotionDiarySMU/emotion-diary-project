@@ -124,7 +124,7 @@ public class EmotionChartPanel extends JPanel {
         JPanel legendPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
         legendPanel.setBackground(Color.WHITE);
         legendPanel.setOpaque(true);
-        legendPanel.add(createLegendItem(new Color(100, 150, 255), "횟수(%)"));
+        legendPanel.add(createLegendItem(new Color(100, 150, 255), "횟수"));
         legendPanel.add(Box.createHorizontalStrut(5));
         legendPanel.add(createLegendItem(new Color(190, 220, 255), "수치"));
         legendPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
