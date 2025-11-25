@@ -277,10 +277,18 @@ public class ViewDiaryPanel extends JPanel {
             }
         }
 
-        // 날짜 라벨 설정
+        // 날짜 라벨 설정 (수정일 포함)
         if (entry.getEntry_date() != null) {
             String dateStr = entry.getEntry_date().toLocalDateTime().toLocalDate().toString();
-            dateLabel.setText("[" + dateStr + "]");
+            String labelText = "[" + dateStr + "]";
+
+            // 수정일이 있으면 추가
+            if (entry.getModify_date() != null) {
+                String modifyDateStr = entry.getModify_date().toLocalDateTime().toLocalDate().toString();
+                labelText += " (수정일: " + modifyDateStr + ")";
+            }
+
+            dateLabel.setText(labelText);
         } else {
             dateLabel.setText("");
         }

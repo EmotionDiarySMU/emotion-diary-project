@@ -1,4 +1,4 @@
-package write;
+package com.diary.emotion.write;
 
 import java.awt.*;
 import javax.swing.text.AttributeSet;

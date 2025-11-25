@@ -1,4 +1,4 @@
-package write;
+package com.diary.emotion.write;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -7,10 +7,10 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
 
-import DB.DatabaseManager;
-import DB.DiaryEntry;
-import DB.QuestionDBManager;
-import view.SearchDiaryPanel;
+import com.diary.emotion.DB.DatabaseManager;
+import com.diary.emotion.DB.DiaryEntry;
+import com.diary.emotion.DB.Emotion;
+import com.diary.emotion.view.SearchDiaryPanel;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -58,7 +58,7 @@ public class WriteDiaryGUI extends JPanel {
     public WriteDiaryGUI() {
         setLayout(new BorderLayout());
         
-        Arrays.fill(emotionValues, 0);;
+        Arrays.fill(emotionValues, 0);
 
         // --- 메인 컨텐츠 패널 (GridBagLayout 사용) ---
         mainPanel = new JPanel(new GridBagLayout());
@@ -316,7 +316,7 @@ public class WriteDiaryGUI extends JPanel {
                         clearAllFields();
                         
                         SearchDiaryPanel.refreshDiaryModel(true);
-                        
+
                         // 3. 저장 후 '수정됨' 플래그 리셋
                         isModified = false; 
                         
@@ -431,7 +431,7 @@ public class WriteDiaryGUI extends JPanel {
         stressSlider.setValue(entry.getStress_level());
 
         // 감정(최대 4개) 채우기: 안전하게 범위 검사
-        List<DB.Emotion> emotions = entry.getEmotions();
+        List<Emotion> emotions = entry.getEmotions();
         for (int i = 0; i < valueFields.length; i++) {
             if (i < emotions.size()) {
                 iconLabels[i].setText(emotions.get(i).getEmoji_icon());

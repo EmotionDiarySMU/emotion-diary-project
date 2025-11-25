@@ -212,28 +212,6 @@ public class MainView extends JFrame {
 	 * 열람 패널 표시
 	 */
 	private void showViewPanel() {
-		// 일기 쓰기 탭에서 수정된 내용이 있으면 저장 확인
-		if (writePanel.isModified) {
-			int result = JOptionPane.showConfirmDialog(
-				this,
-				"저장되지 않은 변경 사항이 있습니다. 저장하시겠습니까?",
-				"경고",
-				JOptionPane.YES_NO_CANCEL_OPTION
-			);
-
-			if (result == JOptionPane.YES_OPTION) {
-				writePanel.saveOrFinish();
-				// 저장 후에도 isModified가 true면 저장 실패한 것이므로 탭 전환 취소
-				if (writePanel.isModified) {
-					return;
-				}
-			} else if (result == JOptionPane.CANCEL_OPTION) {
-				return; // 탭 전환 취소
-			} else if (result == JOptionPane.NO_OPTION) {
-				// 요구사항 7: No 클릭 시 작성 중인 일기 내용 모두 초기화
-				writePanel.clearAllFields();
-			}
-		}
 
 		setActiveTab(viewTab, BG_VIEW, ACCENT_ORANGE);
 		cardLayout.show(cardPanel, "view");
@@ -243,28 +221,6 @@ public class MainView extends JFrame {
 	 * 통계 패널 표시
 	 */
 	private void showChartPanel() {
-		// 일기 쓰기 탭에서 수정된 내용이 있으면 저장 확인
-		if (writePanel.isModified) {
-			int result = JOptionPane.showConfirmDialog(
-				this,
-				"저장되지 않은 변경 사항이 있습니다. 저장하시겠습니까?",
-				"경고",
-				JOptionPane.YES_NO_CANCEL_OPTION
-			);
-
-			if (result == JOptionPane.YES_OPTION) {
-				writePanel.saveOrFinish();
-				// 저장 후에도 isModified가 true면 저장 실패한 것이므로 탭 전환 취소
-				if (writePanel.isModified) {
-					return;
-				}
-			} else if (result == JOptionPane.CANCEL_OPTION) {
-				return; // 탭 전환 취소
-			} else if (result == JOptionPane.NO_OPTION) {
-				// 요구사항 7: No 클릭 시 작성 중인 일기 내용 모두 초기화
-				writePanel.clearAllFields();
-			}
-		}
 
 		setActiveTab(chartTab, BG_STATS, ACCENT_BLUE);
 		cardLayout.show(cardPanel, "chart");

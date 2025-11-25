@@ -1,4 +1,4 @@
-package DB;
+package com.diary.emotion.DB;
 
 public class Emotion{
 	

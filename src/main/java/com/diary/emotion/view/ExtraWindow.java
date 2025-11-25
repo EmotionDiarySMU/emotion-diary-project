@@ -4,7 +4,6 @@ import com.diary.emotion.db.DatabaseManager;
 import com.diary.emotion.db.DiaryEntry;
 import com.diary.emotion.main.MainView;
 import com.diary.emotion.ui.UIConstants;
-import static com.diary.emotion.ui.ViewStyleOverrider.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,6 +29,20 @@ public class ExtraWindow extends JFrame {
     public ExtraWindow(DiaryEntry entry) {
         this.entryId = entry.getEntry_id();
         UIConstants.setupFrame(this); // 기본 크기(495x630) 설정
+
+        // 창 타이틀 설정 (작성일과 수정일 포함)
+        String title = UIConstants.APP_TITLE;
+        if (entry.getEntry_date() != null) {
+            String dateStr = entry.getEntry_date().toLocalDateTime().toLocalDate().toString();
+            title += " - " + dateStr;
+
+            // 수정일이 있으면 추가
+            if (entry.getModify_date() != null) {
+                String modifyDateStr = entry.getModify_date().toLocalDateTime().toLocalDate().toString();
+                title += " (수정일: " + modifyDateStr + ")";
+            }
+        }
+        setTitle(title);
 
         // 요구사항 4: ViewDiaryPanel 창 닫을 때 프로그램 종료 방지
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -104,7 +117,19 @@ public class ExtraWindow extends JFrame {
         modifyPanel.cancelBtn.addActionListener(e -> {
             modifyPanel.fillEntry(entry); // 수정된 내용 버리고 초기화
             cardLayout.show(cardPanel, "VIEW");
-            setTitle(UIConstants.APP_TITLE);
+
+            // 타이틀 복원 (작성일과 수정일 포함)
+            String title = UIConstants.APP_TITLE;
+            if (entry.getEntry_date() != null) {
+                String dateStr = entry.getEntry_date().toLocalDateTime().toLocalDate().toString();
+                title += " - " + dateStr;
+
+                if (entry.getModify_date() != null) {
+                    String modifyDateStr = entry.getModify_date().toLocalDateTime().toLocalDate().toString();
+                    title += " (수정일: " + modifyDateStr + ")";
+                }
+            }
+            setTitle(title);
 
             viewPanel.revalidate();
             viewPanel.repaint();

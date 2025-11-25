@@ -1,4 +1,4 @@
-package write;
+package com.diary.emotion.write;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;

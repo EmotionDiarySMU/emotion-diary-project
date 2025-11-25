@@ -16,6 +16,7 @@ public class SignUpSuccessPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
     private JLabel successMessageLabel;
+    private JLabel userWelcomeLabel;
     private Timer timer;
     private AuthenticationFrame parent;
 
@@ -28,28 +29,37 @@ public class SignUpSuccessPanel extends JPanel {
         gbc.gridx = 0;
         gbc.anchor = GridBagConstraints.CENTER;
 
-        // 완료 텍스트
+        // 회원가입 성공 메시지 (고정)
         gbc.gridy = 0;
-        gbc.insets = new Insets(0, 0, 20, 0);
-        JLabel mainText = new JLabel("회원가입이 완료되었습니다!");
-        mainText.setFont(new Font(H2.getName(), Font.BOLD, 28));
+        gbc.insets = new Insets(0, 0, 10, 0);
+        successMessageLabel = new JLabel("🎉 회원가입 성공! 🎉");
+        successMessageLabel.setFont(new Font(H2.getName(), Font.BOLD, 28));
+        successMessageLabel.setForeground(TEXT_PRIMARY);
+        successMessageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        add(successMessageLabel, gbc);
+
+        // 사용자 환영 메시지 (동적으로 변경됨)
+        gbc.gridy = 1;
+        gbc.insets = new Insets(0, 0, 10, 0);
+        userWelcomeLabel = new JLabel("");
+        userWelcomeLabel.setFont(new Font(H2.getName(), Font.BOLD, 24));
+        userWelcomeLabel.setForeground(TEXT_PRIMARY);
+        userWelcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        add(userWelcomeLabel, gbc);
+
+        // 완료 텍스트
+        gbc.gridy = 2;
+        gbc.insets = new Insets(0, 0, 30, 0);
+        JLabel mainText = new JLabel("환영합니다!");
+        mainText.setFont(new Font(H2.getName(), Font.PLAIN, 18));
         mainText.setForeground(TEXT_PRIMARY);
         mainText.setHorizontalAlignment(SwingConstants.CENTER);
         add(mainText, gbc);
 
-        // 안내 메시지
-        gbc.gridy = 1;
-        gbc.insets = new Insets(0, 0, 20, 0);
-        successMessageLabel = new JLabel("5초 후 로그인 화면으로 돌아갑니다.");
-        successMessageLabel.setFont(new Font(BODY_LARGE.getName(), Font.PLAIN, 16));
-        successMessageLabel.setForeground(new Color(65, 105, 225)); // Royal Blue
-        successMessageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        add(successMessageLabel, gbc);
-
         // 로그인 하러 가기 버튼
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.insets = new Insets(0, 0, 0, 0);
-        JButton loginButton = ButtonFactory.createCustomButton("로그인 하러 가기", Color.WHITE, Color.BLACK, 150, 40);
+        JButton loginButton = ButtonFactory.createCustomButton("로그인 하러 가기 (5초 후 자동)", Color.WHITE, Color.BLACK, 200, 40);
         loginButton.addActionListener(e -> {
             timer.stop();
             parent.showPanel("LOGIN");
@@ -65,6 +75,7 @@ public class SignUpSuccessPanel extends JPanel {
     }
 
     public void setSuccessMessage(String id) {
+        userWelcomeLabel.setText(id + " 님, 가입을 축하합니다!");
         timer.restart();
     }
 }

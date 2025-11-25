@@ -20,6 +20,7 @@ public class SignUpPanel extends JPanel {
 
     private JTextField idField;
     private JPasswordField pwField;
+    private JPasswordField confirmPwField;
     private JLabel errorLabel;
     private AuthenticationFrame parent;
 
@@ -82,14 +83,30 @@ public class SignUpPanel extends JPanel {
         pwField.setPreferredSize(new Dimension(280, 30));
         pwField.setFont(BODY_REGULAR);
         gbc.gridy = 4;
-        gbc.insets = new Insets(0, 0, 5, 0);
+        gbc.insets = new Insets(0, 0, 15, 0);
         centerPanel.add(pwField, gbc);
+
+        // Confirm PW 라벨
+        JLabel confirmPwLabel = new JLabel("Confirm PW:");
+        confirmPwLabel.setFont(BODY_REGULAR);
+        confirmPwLabel.setForeground(TEXT_SECONDARY);
+        gbc.gridy = 5;
+        gbc.insets = new Insets(5, 0, 2, 0);
+        centerPanel.add(confirmPwLabel, gbc);
+
+        // Confirm PW 입력창
+        confirmPwField = StyleUtils.createStyledPasswordField();
+        confirmPwField.setPreferredSize(new Dimension(280, 30));
+        confirmPwField.setFont(BODY_REGULAR);
+        gbc.gridy = 6;
+        gbc.insets = new Insets(0, 0, 5, 0);
+        centerPanel.add(confirmPwField, gbc);
 
         // 에러 메시지
         errorLabel = new JLabel("");
         errorLabel.setForeground(Color.RED);
         errorLabel.setFont(new Font(BODY_SMALL.getName(), Font.PLAIN, 12));
-        gbc.gridy = 5;
+        gbc.gridy = 7;
         gbc.insets = new Insets(0, 0, 10, 0);
         centerPanel.add(errorLabel, gbc);
 
@@ -135,9 +152,15 @@ public class SignUpPanel extends JPanel {
     private void handleSignUp() {
         String id = idField.getText().trim();
         String pw = new String(pwField.getPassword()).trim();
+        String confirmPw = new String(confirmPwField.getPassword()).trim();
 
-        if (id.isEmpty() || pw.isEmpty()) {
-            setErrorMessage("아이디와 비밀번호를 모두 입력해주세요.");
+        if (id.isEmpty() || pw.isEmpty() || confirmPw.isEmpty()) {
+            setErrorMessage("모든 필드를 입력해주세요.");
+            return;
+        }
+
+        if (!pw.equals(confirmPw)) {
+            JOptionPane.showMessageDialog(this, "비밀번호가 일치하지 않습니다.", "오류", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -163,6 +186,7 @@ public class SignUpPanel extends JPanel {
     public void clearFields() {
         idField.setText("");
         pwField.setText("");
+        confirmPwField.setText("");
         errorLabel.setText("");
     }
 }

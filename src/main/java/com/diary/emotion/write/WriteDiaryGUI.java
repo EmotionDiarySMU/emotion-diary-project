@@ -400,14 +400,31 @@ public class WriteDiaryGUI extends JPanel {
     private JButton createResetButton() {
         JButton button = ButtonFactory.createCustomButton("다시 쓰기", Color.WHITE, Color.BLACK, 85, 30);
         button.addActionListener(e -> {
-            int result = JOptionPane.showConfirmDialog(
-                    this,
-                    "작성 중인 내용을 모두 지우고 다시 쓰시겠습니까?",
-                    "다시 쓰기",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.WARNING_MESSAGE
-            );
-            if (result == JOptionPane.YES_OPTION) {
+            // 작성 중인 내용이 있는지 확인
+            if (isModified) {
+                // 커스텀 옵션 다이얼로그 생성
+                Object[] options = {"Yes", "No", "Cancel"};
+                int result = JOptionPane.showOptionDialog(
+                        this,
+                        "작성 중인 일기가 있습니다.\n저장하고 새 일기를 쓰시겠습니까?",
+                        "다시 쓰기",
+                        JOptionPane.YES_NO_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        options,
+                        options[2]
+                );
+
+                if (result == JOptionPane.YES_OPTION) {
+                    // Yes: 저장하고 초기화
+                    saveEntry();
+                } else if (result == JOptionPane.NO_OPTION) {
+                    // No: 저장하지 않고 초기화
+                    clearAllFields();
+                }
+                // Cancel: 아무것도 하지 않음
+            } else {
+                // 작성 중인 내용이 없으면 바로 초기화
                 clearAllFields();
             }
         });

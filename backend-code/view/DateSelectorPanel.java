@@ -1,4 +1,4 @@
-package view;
+package com.diary.emotion.view;
 
 import javax.swing.*;
 import java.awt.*;
@@ -6,8 +6,8 @@ import java.time.*;
 
 public class DateSelectorPanel extends JPanel {
     private static final long serialVersionUID = 1L;
-    
-	private JComboBox<Object> yearCombo;
+
+    private JComboBox<Object> yearCombo;
     private JComboBox<Object> monthCombo;
     private JComboBox<Object> dayCombo;
 
@@ -19,10 +19,10 @@ public class DateSelectorPanel extends JPanel {
 
     // 🟡 콤보박스 생성, 설정
     private void initializeComponents() {
-    	
+
         // 🔹 연도 콤보박스
         int currentYear = LocalDate.now().getYear();
-        
+
         yearCombo = new JComboBox<>();
         yearCombo.addItem("-"); // 선택 안 된 상태
         for (int i = 0; i < 5; i++) {
@@ -44,7 +44,7 @@ public class DateSelectorPanel extends JPanel {
 
         // 🔹 글자 설정 객체
         Font smallFont = new Font("Dialog", Font.PLAIN, 10);
-        
+
         // 🔹 라벨 생성 후, 폰트 및 크기 설정
         JLabel yearLabel = new JLabel("년");
         JLabel monthLabel = new JLabel("월");
@@ -52,12 +52,12 @@ public class DateSelectorPanel extends JPanel {
         yearLabel.setFont(smallFont);
         monthLabel.setFont(smallFont);
         dayLabel.setFont(smallFont);
-        
+
         // 🔹 콤보박스 글자 폰트 및 크기 설정
         yearCombo.setFont(smallFont);
         monthCombo.setFont(smallFont);
         dayCombo.setFont(smallFont);
-        
+
         // 🔹 콤보박스 크기 및 간격 설정
         Dimension comboSize = new Dimension(62, 25);
         yearCombo.setPreferredSize(new Dimension(74, 25));
@@ -78,7 +78,7 @@ public class DateSelectorPanel extends JPanel {
         yearCombo.addActionListener(e -> {
             Object yObj = yearCombo.getSelectedItem();
             if (yObj instanceof Integer) {
-            	// 콤보박스 내부 요소엔 '-'와 날짜들이 있음. '-'는 선택한 날짜가 없음 나타냄. 모든 콤보박스는 활성화/비활성화시 '-'로 초기화됨
+                // 콤보박스 내부 요소엔 '-'와 날짜들이 있음. '-'는 선택한 날짜가 없음 나타냄. 모든 콤보박스는 활성화/비활성화시 '-'로 초기화됨
                 // year 선택 -> month 활성화, day 비활성화
                 monthCombo.setEnabled(true);
                 monthCombo.setSelectedItem("-");
@@ -103,7 +103,7 @@ public class DateSelectorPanel extends JPanel {
             if (yObj instanceof Integer && mObj instanceof Integer) {
                 updateDayCombo((int) yObj, (int) mObj);
                 dayCombo.setEnabled(true);
-            // month 선택 안 함 -> day 비활성화
+                // month 선택 안 함 -> day 비활성화
             } else {
                 dayCombo.removeAllItems();
                 dayCombo.addItem("-");
@@ -142,5 +142,5 @@ public class DateSelectorPanel extends JPanel {
         Object d = dayCombo.getSelectedItem();
         return (d instanceof Integer) ? (int) d : -1;
     }
-    
+
 }

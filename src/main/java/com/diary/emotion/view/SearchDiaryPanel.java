@@ -267,6 +267,13 @@ public class SearchDiaryPanel extends JPanel {
             DiaryEntry entry = diaryEntries.get(i);
             LocalDate date = entry.getEntry_date().toLocalDateTime().toLocalDate();
             String displayText = String.format("[%s]  %s", date.format(formatter), entry.getTitle());
+
+            // 수정일이 있으면 표시
+            if (entry.getModify_date() != null) {
+                LocalDate modifyDate = entry.getModify_date().toLocalDateTime().toLocalDate();
+                displayText += String.format(" (수정일: %s)", modifyDate.format(formatter));
+            }
+
             diaryModel.addRow(new Object[]{displayText});
         }
 

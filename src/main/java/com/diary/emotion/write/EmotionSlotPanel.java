@@ -69,6 +69,7 @@ public class EmotionSlotPanel extends JPanel {
         valueField.setPreferredSize(new Dimension(40, 24));
         valueField.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         valueField.setEditable(false); // 초기에는 비활성화 (감정 미선택 상태)
+        valueField.setForeground(Color.GRAY); // 초기 상태는 회색 텍스트
 
         valueField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
@@ -138,6 +139,7 @@ public class EmotionSlotPanel extends JPanel {
                 iconLabel.setFont(UIFonts.EMOJI);
                 // 요구사항 3: 감정 선택 시 수치를 1로 설정
                 valueField.setText("1");
+                valueField.setForeground(Color.BLACK); // 텍스트 색상을 검정색으로 변경
                 // 감정이 선택되면 수치 입력 필드 활성화
                 if (isEditable) {
                     valueField.setEditable(true);
@@ -181,6 +183,7 @@ public class EmotionSlotPanel extends JPanel {
         iconLabel.setBackground(Color.WHITE);
         // 요구사항 3: 초기값은 0
         valueField.setText("0");
+        valueField.setForeground(Color.GRAY); // 회색 텍스트
         // 감정이 선택되지 않은 상태이므로 수치 입력 필드 비활성화
         valueField.setEditable(false);
     }
@@ -190,6 +193,7 @@ public class EmotionSlotPanel extends JPanel {
         iconLabel.setFont(UIFonts.EMOJI);
         iconLabel.setBackground(new Color(255, 250, 240));
         valueField.setText(String.valueOf(level));
+        valueField.setForeground(Color.BLACK); // 텍스트 색상을 검정색으로 설정
         // 감정이 설정되면 수치 입력 필드 활성화 (편집 가능한 경우에만)
         if (isEditable) {
             valueField.setEditable(true);
