@@ -128,7 +128,7 @@ public class SingleIconChooserDialog extends JDialog {
         cancelBtn.setFont(UIFonts.BUTTON);
         cancelBtn.setBackground(Color.WHITE);
         cancelBtn.setFocusPainted(false);
-        cancelBtn.setBorder(new ButtonFactory.RoundedBorder(Color.DARK_GRAY, 1, 10));
+        cancelBtn.setBorder(new ButtonFactory.RoundedBorder(Color.BLACK, 1, 10));
         cancelBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         cancelBtn.setContentAreaFilled(false);
         cancelBtn.setOpaque(false); // 들뜸 방지

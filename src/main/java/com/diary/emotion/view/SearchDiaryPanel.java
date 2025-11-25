@@ -69,7 +69,7 @@ public class SearchDiaryPanel extends JPanel {
         titleFd = StyleUtils.createStyledTextField();
         titleFd.setPreferredSize(new Dimension(380, 30));
         titleFd.setBackground(BG_LIGHT_CREAM);
-        titleFd.setBorder(new LineBorder(Color.DARK_GRAY, 1));
+        titleFd.setBorder(new LineBorder(Color.BLACK, 1));
 
         titleRow.add(titleLb);
         titleRow.add(titleFd);
@@ -163,7 +163,7 @@ public class SearchDiaryPanel extends JPanel {
         diaries.setTableHeader(null);
 
         diaries.setBackground(BG_LIGHT_CREAM);
-        diaries.setGridColor(Color.DARK_GRAY);
+        diaries.setGridColor(Color.BLACK);
         diaries.setShowHorizontalLines(true);
         diaries.setShowVerticalLines(false);
         diaries.setIntercellSpacing(new Dimension(0, 1));
@@ -189,7 +189,7 @@ public class SearchDiaryPanel extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(diaries);
         scrollPane.getViewport().setBackground(BG_LIGHT_CREAM);
-        scrollPane.setBorder(new LineBorder(Color.DARK_GRAY, 1));
+        scrollPane.setBorder(new LineBorder(Color.BLACK, 1));
         // UI 패키지의 ScrollBarStyler 사용
         ScrollBarStyler.applyViewStyle(scrollPane);
 

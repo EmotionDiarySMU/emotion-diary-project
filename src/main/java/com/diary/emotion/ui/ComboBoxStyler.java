@@ -21,7 +21,7 @@ public class ComboBoxStyler {
         comboBox.setFont(UIFonts.BODY_REGULAR);
         comboBox.setBackground(UIColors.BG_LIGHT_CREAM);
         comboBox.setForeground(Color.BLACK);
-        comboBox.setBorder(new LineBorder(Color.DARK_GRAY, 1));
+        comboBox.setBorder(new LineBorder(Color.BLACK, 1));
         comboBox.setPreferredSize(new Dimension(width, 28));
         comboBox.setUI(new FlatComboBoxUI(UIColors.BG_LIGHT_CREAM));
         comboBox.setRenderer(new DateComboRenderer());
@@ -52,7 +52,7 @@ public class ComboBoxStyler {
         comboBox.setBackground(UIColors.BG_LIGHT_CREAM);
         comboBox.setOpaque(true);
         comboBox.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(Color.DARK_GRAY, 1),
+                new LineBorder(Color.BLACK, 1),
                 BorderFactory.createEmptyBorder(2, 2, 2, 2)
         ));
         comboBox.setUI(new SearchComboBoxUI());
@@ -87,7 +87,7 @@ public class ComboBoxStyler {
                     int x = (w - size) / 2;
                     int y = (h - size) / 2 + 1;
 
-                    g2.setColor(Color.DARK_GRAY);
+                    g2.setColor(Color.BLACK);
                     int[] xPoints = {x, x + size, x + size / 2};
                     int[] yPoints = {y, y, y + size - 1};
                     g2.fillPolygon(xPoints, yPoints, 3);
@@ -110,7 +110,7 @@ public class ComboBoxStyler {
         @Override
         protected ComboPopup createPopup() {
             BasicComboPopup popup = (BasicComboPopup) super.createPopup();
-            popup.setBorder(new LineBorder(Color.DARK_GRAY, 1));
+            popup.setBorder(new LineBorder(Color.BLACK, 1));
             // 팝업의 스크롤 패널에 스타일 적용 (나중에 적용되도록 invokeLater 사용)
             SwingUtilities.invokeLater(() -> {
                 JScrollPane scrollPane = getScrollPane(popup);
@@ -140,7 +140,7 @@ public class ComboBoxStyler {
             BasicArrowButton button = new BasicArrowButton(
                     BasicArrowButton.SOUTH,
                     Color.WHITE,        // 배경색
-                    Color.LIGHT_GRAY,   // 그림자
+                    Color.BLACK,        // 그림자
                     Color.BLACK,        // 화살표 색상 (검정색)
                     Color.WHITE         // 하이라이트
             );
@@ -188,7 +188,7 @@ public class ComboBoxStyler {
             BasicArrowButton button = new BasicArrowButton(
                     BasicArrowButton.SOUTH,
                     UIColors.BG_LIGHT_CREAM,
-                    Color.LIGHT_GRAY,
+                    Color.BLACK,
                     Color.BLACK,
                     UIColors.BG_LIGHT_CREAM
             );

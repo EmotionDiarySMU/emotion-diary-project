@@ -30,6 +30,7 @@ public class UIFonts {
 
     // 라벨 폰트
     public static final Font LABEL_FONT = createFont(Font.PLAIN, 14);
+    public static final Font DATE_LABEL_FONT = createFont(Font.BOLD, 16); // 날짜 라벨용 폰트
 
     /**
      * 지정된 스타일과 크기로 폰트를 생성합니다.

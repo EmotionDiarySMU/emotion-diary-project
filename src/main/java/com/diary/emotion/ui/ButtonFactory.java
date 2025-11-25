@@ -39,7 +39,7 @@ public class ButtonFactory {
         btn.setBackground(bg);
         btn.setForeground(fg);
         btn.setFocusPainted(false);
-        btn.setBorder(new RoundedBorder(Color.DARK_GRAY, 1, 10));
+        btn.setBorder(new RoundedBorder(Color.BLACK, 1, 10));
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btn.setContentAreaFilled(false);
         btn.setOpaque(false); // 들뜸 방지
@@ -84,7 +84,7 @@ public class ButtonFactory {
         btn.setBackground(Color.WHITE);
         btn.setForeground(Color.BLACK);
         btn.setFocusPainted(false);
-        btn.setBorder(new RoundedBorder(Color.DARK_GRAY, 1, 10));
+        btn.setBorder(new RoundedBorder(Color.BLACK, 1, 10));
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btn.setContentAreaFilled(false);
         btn.setOpaque(false); // 들뜸 방지

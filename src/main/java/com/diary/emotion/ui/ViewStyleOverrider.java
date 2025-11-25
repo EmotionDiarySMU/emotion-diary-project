@@ -31,7 +31,6 @@ public class ViewStyleOverrider {
     // [배경색]
     // 전체 배경 (연한 살구색)
     private static final Color MAIN_BG_COLOR = UIColors.BG_VIEW;
-    // 감정 이모지 칸 주변 배경 (진한 살구색: r255, g160, b122)
     private static final Color EMOTION_AREA_BG = UIColors.BG_VIEW;
 
     /**
@@ -56,7 +55,7 @@ public class ViewStyleOverrider {
     public static void applyStyle(ViewDiaryPanel panel) {
         // ViewDiaryPanel에 특화된 스타일 적용 로직
         panel.setBackground(UIColors.BG_VIEW);
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // 여백 설정 제거 - container에 이미 EmptyBorder(20, 30, 30, 30) 설정되어 있음
 
         // 2. 재귀적으로 모든 컴포넌트 탐색 및 스타일링
         updateComponentStyles(panel);
@@ -75,7 +74,8 @@ public class ViewStyleOverrider {
         }
         // ModifyPanel에 특화된 스타일 적용 로직
         panel.setBackground(UIColors.BG_VIEW);
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // 여백 설정 제거 - container에 이미 EmptyBorder(20, 30, 30, 30) 설정되어 있음
+
         // ModifyPanel 내부 컴포넌트 스타일 적용
         updateComponentStyles(panel);
 
@@ -85,7 +85,7 @@ public class ViewStyleOverrider {
 
         // 추가 스타일링: 날짜 라벨
         if (panel.dateLabel != null) {
-            panel.dateLabel.setFont(UIFonts.LABEL_FONT);
+            panel.dateLabel.setFont(UIFonts.DATE_LABEL_FONT);
             panel.dateLabel.setForeground(UIColors.TEXT_PRIMARY);
         }
     }
@@ -100,6 +100,11 @@ public class ViewStyleOverrider {
             // 1. 텍스트 필드 (제목, 감정 수치, 스트레스 수치)
             // -------------------------------------------------------
             if (c instanceof JTextField field) {
+                // stressValueField는 스타일 변경에서 제외 (편집 가능 유지)
+                if ("stressValueField".equals(field.getName())) {
+                    // 스트레스 수치 입력 필드는 건드리지 않음
+                    continue;
+                }
                 removeFocusListeners(field);
                 field.setBorder(STYLED_BORDER);
                 field.setBackground(Color.WHITE);

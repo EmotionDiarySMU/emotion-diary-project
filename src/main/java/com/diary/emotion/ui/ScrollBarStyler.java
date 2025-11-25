@@ -19,7 +19,7 @@ public class ScrollBarStyler {
         private final Color customTrackColor;
 
         public FlatScrollBarUI() {
-            this(Color.LIGHT_GRAY, UIColors.BG_LIGHT_CREAM);
+            this(Color.BLACK, UIColors.BG_LIGHT_CREAM);
         }
 
         public FlatScrollBarUI(Color thumbColor, Color trackColor) {
@@ -103,7 +103,7 @@ public class ScrollBarStyler {
      * @param scrollPane 스타일을 적용할 스크롤 패널
      */
     public static void applyViewStyle(JScrollPane scrollPane) {
-        applyFlatStyle(scrollPane, Color.GRAY, UIColors.BG_LIGHT_CREAM);
+        applyFlatStyle(scrollPane, Color.BLACK, UIColors.BG_LIGHT_CREAM);
     }
 
     /**
@@ -111,7 +111,7 @@ public class ScrollBarStyler {
      * @param scrollPane 스타일을 적용할 스크롤 패널
      */
     public static void applyWriteStyle(JScrollPane scrollPane) {
-        applyFlatStyle(scrollPane, Color.GRAY, UIColors.BG_WRITE);
+        applyFlatStyle(scrollPane, Color.BLACK, UIColors.BG_WRITE);
     }
 
     /**
@@ -119,7 +119,7 @@ public class ScrollBarStyler {
      * @param scrollPane 스타일을 적용할 스크롤 패널
      */
     public static void applyStatsStyle(JScrollPane scrollPane) {
-        applyFlatStyle(scrollPane, Color.GRAY, UIColors.BG_STATS);
+        applyFlatStyle(scrollPane, Color.BLACK, UIColors.BG_STATS);
     }
 }
 

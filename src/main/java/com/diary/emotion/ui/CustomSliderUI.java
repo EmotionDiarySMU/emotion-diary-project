@@ -34,7 +34,7 @@ public class CustomSliderUI extends BasicSliderUI {
     protected void calculateTickRect() {
         super.calculateTickRect();
         // 눈금 위치 조정 (필요시 값 변경)
-        tickRect.y += -4; // 양수: 아래로 이동, 음수: 위로 이동
+        tickRect.y -= 4; // 양수: 위로 이동, 음수: 아래로 이동
     }
 
     /**
@@ -44,7 +44,7 @@ public class CustomSliderUI extends BasicSliderUI {
     protected void calculateLabelRect() {
         super.calculateLabelRect();
         // 숫자 위치 조정 (필요시 값 변경)
-        labelRect.y += -4; // 양수: 아래로 이동, 음수: 위로 이동
+        labelRect.y -= 4; // 양수: 위로 이동, 음수: 아래로 이동
     }
 
     /**
@@ -107,5 +107,42 @@ public class CustomSliderUI extends BasicSliderUI {
     protected Dimension getThumbSize() {
         // 동그라미(8px) + 테두리(1.5px) + 최소 여유공간 = 12px
         return new Dimension(12, 12); // 16 -> 12로 축소
+    }
+
+    /**
+     * 레이블(숫자)을 그릴 때 비활성화 상태에서도 검은색으로 표시
+     */
+    @Override
+    public void paintLabels(Graphics g) {
+        // 슬라이더가 비활성화되어 있어도 레이블을 검은색으로 표시
+        if (slider.getLabelTable() != null) {
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setColor(Color.BLACK); // 레이블 색상을 검은색으로 강제 설정
+
+            // 기존 foreground 색상 저장
+            Color originalColor = slider.getForeground();
+
+            // 일시적으로 foreground를 검은색으로 변경
+            slider.setForeground(Color.BLACK);
+
+            // 부모 클래스의 paintLabels 호출
+            super.paintLabels(g2d);
+
+            // 원래 색상 복원
+            slider.setForeground(originalColor);
+
+            g2d.dispose();
+        }
+    }
+
+    /**
+     * 눈금(틱)을 그릴 때 비활성화 상태에서도 검은색으로 표시
+     */
+    @Override
+    public void paintTicks(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g.create();
+        g2d.setColor(Color.BLACK); // 눈금 색상을 검은색으로 강제 설정
+        super.paintTicks(g2d);
+        g2d.dispose();
     }
 }

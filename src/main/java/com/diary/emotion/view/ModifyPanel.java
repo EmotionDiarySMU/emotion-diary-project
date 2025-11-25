@@ -44,7 +44,6 @@ public class ModifyPanel extends JPanel {
     public boolean isModified = false;
 
     public JLabel dateLabel; // 날짜 라벨 추가
-    private JLabel stressValueLabel; // 스트레스 수치 표시 라벨 추가
 
     private static final Font LABEL_FONT = new Font(BODY_REGULAR.getName(), Font.BOLD, 16);
     private static final Font INPUT_FONT = BODY_REGULAR;
@@ -56,22 +55,11 @@ public class ModifyPanel extends JPanel {
         initializeUI();
         setupButtonPanel();
 
-        // 날짜 라벨 초기화
-        dateLabel = new JLabel("날짜를 선택하세요");
-        dateLabel.setFont(LABEL_FONT);
-        dateLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        add(dateLabel, BorderLayout.NORTH);
-
         // 스타일 적용
         ViewStyleOverrider.applyStyle(this);
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        // ViewStyleOverrider를 사용하여 스타일 적용
-        ViewStyleOverrider.applyStyle(this);
-    }
+    // paintComponent에서 스타일 오버라이더 제거 - 생성자에서만 한 번 적용
 
     private void initializeUI() {
         JPanel container = new JPanel(new GridBagLayout());
@@ -81,10 +69,20 @@ public class ModifyPanel extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(0, 0, 15, 0);
 
+        // 날짜 라벨 초기화 및 추가 (ViewDiaryPanel과 동일한 스타일)
+        dateLabel = new JLabel("", SwingConstants.LEFT);
+        dateLabel.setFont(DATE_LABEL_FONT);
+        gbc.gridx = 0; gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(0, 0, 15, 0);
+        container.add(dateLabel, gbc);
+
         // 제목 영역
         JLabel titleLabel = new JLabel("제목 :", SwingConstants.CENTER);
         titleLabel.setFont(LABEL_FONT);
-        gbc.gridx = 0; gbc.gridy = 0;
+        gbc.gridx = 0; gbc.gridy = 1;
         gbc.gridwidth = 1;
         gbc.weightx = 0;
         gbc.fill = GridBagConstraints.NONE;
@@ -97,7 +95,7 @@ public class ModifyPanel extends JPanel {
         titleField.setPreferredSize(new Dimension(100, 30));
         titleField.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         addChangeListener(titleField);
-        gbc.gridx = 1; gbc.gridy = 0;
+        gbc.gridx = 1; gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 0, 15, 0);
@@ -114,9 +112,9 @@ public class ModifyPanel extends JPanel {
         contentScrollPane = new JScrollPane(contentArea);
         contentScrollPane.setPreferredSize(new Dimension(100, 200));
         contentScrollPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        ScrollBarStyler.applyWriteStyle(contentScrollPane);
+        ScrollBarStyler.applyViewStyle(contentScrollPane);
 
-        gbc.gridx = 0; gbc.gridy = 1;
+        gbc.gridx = 0; gbc.gridy = 2;
         gbc.gridwidth = 2;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
@@ -127,7 +125,7 @@ public class ModifyPanel extends JPanel {
         // 감정 영역
         JLabel emotionLabel = new JLabel("<html><center>감정<br>수치</center></html>", SwingConstants.CENTER);
         emotionLabel.setFont(LABEL_FONT);
-        gbc.gridx = 0; gbc.gridy = 2;
+        gbc.gridx = 0; gbc.gridy = 3;
         gbc.gridwidth = 1;
         gbc.weightx = 0;
         gbc.weighty = 0;
@@ -146,7 +144,7 @@ public class ModifyPanel extends JPanel {
             emotionPanel.add(emotionSlots[i]);
         }
 
-        gbc.gridx = 1; gbc.gridy = 2;
+        gbc.gridx = 1; gbc.gridy = 3;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 0, 15, 0);
@@ -155,7 +153,7 @@ public class ModifyPanel extends JPanel {
         // 스트레스 영역
         JLabel stressLabel = new JLabel("<html><center>스트레스<br>수치</center></html>", SwingConstants.CENTER);
         stressLabel.setFont(LABEL_FONT);
-        gbc.gridx = 0; gbc.gridy = 3;
+        gbc.gridx = 0; gbc.gridy = 4;
         gbc.gridwidth = 1;
         gbc.weightx = 0;
         gbc.fill = GridBagConstraints.NONE;
@@ -167,19 +165,23 @@ public class ModifyPanel extends JPanel {
         stressPanel.setBackground(BG_VIEW);
         GridBagConstraints sbc = new GridBagConstraints();
 
-        // 스트레스 수치 입력 필드 초기화 (이동)
+        // 스트레스 수치 입력 필드 초기화
         stressValueField = new JTextField();
-        stressValueField.setFont(INPUT_FONT);
-        stressValueField.setPreferredSize(new Dimension(40, 24));
+        stressValueField.setName("stressValueField"); // 식별용 이름 설정
+        stressValueField.setFont(BODY_SMALL); // 12px 폰트 사용
+        stressValueField.setPreferredSize(new Dimension(45, 28)); // 크기 확대: 40→50, 24→28
         stressValueField.setHorizontalAlignment(SwingConstants.CENTER);
+        stressValueField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Color.BLACK),
+            BorderFactory.createEmptyBorder(2, 4, 2, 4) // 상하 2px, 좌우 4px 패딩
+        ));
+        stressValueField.setBackground(Color.WHITE);
+        stressValueField.setEditable(true); // 명시적으로 편집 가능 설정
         // 초기값은 fillEntry에서 설정
 
-        stressValueLabel = new JLabel(""); // 초기 텍스트는 빈 문자열, fillEntry에서 설정
-        stressValueLabel.setFont(new Font(BODY_REGULAR.getName(), Font.PLAIN, 12));
-        stressValueLabel.setPreferredSize(new Dimension(40, 24));
-        stressValueLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        // 스트레스 수치 입력 필드를 패널에 추가
         sbc.gridx = 0; sbc.weightx = 0; sbc.insets = new Insets(0, 0, 0, 10);
-        stressPanel.add(stressValueLabel, sbc);
+        stressPanel.add(stressValueField, sbc);
 
         stressSlider = new JSlider(0, 100, 50);
         stressSlider.setBackground(BG_VIEW);
@@ -191,11 +193,12 @@ public class ModifyPanel extends JPanel {
         stressSlider.setPaintTicks(true);
         stressSlider.setPaintLabels(true);
         stressSlider.setFont(new Font("SansSerif", Font.PLAIN, 8));
+        stressSlider.setForeground(Color.BLACK); // 눈금 색상을 검은색으로 설정
         stressSlider.setUI(new CustomSliderUI(stressSlider));
 
         stressSlider.addChangeListener(e -> {
-            stressValueField.setText(String.valueOf(stressSlider.getValue()));
-            stressValueLabel.setText(String.valueOf(stressSlider.getValue())); // 슬라이더 값 변경 시 라벨 업데이트
+            int value = stressSlider.getValue();
+            stressValueField.setText(String.valueOf(value));
             isModified = true;
             stressSlider.repaint();
         });
@@ -203,7 +206,9 @@ public class ModifyPanel extends JPanel {
         stressValueField.addActionListener(e -> {
             try {
                 int val = Integer.parseInt(stressValueField.getText());
-                stressSlider.setValue(val);
+                if (val >= 0 && val <= 100) {
+                    stressSlider.setValue(val);
+                }
             } catch(NumberFormatException ex) {
                 // 예외 발생 시 무시
             }
@@ -219,7 +224,7 @@ public class ModifyPanel extends JPanel {
                         String text = stressValueField.getText();
                         if(!text.isEmpty()) {
                             int val = Integer.parseInt(text);
-                            if(val != stressSlider.getValue()) {
+                            if(val >= 0 && val <= 100 && val != stressSlider.getValue()) {
                                 stressSlider.setValue(val);
                             }
                         }
@@ -234,7 +239,7 @@ public class ModifyPanel extends JPanel {
         sbc.gridx = 1; sbc.weightx = 1.0; sbc.fill = GridBagConstraints.HORIZONTAL; sbc.insets = new Insets(0, 0, 0, 0);
         stressPanel.add(stressSlider, sbc);
 
-        gbc.gridx = 1; gbc.gridy = 3;
+        gbc.gridx = 1; gbc.gridy = 4;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 0, 20, 0);
@@ -243,7 +248,7 @@ public class ModifyPanel extends JPanel {
         // 하단 버튼 영역 placeholder
         southPanel = new JPanel(new GridBagLayout());
         southPanel.setBackground(BG_VIEW);
-        gbc.gridx = 0; gbc.gridy = 4;
+        gbc.gridx = 0; gbc.gridy = 5;
         gbc.gridwidth = 2;
         gbc.weightx = 1.0;
         gbc.weighty = 0;
@@ -262,17 +267,28 @@ public class ModifyPanel extends JPanel {
         gbc.fill = GridBagConstraints.NONE;
         gbc.insets = new Insets(0, 0, 0, 0);
 
+        // 취소 버튼 (왼쪽)
         cancelBtn = ButtonFactory.createCustomButton("취소", Color.WHITE, UIColors.TEXT_PRIMARY);
         gbc.gridx = 0;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         southPanel.add(cancelBtn, gbc);
 
+        // 수정완료 버튼 (중앙)
         fineditBtn = ButtonFactory.createCustomButton("수정완료", Color.WHITE, UIColors.TEXT_PRIMARY);
         gbc.gridx = 1;
         gbc.weightx = 0.0;
         gbc.anchor = GridBagConstraints.CENTER;
         southPanel.add(fineditBtn, gbc);
+
+        // 오른쪽 빈 여백 (중앙 정렬을 위한 균형 맞추기)
+        JPanel spacer = new JPanel();
+        spacer.setBackground(BG_VIEW);
+        spacer.setOpaque(false);
+        gbc.gridx = 2;
+        gbc.weightx = 1.5;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        southPanel.add(spacer, gbc);
     }
 
     private void addChangeListener(JTextComponent textComp) {
@@ -291,7 +307,6 @@ public class ModifyPanel extends JPanel {
         int stressLevel = entry.getStress_level();
         stressSlider.setValue(stressLevel);
         stressValueField.setText(String.valueOf(stressLevel));
-        stressValueLabel.setText(String.valueOf(stressLevel)); // 저장된 스트레스 수치로 라벨 업데이트
 
         List<Emotion> emotions = entry.getEmotions();
         for (int i = 0; i < 4; i++) {
@@ -312,6 +327,11 @@ public class ModifyPanel extends JPanel {
         } else {
             dateLabel.setText("");
         }
+
+        // 감정 영역 스타일 적용 (ModifyPanel용: WHITE)
+        EmotionPanelStyler.applyModifyEmotionAreaStyle(this);
+        this.revalidate();
+        this.repaint();
     }
 
     public void saveOrFinish() {

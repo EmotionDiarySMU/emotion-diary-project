@@ -47,10 +47,6 @@ public class ViewDiaryPanel extends JPanel {
         setLayout(new BorderLayout());
         setBackground(BG_VIEW);
 
-        dateLabel = new JLabel(); // 초기화 추가
-        dateLabel.setFont(new Font("Arial", Font.BOLD, 14)); // 스타일 설정
-        dateLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        add(dateLabel, BorderLayout.NORTH); // 레이아웃에 추가
 
         initializeUI();
         setupButtonPanel();
@@ -66,7 +62,7 @@ public class ViewDiaryPanel extends JPanel {
 
         // 날짜 라벨 초기화 및 추가
         dateLabel = new JLabel("", SwingConstants.LEFT);
-        dateLabel.setFont(new Font(BODY_REGULAR.getName(), Font.BOLD, 16));
+        dateLabel.setFont(DATE_LABEL_FONT);
         gbc.gridx = 0; gbc.gridy = 0;
         gbc.gridwidth = 2;
         gbc.weightx = 1.0;
@@ -108,7 +104,7 @@ public class ViewDiaryPanel extends JPanel {
         contentScrollPane = new JScrollPane(contentArea);
         contentScrollPane.setPreferredSize(new Dimension(100, 200));
         contentScrollPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        ScrollBarStyler.applyWriteStyle(contentScrollPane);
+        ScrollBarStyler.applyViewStyle(contentScrollPane);
 
         gbc.gridx = 0; gbc.gridy = 2;
         gbc.gridwidth = 2;
@@ -166,7 +162,7 @@ public class ViewDiaryPanel extends JPanel {
         stressValueField = new JTextField("50", 3);
         stressValueField.setHorizontalAlignment(JTextField.CENTER);
         stressValueField.setFont(new Font(BODY_REGULAR.getName(), Font.PLAIN, 12));
-        stressValueField.setPreferredSize(new Dimension(40, 24));
+        stressValueField.setPreferredSize(new Dimension(45, 28));
         stressValueField.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         stressValueField.setEditable(false); // 조회 전용으로 편집 불가
         stressValueField.setBackground(BG_LIGHT_CREAM); // 배경색 설정
@@ -175,14 +171,29 @@ public class ViewDiaryPanel extends JPanel {
 
         stressSlider = new JSlider(0, 100, 50);
         stressSlider.setBackground(BG_VIEW);
+        stressSlider.setOpaque(true);
         stressSlider.setPreferredSize(new Dimension(150, 35));
         stressSlider.setMajorTickSpacing(25);
         stressSlider.setMinorTickSpacing(5);
         stressSlider.setPaintTicks(true);
         stressSlider.setPaintLabels(true);
         stressSlider.setFont(new Font("SansSerif", Font.PLAIN, 8));
+        stressSlider.setForeground(Color.BLACK); // 눈금 색상을 검은색으로 설정
         stressSlider.setUI(new CustomSliderUI(stressSlider));
-        stressSlider.setEnabled(false); // 조회 전용으로 비활성화
+        // 조회 전용: 활성화 상태로 두되, 마우스/키보드 입력을 막음
+        stressSlider.setFocusable(false);
+        stressSlider.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mousePressed(java.awt.event.MouseEvent e) {
+                e.consume(); // 마우스 클릭 무시
+            }
+        });
+        stressSlider.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(java.awt.event.MouseEvent e) {
+                e.consume(); // 드래그 무시
+            }
+        });
         sbc.gridx = 1; sbc.weightx = 1.0; sbc.fill = GridBagConstraints.HORIZONTAL; sbc.insets = new Insets(0, 0, 0, 0);
         stressPanel.add(stressSlider, sbc);
 
@@ -270,5 +281,10 @@ public class ViewDiaryPanel extends JPanel {
         } else {
             dateLabel.setText("");
         }
+
+        // 감정 영역 스타일 적용 (ViewDiaryPanel용: BG_LIGHT_CREAM)
+        EmotionPanelStyler.applyViewEmotionAreaStyle(this);
+        this.revalidate();
+        this.repaint();
     }
 }
