@@ -141,11 +141,18 @@ public class SignUpPanel extends JPanel {
             return;
         }
 
-        boolean success = DatabaseManager.registerUser(id, pw);
-        if (success) {
-            parent.showSuccess(id);
-        } else {
-            setErrorMessage("이미 존재하는 아이디이거나 오류가 발생했습니다.");
+        int result = DatabaseManager.registerUser(id, pw);
+
+        switch (result) {
+            case 1: // 성공
+                parent.showSuccess(id);
+                break;
+            case 0: // 중복
+                setErrorMessage("이미 존재하는 아이디입니다.");
+                break;
+            case -1: // DB 에러
+                setErrorMessage("회원가입 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+                break;
         }
     }
 

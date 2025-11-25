@@ -363,4 +363,88 @@ public class ModifyPanel extends JPanel {
 
         return currentEntry;
     }
+
+    // =========================================
+    // 검증 메서드들 (backend-code에서 가져옴)
+    // =========================================
+
+    /**
+     * 감정 수치 검증 (0-100 범위)
+     * @param slotIndex 슬롯 인덱스
+     * @return 검증 성공 여부
+     */
+    public boolean validateAndSaveEmotionValue(int slotIndex) {
+        if (slotIndex < 0 || slotIndex >= 4) {
+            return false;
+        }
+
+        try {
+            String text = valueFields[slotIndex].getText().trim();
+            if (text.isEmpty()) {
+                return true; // 빈 값은 허용
+            }
+
+            int value = Integer.parseInt(text);
+
+            if (value < 0 || value > 100) {
+                JOptionPane.showMessageDialog(this,
+                    "감정 수치는 0~100 사이여야 합니다.",
+                    "입력 오류",
+                    JOptionPane.ERROR_MESSAGE);
+                valueFields[slotIndex].setText("0");
+                return false;
+            }
+
+            return true;
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this,
+                "숫자만 입력 가능합니다.",
+                "입력 오류",
+                JOptionPane.ERROR_MESSAGE);
+            valueFields[slotIndex].setText("0");
+            return false;
+        }
+    }
+
+    /**
+     * 스트레스 수치 검증 및 동기화 (0-100 범위)
+     * @return 검증 성공 여부
+     */
+    public boolean validateAndSaveStressValue() {
+        try {
+            String text = stressValueField.getText().trim();
+            if (text.isEmpty()) {
+                stressValueField.setText("50");
+                stressSlider.setValue(50);
+                return true;
+            }
+
+            int value = Integer.parseInt(text);
+
+            if (value < 0 || value > 100) {
+                JOptionPane.showMessageDialog(this,
+                    "스트레스 수치는 0~100 사이여야 합니다.",
+                    "입력 오류",
+                    JOptionPane.ERROR_MESSAGE);
+                stressValueField.setText(String.valueOf(stressSlider.getValue()));
+                return false;
+            }
+
+            // 슬라이더와 동기화
+            if (stressSlider.getValue() != value) {
+                stressSlider.setValue(value);
+            }
+
+            return true;
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this,
+                "숫자만 입력 가능합니다.",
+                "입력 오류",
+                JOptionPane.ERROR_MESSAGE);
+            stressValueField.setText(String.valueOf(stressSlider.getValue()));
+            return false;
+        }
+    }
 }

@@ -17,7 +17,6 @@ import com.diary.emotion.main.MainView;
 import com.diary.emotion.ui.CustomSliderUI;
 import com.diary.emotion.ui.ButtonFactory;
 import com.diary.emotion.ui.ScrollBarStyler;
-import com.diary.emotion.ui.ViewStyleOverrider;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -436,9 +435,17 @@ public class WriteDiaryGUI extends JPanel {
                 this,
                 "오늘의 질문: " + displayedQuestion + "\n\n이 질문에 대한 답변으로 저장하시겠습니까?",
                 "질문 답변 여부",
-                JOptionPane.YES_NO_OPTION
+                JOptionPane.YES_NO_CANCEL_OPTION
         );
-        saveEntry(result == JOptionPane.YES_OPTION);
+
+        if (result == JOptionPane.YES_OPTION) {
+            // YES: 질문에 대한 답변으로 저장
+            saveEntry(true);
+        } else if (result == JOptionPane.NO_OPTION) {
+            // NO: 질문과 관계없이 일반 일기로 저장
+            saveEntry(false);
+        }
+        // CANCEL 또는 창 닫기: 아무것도 하지 않음 (저장 취소)
     }
 
     private void saveEntry(boolean isAnswerToQuestion) {
@@ -522,5 +529,113 @@ public class WriteDiaryGUI extends JPanel {
         }
         isModified = false;
     }
-}
 
+    // =========================================
+    // 검증 메서드들 (backend-code에서 가져옴)
+    // =========================================
+
+    /**
+     * 감정 수치 검증 (0-100 범위)
+     * @param slotIndex 슬롯 인덱스
+     * @return 검증 성공 여부
+     */
+    public boolean validateAndSaveEmotionValue(int slotIndex) {
+        if (slotIndex < 0 || slotIndex >= emotionSlots.length) {
+            return false;
+        }
+
+        try {
+            String text = valueFields[slotIndex].getText().trim();
+            if (text.isEmpty()) {
+                return true; // 빈 값은 허용
+            }
+
+            int value = Integer.parseInt(text);
+
+            if (value < 0 || value > 100) {
+                JOptionPane.showMessageDialog(this,
+                    "감정 수치는 0~100 사이여야 합니다.",
+                    "입력 오류",
+                    JOptionPane.ERROR_MESSAGE);
+                valueFields[slotIndex].setText("0");
+                return false;
+            }
+
+            return true;
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this,
+                "숫자만 입력 가능합니다.",
+                "입력 오류",
+                JOptionPane.ERROR_MESSAGE);
+            valueFields[slotIndex].setText("0");
+            return false;
+        }
+    }
+
+    /**
+     * 스트레스 수치 검증 및 동기화 (0-100 범위)
+     * @return 검증 성공 여부
+     */
+    public boolean validateAndSaveStressValue() {
+        try {
+            String text = stressValueField.getText().trim();
+            if (text.isEmpty()) {
+                stressValueField.setText("50");
+                stressSlider.setValue(50);
+                return true;
+            }
+
+            int value = Integer.parseInt(text);
+
+            if (value < 0 || value > 100) {
+                JOptionPane.showMessageDialog(this,
+                    "스트레스 수치는 0~100 사이여야 합니다.",
+                    "입력 오류",
+                    JOptionPane.ERROR_MESSAGE);
+                stressValueField.setText(String.valueOf(stressSlider.getValue()));
+                return false;
+            }
+
+            // 슬라이더와 동기화
+            if (stressSlider.getValue() != value) {
+                stressSlider.setValue(value);
+            }
+
+            return true;
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this,
+                "숫자만 입력 가능합니다.",
+                "입력 오류",
+                JOptionPane.ERROR_MESSAGE);
+            stressValueField.setText(String.valueOf(stressSlider.getValue()));
+            return false;
+        }
+    }
+
+    /**
+     * 저장 여부 확인 후 초기화
+     * backend-code의 checkAndClear 메서드 이식
+     */
+    public void checkAndClear() {
+        if (isModified) {
+            int result = JOptionPane.showConfirmDialog(
+                this,
+                "작성 중인 내용이 있습니다. 저장하지 않고 초기화하시겠습니까?",
+                "확인",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+            );
+
+            if (result == JOptionPane.YES_OPTION) {
+                clearAllFields();
+                isModified = false;
+            }
+            // NO를 선택하면 아무것도 하지 않음
+        } else {
+            // 수정된 내용이 없으면 바로 초기화
+            clearAllFields();
+        }
+    }
+}

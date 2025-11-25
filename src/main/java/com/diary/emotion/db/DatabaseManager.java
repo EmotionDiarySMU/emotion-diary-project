@@ -123,7 +123,7 @@ public class DatabaseManager {
     }
 
     // 2. 회원가입 기능: 성공(1), 중복ID(0), 에러(-1) 반환
-    public static boolean registerUser(String id, String pw) {
+    public static int registerUser(String id, String pw) {
         String checkSql = "SELECT user_id FROM user WHERE user_id = ?";
         String insertSql = "INSERT INTO user (user_id, user_pw) VALUES (?, ?)";
 
@@ -133,7 +133,7 @@ public class DatabaseManager {
             try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
                 checkStmt.setString(1, id);
                 try (ResultSet rs = checkStmt.executeQuery()) {
-                    if (rs.next()) return false;
+                    if (rs.next()) return 0; // 중복
                 }
             }
 
@@ -142,13 +142,13 @@ public class DatabaseManager {
                 insertStmt.setString(1, id);
                 insertStmt.setString(2, pw);
                 insertStmt.executeUpdate();
-                return true;
+                return 1; // 성공
             }
 
         } catch (Exception e) {
             e.printStackTrace();
+            return -1; // DB 에러
         }
-        return false;
     }
 
     // 2. 일기 항목을 DB에 삽입하는 메소드

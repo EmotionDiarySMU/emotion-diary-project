@@ -136,7 +136,22 @@ public class ExtraWindow extends JFrame {
     }
 
     private void updateEntry(DiaryEntry entry) {
-        // ModifyPanel에서 업데이트된 엔트리 가져오기
+        // 1. 스트레스 수치 검증
+        if (!modifyPanel.validateAndSaveStressValue()) {
+            return; // 검증 실패 시 저장 중단
+        }
+
+        // 2. 감정 수치 검증 (모든 슬롯)
+        for (int i = 0; i < 4; i++) {
+            String icon = modifyPanel.iconLabels[i].getText();
+            if (!icon.equals("+")) { // 감정이 선택된 경우만 검증
+                if (!modifyPanel.validateAndSaveEmotionValue(i)) {
+                    return; // 검증 실패 시 저�� 중단
+                }
+            }
+        }
+
+        // 3. ModifyPanel에서 업데이트된 엔트리 가져오기
         DiaryEntry updatedEntry = modifyPanel.getUpdatedEntry();
 
         if (updatedEntry == null) {
@@ -152,7 +167,7 @@ public class ExtraWindow extends JFrame {
             return;
         }
 
-        // DB 업데이트
+        // 4. DB 업데이트
         boolean success = DatabaseManager.updateEntry(updatedEntry);
 
         if (success) {
