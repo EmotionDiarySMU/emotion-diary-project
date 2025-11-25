@@ -49,8 +49,8 @@ public class SignUpSuccessPanel extends JPanel {
 
         // 완료 텍스트
         gbc.gridy = 2;
-        gbc.insets = new Insets(0, 0, 30, 0);
-        JLabel mainText = new JLabel("환영합니다!");
+        gbc.insets = new Insets(0, 0, 100, 0);
+        JLabel mainText = new JLabel("");
         mainText.setFont(new Font(H2.getName(), Font.PLAIN, 18));
         mainText.setForeground(TEXT_PRIMARY);
         mainText.setHorizontalAlignment(SwingConstants.CENTER);
@@ -62,12 +62,14 @@ public class SignUpSuccessPanel extends JPanel {
         JButton loginButton = ButtonFactory.createCustomButton("로그인 하러 가기 (5초 후 자동)", Color.WHITE, Color.BLACK, 200, 40);
         loginButton.addActionListener(e -> {
             timer.stop();
+            parent.getLoginPanel().clearFields();
             parent.showPanel("LOGIN");
         });
         add(loginButton, gbc);
 
         // 타이머 설정 (5초)
         timer = new Timer(5000, e -> {
+            parent.getLoginPanel().clearFields();
             parent.showPanel("LOGIN");
             timer.stop();
         });

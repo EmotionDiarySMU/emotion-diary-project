@@ -141,5 +141,10 @@ public class LoginPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "아이디 또는 비밀번호가 일치하지 않습니다.", "로그인 실패", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    public void clearFields() {
+        idField.setText("");
+        pwField.setText("");
+    }
 }
 

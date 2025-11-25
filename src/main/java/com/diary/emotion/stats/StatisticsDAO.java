@@ -60,10 +60,6 @@ public class StatisticsDAO {
         data.put("횟수", new HashMap<>());
         data.put("수치", new HashMap<>());
 
-        System.out.println("=== 감정 데이터 조회 ===");
-        System.out.println("사용자: " + AuthenticationFrame.loggedInUserId);
-        System.out.println("기간: " + startDate + " ~ " + endDate);
-
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sqlCount)) {
 
@@ -76,14 +72,11 @@ public class StatisticsDAO {
                     String emojiIcon = rs.getString(1);
                     double count = rs.getDouble(2);
                     data.get("횟수").put(emojiIcon, count);
-                    System.out.println("  횟수 - " + emojiIcon + ": " + count);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        System.out.println("쿼리(수치): " + sqlValue);
 
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sqlValue)) {
@@ -93,23 +86,16 @@ public class StatisticsDAO {
             pstmt.setObject(3, endDate);
 
             try (ResultSet rs = pstmt.executeQuery()) {
-                int rowCount = 0;
                 while (rs.next()) {
-                    rowCount++;
                     String emojiIcon = rs.getString(1);
                     double avgLevel = rs.getDouble(2);
                     data.get("수치").put(emojiIcon, avgLevel);
-                    System.out.println("  [" + rowCount + "] 수치 - '" + emojiIcon + "' (길이:" + emojiIcon.length() + "): " + avgLevel);
                 }
-                System.out.println("총 조회된 이모지 종류(수치): " + rowCount + "개");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        System.out.println("최종 데이터 - 횟수 맵 크기: " + data.get("횟수").size() + "개");
-        System.out.println("최종 데이터 - 수치 맵 크기: " + data.get("수치").size() + "개");
-        System.out.println("===================");
 
         return data;
     }

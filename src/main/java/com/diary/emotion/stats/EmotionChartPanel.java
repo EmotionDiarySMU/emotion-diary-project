@@ -50,7 +50,7 @@ public class EmotionChartPanel extends JPanel {
         barChart = ChartFactory.createBarChart(
             null,
             "(감정)",
-            "(%)",
+            null,
             dataset,
             PlotOrientation.VERTICAL,
             false,

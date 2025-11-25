@@ -52,5 +52,9 @@ public class AuthenticationFrame extends JFrame {
     public SignUpPanel getSignUpPanel() {
         return signUpPanel;
     }
+
+    public LoginPanel getLoginPanel() {
+        return loginPanel;
+    }
 }
 
