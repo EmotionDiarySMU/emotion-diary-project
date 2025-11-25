@@ -227,8 +227,8 @@ public class WriteDiaryGUI extends JPanel {
         stressSlider = new JSlider(0, 100, 50);
         
         stressValueField = new JTextField("50", 3);
-        ((AbstractDocument) stressValueField.getDocument()).setDocumentFilter(filter); // ♦️
-        stressValueField.getDocument().addDocumentListener(new SimpleModifyListener()); // ♦️
+        ((AbstractDocument) stressValueField.getDocument()).setDocumentFilter(filter);
+        stressValueField.getDocument().addDocumentListener(new SimpleModifyListener());
         
         stressPanel.add(stressSlider, BorderLayout.CENTER);
         stressPanel.add(stressValueField, BorderLayout.EAST);
@@ -267,7 +267,7 @@ public class WriteDiaryGUI extends JPanel {
         stressValueField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                validateAndSaveStressValue(); // ♦️
+                validateAndSaveStressValue();
             }
         });
         
@@ -294,18 +294,18 @@ public class WriteDiaryGUI extends JPanel {
                     String icon = iconLabels[i].getText();
                     if (!icon.equals("[ ]") && !icon.equals(" ")) { 
                         emotions.add(icon);
-                        validateAndSaveEmotionValue(i); // ♦️
+                        validateAndSaveEmotionValue(i);
                         emotionValuesList.add(emotionValues[i]);
                     }
                 }
                 
-                validateAndSaveStressValue(); // ♦️
+                validateAndSaveStressValue();
                 int stressLevel = stressSlider.getValue();
 
                 // ⭐️ --- 2. DB에 저장 ---
                 try {
                     // DatabaseUtil의 새 메소드 호출!
-                   boolean success = DatabaseManager.insertDiaryEntry( // ♦️
+                   boolean success = DatabaseManager.insertDiaryEntry(
                             title, content, stressLevel, emotions, emotionValuesList
                         );
 

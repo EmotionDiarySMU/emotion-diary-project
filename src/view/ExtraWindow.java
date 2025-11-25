@@ -101,6 +101,7 @@ public class ExtraWindow extends JFrame{
                     modifyPanel.isModified=false;
                     
                     viewPanel.fillEntry(entry); // viewPanel에 수정된 값 반영
+                    modifyPanel.fillEntry(entry); // modifyPanel에 수정된 값 반영
                     
                     SearchDiaryPanel.refreshDiaryModel(true); // 목록 패널도 갱신
                     
