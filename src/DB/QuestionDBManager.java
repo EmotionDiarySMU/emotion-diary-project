@@ -1,4 +1,4 @@
-package write;
+package DB;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,18 +6,14 @@ import java.sql.ResultSet;
 import java.util.Arrays;
 import java.util.List;
 
-import DB.DatabaseManager;
-
 /**
- * 'question' DB 테이블 관리 클래스
- * 1. DB 초기화 및 강제 업데이트 (질문 목록 수정 시 반영 가능)
- * 2. 랜덤 질문 뽑기
+ * 'question' DB 테이블 관련 로직(초기화, 랜덤 조회)을 전담하는 클래스
  */
 public class QuestionDBManager {
 
-    // 1. 50개 질문 리스트 (수정하고 싶으면 여기서 고치고 resetQuestions() 실행)
+    // 1. 50개 질문 리스트 (DB 초기화용 1회성 재료!)
     private static final List<String> QUESTIONS_LIST = Arrays.asList(
-            "오늘 하루, 기분 좋게 마무리했나요?",
+    		"오늘 하루, 기분 좋게 마무리했나요?",
             "오늘 가장 기억에 남는 순간은 언제였나요?",
             "오늘 '이건 좀 잘했다' 싶은 일이 있나요?",
             "오늘 먹었던 음식 중 가장 기분 좋게 했던 것은?",
@@ -70,80 +66,75 @@ public class QuestionDBManager {
     );
 
     /**
-     * 기능1~2: 내가(이아진) 수정해야할 일이 생겨서 넣은 코드
-     * 질문 목록 1회용성 설치를 원하면 기능 1~2 코드를 아예 삭제 하면 됨
-     * [기능 1] 프로그램 시작 시 자동 실행
-     * - DB가 비어있으면 채워넣고, 이미 있으면 건너뜀
+     * [기능 1] 
+     * 프로그램 시작 시 question 테이블이 비어있으면 50개 질문을 삽입.
      */
     public static void initializeQuestions() {
-        String countSql = "SELECT COUNT(*) FROM question";
-        
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(countSql);
-             ResultSet rs = pstmt.executeQuery()) {
+        String checkSql = "SELECT COUNT(*) FROM question";
+        String insertSql = "INSERT INTO question (question_text) VALUES (?)";
+
+        // ⭐️ DB 연결은 'DatabaseManager'의 것을 빌려 씀
+        try (Connection conn = DB.DatabaseManager.getConnection()) {
             
-            // 데이터가 이미 1개라도 있으면 그냥 종료
-            if (rs.next() && rs.getInt(1) > 0) {
-                return; 
-            }
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-        // 비어있으면 초기화 진행
-        resetQuestions(); 
-    }
-
-    /**
-     * [기능 2] 질문 목록 강제 업데이트
-     * - 질문 리스트 수정 시 이 메소드를 호출하면 DB가 갱신됨
-     */
-    public static void resetQuestions() {
-        String truncateSql = "TRUNCATE TABLE question"; 
-        String insertSql = "INSERT INTO question (question_text) VALUES (?)"; 
-
-        try (Connection conn = DatabaseManager.getConnection()) {
-            conn.setAutoCommit(false);
-
-            // 1. 삭제
-            try (PreparedStatement pstmt = conn.prepareStatement(truncateSql)) {
-                pstmt.executeUpdate();
-            }
-
-            // 2. 삽입
-            try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
-                for (String question : QUESTIONS_LIST) {
-                    pstmt.setString(1, question);
-                    pstmt.addBatch();
+            // 1. 테이블이 비어있는지 확인
+            try (PreparedStatement checkPstmt = conn.prepareStatement(checkSql);
+                 ResultSet rs = checkPstmt.executeQuery()) {
+                if (rs.next() && rs.getInt(1) > 0) {
+//                    System.out.println("질문 DB가 이미 초기화되어 있습니다. (Skipping)");
+                    return; // 이미 데이터가 있으므로 종료
                 }
-                pstmt.executeBatch();
             }
 
+            // 2. 비어있으면 50개 질문 배치(Batch) 삽입
+//            System.out.println("질문 DB 초기화를 시작합니다...");
+            conn.setAutoCommit(false); // 트랜잭션 시작
+
+            try (PreparedStatement insertPstmt = conn.prepareStatement(insertSql)) {
+                for (String question : QUESTIONS_LIST) {
+                    insertPstmt.setString(1, question.replace("'", "''")); // 작은따옴표 처리
+                    insertPstmt.addBatch();
+                }
+                insertPstmt.executeBatch(); // 50개 쿼리 한 번에 실행
+                conn.commit(); // DB에 최종 반영
+//                System.out.println("질문 50개 DB 초기화 완료!");
+            } catch (Exception e) {
+                conn.rollback(); // 오류 시 롤백
+                throw e; 
+            } finally {
+                conn.setAutoCommit(true); // 오토커밋 원상복구
+            }
+            
         } catch (Exception e) {
+            System.err.println("질문 DB 초기화 실패: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     /**
-     * [기능 3] 오늘의 질문 가져오기 (실행할 때마다 랜덤)
-     * 날짜별 랜덤 기능은 아님
+     * [기능 2] (WriteDiaryGUI에서 호출)
+     * "오늘의 질문"을 DB에서 랜덤하게 1개 가져옴.
      */
     public static String getTodaysQuestion() {
-        String defaultQuestion = "오늘 하루는 어땠나요?"; //기본 질문
+        String defaultQuestion = "오늘 하루는 어땠나요?"; // 기본값
+        
+        // ⭐️ SQL을 랜덤으로 1개 정렬 후 뽑기로 수정
         String sql = "SELECT question_text FROM question ORDER BY RAND() LIMIT 1";
-
-        try (Connection conn = DatabaseManager.getConnection();
+        
+        // ⭐️ DB 연결은 'DatabaseManager'의 것을 빌려 씀
+        try (Connection conn = DB.DatabaseManager.getConnection(); 
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
             
             if (rs.next()) {
+                // 쿼리 결과(랜덤 질문)가 있으면 즉시 반환
                 return rs.getString("question_text");
             }
             
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); // 콘솔에 오류 출력
         }
-        return defaultQuestion;
+        
+        // (DB에 질문이 0개이거나, 쿼리 실패 시) 기본값 반환
+        return defaultQuestion; 
     }
 }

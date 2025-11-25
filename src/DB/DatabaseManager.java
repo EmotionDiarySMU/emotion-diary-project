@@ -17,7 +17,7 @@ import login.AuthenticationFrame;
 public class DatabaseManager {
 
     // ⭐️ 이 클래스는 'emotion_diary' DB에 바로 연결
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/emotion_diary?serverTimezone=UTC";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/emotion_diary?serverTimezone=Asia/Seoul";
 	private static final String DB_ID = "root";
 	private static final String DB_PW = "quwrof12"; // 비번
 	
@@ -27,16 +27,16 @@ public class DatabaseManager {
     }
     
     // 처음 DB 생성을 위한 URL
-    private static final String Initial_DB_URL = "jdbc:mysql://localhost:3306/?serverTimezone=UTC";
+    private static final String Initial_DB_URL = "jdbc:mysql://localhost:3306/?serverTimezone=Asia/Seoul";
     
     // DB 생성 메서드
     public static boolean createDatabase() {
 	
-	    try (Connection conn = DriverManager.getConnection(Initial_DB_URL, DB_ID, DB_PW);
-	    		Statement stmt = conn.createStatement()) {
-	
-	    	ResultSet rs = stmt.executeQuery("SHOW DATABASES LIKE 'emotion_diary'"); // 해당 DB가 존재하는가
-            if (!rs.next()) { // 해당 DB가 없으면 실행
+    	try (Connection conn = DriverManager.getConnection(Initial_DB_URL, DB_ID, DB_PW);
+    		     Statement stmt = conn.createStatement();
+    		     ResultSet rs = stmt.executeQuery("SHOW DATABASES LIKE 'emotion_diary'")) {
+
+    		    if (!rs.next()) { // 해당 DB가 없으면 실행
             	
             	// DB 생성
             	String sql = "CREATE DATABASE emotion_diary CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"; // 이모지 저장 및 대소문자 구분 없는 유니코드 문자셋 설정
@@ -64,6 +64,7 @@ public class DatabaseManager {
 	                    content TEXT,
 	                    stress_level INTEGER NOT NULL,
 	                    entry_date DATETIME NOT NULL,
+	                    modify_date DATETIME,
 	                    FOREIGN KEY (user_id) REFERENCES user(user_id)
 	                )
 	            """;
@@ -94,7 +95,8 @@ public class DatabaseManager {
 	        return true;
 	        
 	    } catch (Exception e) {
-//	    	e.printStackTrace(); // 오류 콘솔에 출력 (디버깅용)
+	    	System.err.println("일기 삭제 중 오류 발생:");
+	    	e.printStackTrace(); // 오류 콘솔에 출력 (디버깅용)
 	    	
 	    	return false;
 	    }
@@ -103,23 +105,20 @@ public class DatabaseManager {
     // 1. 로그인 기능: ID와 비번을 받아서 맞으면 true, 틀리면 false 반환
     public boolean checkLogin(String id, String pw) {
         String sql = "SELECT user_pw FROM user WHERE user_id = ?";
-        
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_ID, DB_PW);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            pstmt.setString(1, id);
-            ResultSet rs = pstmt.executeQuery();
 
-            if (rs.next()) {
-                String dbPw = rs.getString("user_pw");
-                // 비밀번호가 일치하는지 확인
-                return dbPw.equals(pw); 
+            pstmt.setString(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return pw.equals(rs.getString("user_pw"));
+                }
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // ID가 없거나 오류가 나면 실패로 간주
-        return false; 
+        return false;
     }
 
     // 2. 회원가입 기능: 성공(1), 중복ID(0), 에러(-1) 반환
@@ -128,26 +127,26 @@ public class DatabaseManager {
         String insertSql = "INSERT INTO user (user_id, user_pw) VALUES (?, ?)";
 
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_ID, DB_PW)) {
+            
             // ID 중복 확인
             try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
                 checkStmt.setString(1, id);
-                ResultSet rs = checkStmt.executeQuery();
-                if (rs.next()) {
-                    return 0; // 이미 존재하는 ID
+                try (ResultSet rs = checkStmt.executeQuery()) {
+                    if (rs.next()) return 0; 
                 }
             }
 
-            // 회원가입 실행
+            // 회원가입
             try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
                 insertStmt.setString(1, id);
                 insertStmt.setString(2, pw);
                 insertStmt.executeUpdate();
-                return 1; // 성공
+                return 1;
             }
-            
+
         } catch (Exception e) {
             e.printStackTrace();
-            return -1; // DB 연결 오류 등
+            return -1;
         }
     }
 
@@ -170,7 +169,7 @@ public class DatabaseManager {
             // --- 1단계: 'diary' 테이블에 삽입 ---
             pstmtDiary = conn.prepareStatement(sqlInsertDiary, Statement.RETURN_GENERATED_KEYS);
             pstmtDiary.setString(1, AuthenticationFrame.loggedInUserId);
-            pstmtDiary.setString(2, title);
+            pstmtDiary.setString(2, title.trim()); // 앞 뒤 공백 제거
             pstmtDiary.setString(3, content);
             pstmtDiary.setInt(4, stressLevel);
             pstmtDiary.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
@@ -231,39 +230,46 @@ public class DatabaseManager {
     }
     
     // 3. 일기 조회 메서드
-    public static List<DiaryEntry> getAllEntries() throws Exception {
-        List<DiaryEntry> entries = new ArrayList<>();
-        // 최신 일기순으로 정렬 (DESC)
-        String sql = "SELECT entry_id, title, content, stress_level, DATE_FORMAT(entry_date, '%Y-%m-%d %H:%i') AS entry_date FROM diary WHERE user_id = ? ORDER BY entry_id DESC"; 
-        
-        try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-        	
-        	pstmt.setString(1, AuthenticationFrame.loggedInUserId);
-        	
-        	try (ResultSet rs = pstmt.executeQuery()){
-	            while (rs.next()) {
-	            	DiaryEntry entry = new DiaryEntry();
+    public static List<DiaryEntry> getEntries(String title, Timestamp start, Timestamp end) {
+        List<DiaryEntry> list = new ArrayList<>();
+        String sql = "SELECT * FROM diary WHERE user_id = ?";
 
+        if (!title.isEmpty()) sql += " AND title LIKE ?";
+        if (start != null) sql += " AND entry_date >= ?";
+        if (end != null) sql += " AND entry_date <= ?";
+
+        sql += " ORDER BY entry_id DESC";
+
+        try (Connection conn = getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            int index = 1;
+            pstmt.setString(index++, AuthenticationFrame.loggedInUserId);
+
+            if (!title.isEmpty()) pstmt.setString(index++, "%" + title + "%");
+            if (start != null) pstmt.setTimestamp(index++, start);
+            if (end != null) pstmt.setTimestamp(index++, end);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+	            while (rs.next()) {
+	                DiaryEntry entry = new DiaryEntry();
 	                entry.setEntry_id(rs.getInt("entry_id"));
 	                entry.setTitle(rs.getString("title"));
 	                entry.setContent(rs.getString("content"));
 	                entry.setStress_level(rs.getInt("stress_level"));
-	                entry.setEntry_date(rs.getString("entry_date"));
-
-	                // 감정 최대 4개 가져오기
+	                entry.setEntry_date(rs.getTimestamp("entry_date"));
+	                entry.setModify_date(rs.getTimestamp("modify_date"));
 	                entry.setEmotions(getEmotionsByEntryId(conn, entry.getEntry_id()));
-
-	                entries.add(entry);
+	                list.add(entry);
 	            }
-        	}
-            
-        } catch (SQLException e) {
-            System.err.println("일기 조회 중 오류 발생:");
-            e.printStackTrace();
-        }
-        return entries;
+            }
+	    } catch (Exception e) {
+	    	System.err.println("일기 조회 중 오류 발생:");
+	        e.printStackTrace();
+	        return list;
+	    }
+        return list;
     }
+
     
     public static List<Emotion> getEmotionsByEntryId(Connection conn, int entryId) throws SQLException {
 
@@ -290,66 +296,93 @@ public class DatabaseManager {
     }
     
     // 4. 일기 수정하는 메서드
-    public static boolean updateDiaryEntry( // ♦️
+    public static boolean updateDiaryEntry(
             int entryId,
             String title,
             String content,
             int stressLevel,
+            Timestamp modifyDate,
             List<String> emotionIcons,
             List<Integer> emotionValuesList) {
 
-        Connection conn = null;
-        PreparedStatement pstmtDiary = null;
-        PreparedStatement pstmtEmotion = null;
+        String sqlUpdateDiary =
+                "UPDATE diary SET title = ?, content = ?, stress_level = ?, modify_date = ? WHERE entry_id = ?";
+        String sqlDeleteEmotion =
+                "DELETE FROM emotion WHERE entry_id = ?";
+        String sqlInsertEmotion =
+                "INSERT INTO emotion (entry_id, emotion_level, emoji_icon) VALUES (?, ?, ?)";
 
-        String sqlUpdateDiary = "UPDATE diary SET title = ?, content = ?, stress_level = ? WHERE entry_id = ?";
-        String sqlDeleteEmotion = "DELETE FROM emotion WHERE entry_id = ?";
-        String sqlInsertEmotion = "INSERT INTO emotion (entry_id, emotion_level, emoji_icon) VALUES (?, ?, ?)";
+        try (Connection conn = getConnection()) {
 
-        try {
-            conn = getConnection();
-            conn.setAutoCommit(false);
+            conn.setAutoCommit(false); // 자동커밋 꺼두기
 
             // 1. diary 업데이트
-            pstmtDiary = conn.prepareStatement(sqlUpdateDiary);
-            pstmtDiary.setString(1, title);
-            pstmtDiary.setString(2, content);
-            pstmtDiary.setInt(3, stressLevel);
-            pstmtDiary.setInt(4, entryId);
-            pstmtDiary.executeUpdate();
+            try (PreparedStatement pstmt = conn.prepareStatement(sqlUpdateDiary)) {
+                pstmt.setString(1, title);
+                pstmt.setString(2, content);
+                pstmt.setInt(3, stressLevel);
+                pstmt.setTimestamp(4, modifyDate);
+                pstmt.setInt(5, entryId);
+                pstmt.executeUpdate();
+            }
 
             // 2. 기존 emotion 삭제
-            pstmtEmotion = conn.prepareStatement(sqlDeleteEmotion);
-            pstmtEmotion.setInt(1, entryId);
-            pstmtEmotion.executeUpdate();
+            try (PreparedStatement pstmt = conn.prepareStatement(sqlDeleteEmotion)) {
+                pstmt.setInt(1, entryId);
+                pstmt.executeUpdate();
+            }
 
             // 3. 새 emotion 삽입
-            pstmtEmotion = conn.prepareStatement(sqlInsertEmotion);
-            for (int i = 0; i < emotionIcons.size(); i++) {
-                pstmtEmotion.setInt(1, entryId);
-                pstmtEmotion.setInt(2, emotionValuesList.get(i));
-                pstmtEmotion.setString(3, emotionIcons.get(i));
-                pstmtEmotion.addBatch();
+            try (PreparedStatement pstmt = conn.prepareStatement(sqlInsertEmotion)) {
+                for (int i = 0; i < emotionIcons.size(); i++) {
+                    pstmt.setInt(1, entryId);
+                    pstmt.setInt(2, emotionValuesList.get(i));
+                    pstmt.setString(3, emotionIcons.get(i));
+                    pstmt.addBatch();
+                }
+                pstmt.executeBatch();
             }
-            pstmtEmotion.executeBatch();
 
             conn.commit();
             return true;
 
         } catch (Exception e) {
+        	System.err.println("일기 수정 중 오류 발생:");
             e.printStackTrace();
-            if (conn != null) {
-                try { conn.rollback(); } catch (Exception ex) { ex.printStackTrace(); }
-            }
             return false;
-
-        } finally {
-            try { if (pstmtDiary != null) pstmtDiary.close(); } catch (Exception e) {}
-            try { if (pstmtEmotion != null) pstmtEmotion.close(); } catch (Exception e) {}
-            try { if (conn != null) { conn.setAutoCommit(true); conn.close(); } } catch (Exception e) {}
         }
     }
 
+
+    // 5. 일기 삭제하는 메서드
+    public static boolean deleteEntry(int entryId) {
+        String sqlDeleteEmotion = "DELETE FROM emotion WHERE entry_id = ?";
+        String sqlDeleteDiary = "DELETE FROM diary WHERE entry_id = ?";
+
+        try (Connection conn = getConnection()) {
+            conn.setAutoCommit(false);
+
+            // 감정 먼저 삭제
+            try (PreparedStatement pstmt = conn.prepareStatement(sqlDeleteEmotion)) {
+                pstmt.setInt(1, entryId);
+                pstmt.executeUpdate();
+            }
+
+            // 일기 삭제
+            try (PreparedStatement pstmt = conn.prepareStatement(sqlDeleteDiary)) {
+                pstmt.setInt(1, entryId);
+                pstmt.executeUpdate();
+            }
+
+            conn.commit();
+            return true;
+
+        } catch (Exception e) {
+        	System.err.println("일기 삭제 중 오류 발생:");
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     
 }

@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.Color;
 import java.awt.event.MouseListener;
 
 import javax.swing.*;
@@ -11,6 +12,7 @@ public class ViewDiaryPanel extends WriteDiaryGUI {
     private static final long serialVersionUID = 1L;
     
     JButton editBtn;
+    JButton deleteBtn;
 
 	public ViewDiaryPanel() {
 		
@@ -19,23 +21,39 @@ public class ViewDiaryPanel extends WriteDiaryGUI {
         // 질문 라벨 안 보이게
         questionLabel.setVisible(false);
         
-        southPanel.remove(newPostButton);	// 다시쓰 버튼 삭제
+        southPanel.remove(newPostButton);	// 다시쓰기 버튼 삭제
         southPanel.remove(saveButton);		// 저장 버튼 삭제
         southPanel.revalidate();        	// 레이아웃 다시 계산
         southPanel.repaint();           	// 화면 갱신
         
         // 각 컴포넌트들 수정 불가 상태로 만듦
         titleField.setEditable(false);
-        /*
-        수정 불가능 & 커서 안 보임 & 복사 가능 상태로 만들고 싶은데 잘 안 된다..
-        titleField.getCaret().setVisible(false);
-        titleField.getCaret().setBlinkRate(0);
-        titleField.setFocusable(false);
-        */
         contentArea.setEditable(false);
         for (JTextField tf : valueFields) tf.setEditable(false);
         stressSlider.setFocusable(false);
         stressSlider.setEnabled(false);
+        
+        Color darkseaGreen = new Color(193, 238, 153);
+        
+        // 제목, 내용 적는 칸 테두리 제거, 배경 연두색
+        titleField.setBackground(darkseaGreen); // 배경 색
+        titleField.setBorder(null);			 // 테두리 제거
+        contentArea.setBackground(darkseaGreen);
+        contentArea.setBorder(null);
+//        contentScrollPane.setBackground(limeGreen); // 의미없음
+        contentScrollPane.setBorder(null);
+//        contentScrollPane.getVerticalScrollBar().setBackground(limeGreen); // 작동안함
+        
+//        // 제목, 내용 적는 칸 테두리 제거, 배경 투명
+//        titleField.setOpaque(false); // 배경 투명
+//        titleField.setBorder(null);  // 테두리 제거
+//        contentArea.setOpaque(false);
+//        contentArea.setBorder(null);
+//        contentScrollPane.setOpaque(false);
+//        contentScrollPane.setBorder(null);
+//        contentScrollPane.getViewport().setOpaque(false);
+//       contentScrollPane.getVerticalScrollBar().setOpaque(false); // 작동안함
+        
         
         // 아이콘 선택 라벨 수정 불가 상태로 만들기 위해 마우스리스너 제거
         for (JLabel icon : iconLabels) {
@@ -45,6 +63,8 @@ public class ViewDiaryPanel extends WriteDiaryGUI {
         }
         
         // "저장하기" 버튼 위치에 "수정하기" 버튼 넣음
+        deleteBtn = new JButton("삭제");
+        southPanel.add(deleteBtn);
         editBtn = new JButton("수정하기");
         southPanel.add(editBtn);
 

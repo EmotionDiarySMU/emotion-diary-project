@@ -7,7 +7,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.HashSet;
 
+import view.ExtraWindow;
 import view.SearchDiaryPanel;
 import write.WriteDiaryGUI;
 
@@ -17,6 +19,8 @@ public class MainView extends JFrame {
 	
 	CardLayout cardLayout;
 	JPanel cardPanel;
+	
+	int flag;
 	
 	public MainView() {
 		// 창 설정
@@ -64,10 +68,17 @@ public class MainView extends JFrame {
         setVisible(true);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         
+        
         // 닫기전에 "저장하시겠습니까?" 창 띄우기
         addWindowListener(new WindowAdapter() {
         	public void windowClosing(WindowEvent e) {
-        		SaveQuestion.handleWindowClosing(MainView.this, writePanel, true);
+        		flag = 0;
+        		
+    			for (ExtraWindow win : new HashSet<>(SearchDiaryPanel.openWindows)) {
+    				flag = SaveQuestion.handleWindowClosing(win, win.modifyPanel, 2);
+    				if (flag == 1) return;
+    			}
+        		SaveQuestion.handleWindowClosing(MainView.this, writePanel, 1);
             }
         });
         
