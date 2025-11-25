@@ -9,10 +9,7 @@ import javax.swing.text.*;
 
 import DB.DatabaseManager;
 import DB.DiaryEntry;
-<<<<<<< Updated upstream
-=======
 import DB.QuestionDBManager;
->>>>>>> Stashed changes
 import view.SearchDiaryPanel;
 
 import java.awt.*;
@@ -29,19 +26,6 @@ import java.util.List;
  */
 public class WriteDiaryGUI extends JPanel { 
 
-<<<<<<< Updated upstream
-	private static final long serialVersionUID = 1L;
-	
-	public JPanel mainPanel;
-	public JPanel southPanel;
-	
-	public GridBagConstraints gbc;
-	
-	public JLabel questionLabel;
-	public JTextField titleField;
-    public JTextArea contentArea;
-    JScrollPane contentScrollPane;
-=======
    private static final long serialVersionUID = 1L;
    
    public JPanel mainPanel;
@@ -53,7 +37,6 @@ public class WriteDiaryGUI extends JPanel {
    public JTextField titleField;
     public JTextArea contentArea;
     public JScrollPane contentScrollPane;
->>>>>>> Stashed changes
     
     public JLabel[] iconLabels = new JLabel[4];
     public JTextField[] valueFields = new JTextField[4]; 
@@ -90,12 +73,8 @@ public class WriteDiaryGUI extends JPanel {
         gbc.gridy = 0;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
-<<<<<<< Updated upstream
-
-=======
         
         // 질문
->>>>>>> Stashed changes
         String randomQuestion;
         try {
             randomQuestion = QuestionDBManager.getTodaysQuestion();
@@ -112,6 +91,7 @@ public class WriteDiaryGUI extends JPanel {
         
         // --- GBC row 1: 제목 ---
         gbc.gridwidth = 1; // 1열로 복구
+//      gbc.anchor = GridBagConstraints.LINE_START;
         gbc.gridx = 0;
         gbc.gridy = 1; 
         JLabel titleLabel = new JLabel("제목:");
@@ -141,13 +121,8 @@ public class WriteDiaryGUI extends JPanel {
         contentArea.setLineWrap(true);
         contentArea.setWrapStyleWord(true);
         contentScrollPane = new JScrollPane(contentArea);
-<<<<<<< Updated upstream
-        contentArea.getDocument().addDocumentListener(new SimpleModifyListener()); 
-        ((AbstractDocument) contentArea.getDocument()).setDocumentFilter(new LengthFilter(30000)); 
-=======
         contentArea.getDocument().addDocumentListener(new SimpleModifyListener());
         ((AbstractDocument) contentArea.getDocument()).setDocumentFilter(new LengthFilter(30000));
->>>>>>> Stashed changes
         mainPanel.add(contentScrollPane, gbc);
         
         // --- GBC row 3: 감정 (아이콘 + 수치 4칸) ---
@@ -163,17 +138,10 @@ public class WriteDiaryGUI extends JPanel {
         iconDisplayPanel.setBackground(lightGreen); 
         
         // 아이콘 선택 팝업창 초기화
-<<<<<<< Updated upstream
-        iconDialog = new SingleIconChooserDialog(this, iconLabels, lightYellow); 
-        
-        // 숫자만 입력받는 필터 생성
-        NumericRangeFilter filter = new NumericRangeFilter(); 
-=======
         iconDialog = new SingleIconChooserDialog(this, iconLabels, lightYellow);
         
         // 숫자만 입력받는 필터 생성
         NumericRangeFilter filter = new NumericRangeFilter();
->>>>>>> Stashed changes
         
         // 4개의 감정 슬롯(아이콘+텍스트필드) 생성
         for (int i = 0; i < 4; i++) {
@@ -186,13 +154,8 @@ public class WriteDiaryGUI extends JPanel {
             
             valueFields[i] = new JTextField(String.valueOf(emotionValues[i]), 3);
             valueFields[i].setHorizontalAlignment(JTextField.CENTER);
-<<<<<<< Updated upstream
-            ((AbstractDocument) valueFields[i].getDocument()).setDocumentFilter(filter); 
-            valueFields[i].getDocument().addDocumentListener(new SimpleModifyListener()); 
-=======
             ((AbstractDocument) valueFields[i].getDocument()).setDocumentFilter(filter);
             valueFields[i].getDocument().addDocumentListener(new SimpleModifyListener());
->>>>>>> Stashed changes
             
             slotPanel.add(iconLabels[i], BorderLayout.CENTER);
             slotPanel.add(valueFields[i], BorderLayout.SOUTH);
@@ -201,11 +164,7 @@ public class WriteDiaryGUI extends JPanel {
             
             final int slotIndex = i;
             
-<<<<<<< Updated upstream
-            // 🔸[수정한 부분 시작!!] - 클릭 이벤트: 같은 아이콘 선택 시 삭제(토글), 다르면 변경
-=======
          // 클릭 이벤트: 같은 아이콘 선택 시 삭제(토글), 다르면 변경
->>>>>>> Stashed changes
             iconLabels[i].addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -224,15 +183,6 @@ public class WriteDiaryGUI extends JPanel {
                         // 만약 방금 선택한 아이콘이 원래 있던 아이콘과 "똑같다면" -> 삭제 (토글 OFF)
                         if (currentIcon.equals(selectedIcon)) {
                             iconLabels[slotIndex].setText("[ ]"); // 빈칸으로 되돌림
-<<<<<<< Updated upstream
-                            valueFields[slotIndex].setText("1");  // 점수 1점
-                            emotionValues[slotIndex] = 0;
-                            isModified = true;
-                        } 
-                        // 다른 아이콘을 선택했다면 -> 변경 (Update) 🔸추가된 것
-                        else {
-                        	iconLabels[slotIndex].setText(selectedIcon);
-=======
                             valueFields[slotIndex].setText("0");  // 수정 0으로 돌림
                             emotionValues[slotIndex] = 0;
                             isModified = true;
@@ -240,7 +190,6 @@ public class WriteDiaryGUI extends JPanel {
                         // 다른 아이콘을 선택했다면 -> 변경 (Update)
                         else {
                            iconLabels[slotIndex].setText(selectedIcon);
->>>>>>> Stashed changes
                             
                             
                             valueFields[slotIndex].setText("1"); // 1점으로 자동 설정
@@ -252,10 +201,6 @@ public class WriteDiaryGUI extends JPanel {
                     }
                 }
             });
-<<<<<<< Updated upstream
-            // 🔸[수정 한 부분 끝]
-=======
->>>>>>> Stashed changes
             
             valueFields[i].addActionListener(new ActionListener() {
                 @Override
@@ -279,13 +224,8 @@ public class WriteDiaryGUI extends JPanel {
         stressPanel.setBackground(lightGreen);
         
         stressSlider = new JSlider(0, 100, 50);
+        stressSlider.setOpaque(false); //수정1125
         
-<<<<<<< Updated upstream
-=======
-        // [수정] 슬라이더 배경색 수정
-        stressSlider.setOpaque(false);
-        
->>>>>>> Stashed changes
         stressValueField = new JTextField("50", 3);
         ((AbstractDocument) stressValueField.getDocument()).setDocumentFilter(filter);
         stressValueField.getDocument().addDocumentListener(new SimpleModifyListener());
@@ -327,11 +267,7 @@ public class WriteDiaryGUI extends JPanel {
         stressValueField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-<<<<<<< Updated upstream
-                validateAndSaveStressValue(); 
-=======
                 validateAndSaveStressValue();
->>>>>>> Stashed changes
             }
         });
         
@@ -358,11 +294,7 @@ public class WriteDiaryGUI extends JPanel {
                     String icon = iconLabels[i].getText();
                     if (!icon.equals("[ ]") && !icon.equals(" ")) { 
                         emotions.add(icon);
-<<<<<<< Updated upstream
-                        validateAndSaveEmotionValue(i); 
-=======
                         validateAndSaveEmotionValue(i);
->>>>>>> Stashed changes
                         emotionValuesList.add(emotionValues[i]);
                     }
                 }
@@ -373,11 +305,7 @@ public class WriteDiaryGUI extends JPanel {
                 // ⭐️ --- 2. DB에 저장 ---
                 try {
                     // DatabaseUtil의 새 메소드 호출!
-<<<<<<< Updated upstream
-                	boolean success = DatabaseManager.insertDiaryEntry( 
-=======
                    boolean success = DatabaseManager.insertDiaryEntry(
->>>>>>> Stashed changes
                             title, content, stressLevel, emotions, emotionValuesList
                         );
 
@@ -385,19 +313,12 @@ public class WriteDiaryGUI extends JPanel {
                         // 성공 시
                         JOptionPane.showMessageDialog(WriteDiaryGUI.this, "일기가 성공적으로 저장되었습니다.");
                         
-<<<<<<< Updated upstream
-                        SearchDiaryPanel.refreshDiaryList();
-                        
-                    
-                        clearAllFields();  // 🔸저장시 내용 지워줌
-=======
                         clearAllFields();
                         
                         SearchDiaryPanel.refreshDiaryModel(true);
                         
                         // 3. 저장 후 '수정됨' 플래그 리셋
                         isModified = false; 
->>>>>>> Stashed changes
                         
                     } else {
                         // DB 저장 실패 시 (e.g. 트랜잭션 롤백)
@@ -413,56 +334,18 @@ public class WriteDiaryGUI extends JPanel {
                         "DB 연결 중 심각한 오류가 발생했습니다.\n" + ex.getMessage(), 
                         "DB 오류", 
                         JOptionPane.ERROR_MESSAGE);
-<<<<<<< Updated upstream
-            	}
-        	}
-=======
                }
            }
->>>>>>> Stashed changes
         });
         
     }
     
     
-<<<<<<< Updated upstream
- // 🔸 감정 수치 텍스트필드 값 검증/저장 (1-100)
-=======
     // 감정 수치 텍스트필드 값 검증/저장 (1-100)
->>>>>>> Stashed changes
     public void validateAndSaveEmotionValue(int slotIndex) {
         try {
             String text = valueFields[slotIndex].getText();
             int value = 0;
-<<<<<<< Updated upstream
-            
-            // 1. 숫자 파싱
-            if (text != null && !text.isEmpty()) {
-                value = Integer.parseInt(text);
-            }
-
-            // 2. 현재 이 칸에 아이콘이 선택되어 있는지 확인
-            String currentIcon = iconLabels[slotIndex].getText();
-            boolean hasIcon = !currentIcon.equals("[ ]") && !currentIcon.equals("");
-            
-            // [수정한 부분]
-            if (hasIcon) {
-                // 🔸 [수정] 0 이하 숫자 입력시 1로 강제 변경
-                if (value < 1) value = 1;
-                if (value > 100) value = 100;
-            } else {
-                value = 0;
-            }
-            
-            emotionValues[slotIndex] = value;
-            valueFields[slotIndex].setText(String.valueOf(value));
-            
-        } catch (NumberFormatException nfe) {
-            // 숫자가 아닌 걸 적었으면 기존 값으로 복구
-            valueFields[slotIndex].setText(String.valueOf(emotionValues[slotIndex]));
-        }
-    }
-=======
             if (text != null && !text.isEmpty()) {
                 value = Integer.parseInt(text);
             }
@@ -476,7 +359,6 @@ public class WriteDiaryGUI extends JPanel {
         }
     }
     
->>>>>>> Stashed changes
     // 스트레스 수치 텍스트필드 값 검증/저장 및 슬라이더 동기화
     public void validateAndSaveStressValue() {
         try {
@@ -495,10 +377,7 @@ public class WriteDiaryGUI extends JPanel {
         }
     }
     
-<<<<<<< Updated upstream
-=======
     // '수정됨' 플래그(isModified)를 true로 설정하는 간단한 리스너
->>>>>>> Stashed changes
     class SimpleModifyListener implements DocumentListener {
         @Override
         public void insertUpdate(DocumentEvent e) { isModified = true; }
@@ -508,10 +387,7 @@ public class WriteDiaryGUI extends JPanel {
         public void changedUpdate(DocumentEvent e) { /* (무시) */ }
     }
     
-<<<<<<< Updated upstream
-=======
  // [추가] 현 페이지에 작성한 내용을 다 지우고 다시 쓰는 기능
->>>>>>> Stashed changes
     public void checkAndClear() {
         if (isModified) {
             int result = JOptionPane.showConfirmDialog(this, 
