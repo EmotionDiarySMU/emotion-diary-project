@@ -22,6 +22,7 @@ public class SingleIconChooserDialog extends JDialog {
 
     JLabel[] allIconLabels; // 메인 GUI의 4개 아이콘 라벨 (중복 검사용)
     String currentIconInSlot = null; // 현재 슬롯의 아이콘 (중복 검사 제외용)
+    List<String> usedIconsList; // 이미 사용 중인 아이콘 리스트 저장
     JButton[] iconButtons = new JButton[12]; // 12개 버튼
 
     // 🔸 추가된 부분 — 내부에서 선택된 아이콘 위치를 기억
@@ -36,13 +37,15 @@ public class SingleIconChooserDialog extends JDialog {
         super(parent, "감정 선택", true); // modal 다이얼로그로 설정
         Color PASTEL_YELLOW = new Color(254, 255, 216);
 
+        this.selectedIcon = currentSelection;
+        this.currentIconInSlot = currentSelection; // 현재 슬롯의 아이콘 저장
+        this.usedIconsList = usedIcons; // 사용 중인 아이콘 리스트 저장
+
         // [수정 1] GridLayout 간격을 5 -> 15로 늘림 (여백 10 추가효과)
         JPanel panel = new JPanel(new GridLayout(4, 3, 15, 15));
         panel.setBorder(new EmptyBorder(20, 30, 20, 30)); // 좌우 패딩 20 -> 30 (너비 증가)
         panel.setBackground(PASTEL_YELLOW);
 
-        this.selectedIcon = currentSelection;
-        this.currentIconInSlot = currentSelection; // 현재 슬롯의 아이콘 저장
 
         // 아이콘 버튼 생성
         for (int i = 0; i < allIcons.length; i++) {
@@ -175,30 +178,18 @@ public class SingleIconChooserDialog extends JDialog {
         if (b) {
             selectedIcon = null;
 
-            // allIconLabels가 null일 경우 초기화
-            if (allIconLabels == null) {
-                allIconLabels = new JLabel[0];
-            }
-
-            // 다른 슬롯에서 사용 중인 아이콘 목록을 만듦
-            List<String> usedIcons = new ArrayList<>();
-            for (JLabel lbl : allIconLabels) {
-                String icon = lbl.getText();
-                if (!icon.equals("[ ]") && !icon.equals(this.currentIconInSlot)) {
-                    usedIcons.add(icon);
-                }
-            }
-
-            for (int i = 0; i < iconButtons.length; i++) { // 모든 버튼을 순회하며 비활성화 처리
+            // 저장된 usedIconsList를 사용하여 중복 검사
+            // 현재 슬롯의 아이콘은 제외
+            for (int i = 0; i < iconButtons.length; i++) {
                 JButton btn = iconButtons[i];
-                boolean isUsed = usedIcons.contains(btn.getText());
-                btn.setEnabled(!isUsed); // 비활성화
-                
-                // 🔹 추가된 부분 — 비활성화된 아이콘에 시각적 표시 추가
-                // updateSelectionHighlight()에서 처리되도록 이동
+                String icon = btn.getText();
+
+                // 다른 슬롯에서 사용 중인 아이콘이면 비활성화
+                boolean isUsed = usedIconsList != null && usedIconsList.contains(icon);
+                btn.setEnabled(!isUsed);
             }
 
-            // 🔸 추가된 부분 — 중복 체크 후 하이라이트 다시 적용
+            // 하이라이트 적용
             updateSelectionHighlight();
         }
         super.setVisible(b);
@@ -207,21 +198,19 @@ public class SingleIconChooserDialog extends JDialog {
     // 🔸 수정된 부분 — 선택된 아이콘 하이라이트 함수 (비활성화 상태도 반영)
     private void updateSelectionHighlight() {
         // 배경색 설정
-        Color defaultBg = new Color(254, 255, 216);
-        Color selectedBg = new Color(254, 255, 216);
+        Color selectedBg = new Color(240, 240, 240); // 선택된 감정 - 연한 오렌지색
+        Color disabledBg = new Color(240, 240, 240); // 비활성화 - 회색
 
         for (int i = 0; i < iconButtons.length; i++) {
             JButton btn = iconButtons[i];
 
             if (i == selectedIndex) {
-                // 선택된 상태
+                // 현재 슬롯에 선택된 감정 - 눈에 띄는 배경색
                 btn.setBackground(selectedBg);
             } else if (!btn.isEnabled()) {
-                // 비활성화 상태
-                btn.setBackground(new Color(240, 240, 240)); // 회색
-            } else {
-                // 기본 상태
-                btn.setBackground(defaultBg);
+                // 다른 슬롯에서 사용 중 - 비활성화 상태
+                btn.setBackground(disabledBg);
+                btn.setBorder(new ButtonFactory.RoundedBorder(Color.GRAY, 1, 10));
             }
         }
     }

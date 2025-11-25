@@ -24,11 +24,17 @@ public class EmotionSlotPanel extends JPanel {
     private int slotIndex;
     private EmotionSlotPanel[] allSlots;
     private Runnable onChangeCallback;
+    private boolean isEditable; // 편집 가능 여부
 
     public EmotionSlotPanel(int index, EmotionSlotPanel[] allSlots, Runnable onChangeCallback) {
+        this(index, allSlots, onChangeCallback, true); // 기본값은 편집 가능
+    }
+
+    public EmotionSlotPanel(int index, EmotionSlotPanel[] allSlots, Runnable onChangeCallback, boolean isEditable) {
         this.slotIndex = index;
         this.allSlots = allSlots;
         this.onChangeCallback = onChangeCallback;
+        this.isEditable = isEditable;
 
         setLayout(new BorderLayout());
         setBackground(BG_WRITE);
@@ -43,26 +49,58 @@ public class EmotionSlotPanel extends JPanel {
         iconLabel.setOpaque(true);
         iconLabel.setBackground(Color.WHITE);
         iconLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        iconLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        iconLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                openIconChooser();
-            }
-        });
+        // 편집 가능 모드일 때만 클릭 이벤트 및 커서 설정
+        if (isEditable) {
+            iconLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            iconLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    openIconChooser();
+                }
+            });
+        }
 
         // 수치 입력 필드
-        valueField = new JTextField("1", 3);
+        valueField = new JTextField("0", 3);
         valueField.setHorizontalAlignment(JTextField.CENTER);
-        ((AbstractDocument) valueField.getDocument()).setDocumentFilter(new NumericRangeFilter(1, 100));
+        // 요구사항 3: 감정 선택 전 0, 선택 후 1~100만 허용
+        ((AbstractDocument) valueField.getDocument()).setDocumentFilter(new NumericRangeFilter(0, 100));
         valueField.setPreferredSize(new Dimension(40, 24));
         valueField.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        valueField.setEditable(isEditable); // 편집 가능 여부 설정
 
         valueField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            public void insertUpdate(javax.swing.event.DocumentEvent e) { notifyChange(); }
-            public void removeUpdate(javax.swing.event.DocumentEvent e) { notifyChange(); }
-            public void changedUpdate(javax.swing.event.DocumentEvent e) { notifyChange(); }
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                validateEmotionValue();
+                notifyChange();
+            }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                validateEmotionValue();
+                notifyChange();
+            }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                validateEmotionValue();
+                notifyChange();
+            }
+
+            private void validateEmotionValue() {
+                SwingUtilities.invokeLater(() -> {
+                    String text = valueField.getText();
+                    if (text.isEmpty()) return;
+
+                    try {
+                        int value = Integer.parseInt(text);
+                        // 요구사항 3: 감정이 선택되지 않았으면 0만 허용, 선택되었으면 1~100
+                        boolean hasEmotion = !iconLabel.getText().equals("+");
+                        if (hasEmotion && value == 0) {
+                            valueField.setText("1");
+                        }
+                    } catch (NumberFormatException ex) {
+                        // 무시
+                    }
+                });
+            }
         });
 
         add(iconLabel, BorderLayout.CENTER);
@@ -89,10 +127,19 @@ public class EmotionSlotPanel extends JPanel {
 
         String selected = dialog.getSelectedIcon();
         if (selected != null) {
-            iconLabel.setText(selected);
-            iconLabel.setFont(UIFonts.EMOJI);
-            iconLabel.setBackground(new Color(255, 250, 240));
-            notifyChange();
+            // 요구사항 2: 같은 감정을 다시 클릭하면 취소 (토글)
+            if (selected.equals(currentSelection)) {
+                // 선택 취소
+                reset();
+                notifyChange();
+            } else {
+                // 새로운 감정 선택
+                iconLabel.setText(selected);
+                iconLabel.setFont(UIFonts.EMOJI);
+                // 요구사항 3: 감정 선택 시 수치를 1로 설정
+                valueField.setText("1");
+                notifyChange();
+            }
         }
     }
 
@@ -128,7 +175,8 @@ public class EmotionSlotPanel extends JPanel {
         iconLabel.setText("+");
         iconLabel.setFont(new Font("Arial", Font.BOLD, 20));
         iconLabel.setBackground(Color.WHITE);
-        valueField.setText("1"); // "0" -> "1"로 변경 (필터가 1~100 범위이므로)
+        // 요구사항 3: 초기값은 0
+        valueField.setText("0");
     }
 
     public void setEmotion(String icon, int level) {

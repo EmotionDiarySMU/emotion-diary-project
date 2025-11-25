@@ -55,8 +55,8 @@ public class ModifyPanel extends JPanel {
         initializeUI();
         setupButtonPanel();
 
-        // 스타일 적용
-        ViewStyleOverrider.applyStyle(this);
+        // ModifyPanel은 수정 가능해야 하므로 ViewStyleOverrider 적용 안 함
+        // 감정 수치 필드가 편집 가능하도록 유지
     }
 
     // paintComponent에서 스타일 오버라이더 제거 - 생성자에서만 한 번 적용

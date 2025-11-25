@@ -100,8 +100,8 @@ public class MainView extends JFrame {
 	private JPanel createTabPanel() {
 		// 탭 버튼들을 왼쪽 정렬로 배치
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0)); // FlowLayout.LEFT로 설정
-        panel.setBackground(Color.WHITE);
-        panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, BORDER_LIGHT));
+        panel.setBackground(Color.WHITE); // 탭 패널 배경색
+        panel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK)); // 하단 검정 테두리
 
         // 일기 쓰기 탭
         writeTab = createTabButton("일기 쓰기");
@@ -129,9 +129,13 @@ public class MainView extends JFrame {
 		JButton btn = new JButton(text);
 		btn.setFont(BODY_REGULAR);
 		btn.setForeground(TEXT_SECONDARY);
-		btn.setBackground(Color.WHITE);
-		btn.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
+		btn.setBackground(Color.WHITE); // 비활성 탭 배경색
+		btn.setBorder(BorderFactory.createCompoundBorder(
+			BorderFactory.createMatteBorder(1, 1, 0, 1, Color.BLACK), // 검정 테두리 (상, 좌, 우)
+			BorderFactory.createEmptyBorder(12, 25, 12, 25) // 내부 패딩
+		));
 		btn.setFocusPainted(false);
+		btn.setOpaque(true); // 배경색이 보이도록 설정
 		btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
 		// 호버 효과
@@ -139,7 +143,7 @@ public class MainView extends JFrame {
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				if (!btn.getFont().isBold()) {  // 비활성 탭만
-					btn.setBackground(new Color(245, 245, 245));
+					btn.setBackground(new Color(245, 245, 245)); // 연한 회색
 				}
 			}
 
@@ -158,29 +162,41 @@ public class MainView extends JFrame {
 	 * 활성 탭 설정
 	 */
 	private void setActiveTab(JButton activeBtn, Color bgColor, Color accentColor) {
-		// 모든 탭 초기화
+		// 모든 탭 초기화 (비활성 상태로)
 		writeTab.setFont(BODY_REGULAR);
 		writeTab.setForeground(TEXT_SECONDARY);
-		writeTab.setBackground(Color.WHITE);
-		writeTab.setBorder(BorderFactory.createEmptyBorder(12, 25, 12, 25));
+		writeTab.setBackground(Color.WHITE); // 비활성 탭 배경
+		writeTab.setBorder(BorderFactory.createCompoundBorder(
+			BorderFactory.createMatteBorder(1, 1, 0, 1, Color.BLACK), // 검정 테두리
+			BorderFactory.createEmptyBorder(12, 25, 12, 25)
+		));
 
 		viewTab.setFont(BODY_REGULAR);
 		viewTab.setForeground(TEXT_SECONDARY);
-		viewTab.setBackground(Color.WHITE);
-		viewTab.setBorder(BorderFactory.createEmptyBorder(12, 25, 12, 25));
+		viewTab.setBackground(Color.WHITE); // 비활성 탭 배경
+		viewTab.setBorder(BorderFactory.createCompoundBorder(
+			BorderFactory.createMatteBorder(1, 1, 0, 1, Color.BLACK), // 검정 테두리
+			BorderFactory.createEmptyBorder(12, 25, 12, 25)
+		));
 
 		chartTab.setFont(BODY_REGULAR);
 		chartTab.setForeground(TEXT_SECONDARY);
-		chartTab.setBackground(Color.WHITE);
-		chartTab.setBorder(BorderFactory.createEmptyBorder(12, 25, 12, 25));
+		chartTab.setBackground(Color.WHITE); // 비활성 탭 배경
+		chartTab.setBorder(BorderFactory.createCompoundBorder(
+			BorderFactory.createMatteBorder(1, 1, 0, 1, Color.BLACK), // 검정 테두리
+			BorderFactory.createEmptyBorder(12, 25, 12, 25)
+		));
 
 		// 선택된 탭 강조
 		activeBtn.setFont(new Font(BODY_REGULAR.getName(), Font.BOLD, BODY_REGULAR.getSize()));
 		activeBtn.setForeground(TEXT_PRIMARY);
 		activeBtn.setBackground(bgColor);
 		activeBtn.setBorder(BorderFactory.createCompoundBorder(
-			BorderFactory.createEmptyBorder(12, 25, 9, 25),
-			BorderFactory.createMatteBorder(0, 0, 3, 0, accentColor)
+			BorderFactory.createMatteBorder(1, 1, 0, 1, Color.BLACK), // 검정 테두리
+			BorderFactory.createCompoundBorder(
+				BorderFactory.createEmptyBorder(12, 25, 9, 25),
+				BorderFactory.createMatteBorder(0, 0, 3, 0, accentColor) // 하단 강조색 테두리
+			)
 		));
 	}
 
@@ -213,8 +229,10 @@ public class MainView extends JFrame {
 				}
 			} else if (result == JOptionPane.CANCEL_OPTION) {
 				return; // 탭 전환 취소
+			} else if (result == JOptionPane.NO_OPTION) {
+				// 요구사항 7: No 클릭 시 작성 중인 일기 내용 모두 초기화
+				writePanel.clearAllFields();
 			}
-			// NO_OPTION이면 저장하지 않고 탭 전환
 		}
 
 		setActiveTab(viewTab, BG_VIEW, ACCENT_ORANGE);
@@ -242,8 +260,10 @@ public class MainView extends JFrame {
 				}
 			} else if (result == JOptionPane.CANCEL_OPTION) {
 				return; // 탭 전환 취소
+			} else if (result == JOptionPane.NO_OPTION) {
+				// 요구사항 7: No 클릭 시 작성 중인 일기 내용 모두 초기화
+				writePanel.clearAllFields();
 			}
-			// NO_OPTION이면 저장하지 않고 탭 전환
 		}
 
 		setActiveTab(chartTab, BG_STATS, ACCENT_BLUE);

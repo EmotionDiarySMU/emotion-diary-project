@@ -31,6 +31,9 @@ public class ExtraWindow extends JFrame {
         this.entryId = entry.getEntry_id();
         UIConstants.setupFrame(this); // 기본 크기(495x630) 설정
 
+        // 요구사항 4: ViewDiaryPanel 창 닫을 때 프로그램 종료 방지
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
         // CardLayout 설정
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
@@ -52,7 +55,45 @@ public class ExtraWindow extends JFrame {
         // 이벤트 설정
         setupEvents(entry);
 
+        // 메인 창과 겹치지 않게 위치 설정
+        positionWindowNextToMain();
+
         setVisible(true);
+    }
+
+    /**
+     * 메인 창 옆에 ExtraWindow를 배치
+     */
+    private void positionWindowNextToMain() {
+        // 모든 Frame 중에서 MainView 찾기
+        for (Frame frame : Frame.getFrames()) {
+            if (frame instanceof MainView && frame.isVisible()) {
+                Point mainLocation = frame.getLocation();
+                Dimension mainSize = frame.getSize();
+
+                // 메인 창의 오른쪽에 배치
+                int x = mainLocation.x + mainSize.width + 10; // 10px 간격
+                int y = mainLocation.y;
+
+                // 화면 경계를 벗어나는지 확인
+                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                if (x + getWidth() > screenSize.width) {
+                    // 오른쪽에 공간이 없으면 왼쪽에 배치
+                    x = mainLocation.x - getWidth() - 10;
+                    if (x < 0) {
+                        // 왼쪽에도 공간이 없으면 메인 창 아래에 배치
+                        x = mainLocation.x;
+                        y = mainLocation.y + mainSize.height + 10;
+                    }
+                }
+
+                setLocation(x, y);
+                return;
+            }
+        }
+
+        // MainView를 찾지 못한 경우 화면 중앙에 배치
+        setLocationRelativeTo(null);
     }
 
     private void setupEvents(DiaryEntry entry) {

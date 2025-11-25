@@ -130,7 +130,8 @@ public class ViewDiaryPanel extends JPanel {
         emotionPanel.setBackground(BG_VIEW);
 
         for (int i = 0; i < 4; i++) {
-            emotionSlots[i] = new EmotionSlotPanel(i, emotionSlots, () -> {});
+            // ViewDiaryPanel은 조회 전용이므로 편집 불가능(false)로 설정
+            emotionSlots[i] = new EmotionSlotPanel(i, emotionSlots, () -> {}, false);
             iconLabels[i] = emotionSlots[i].getIconLabel();
             valueFields[i] = emotionSlots[i].getValueField();
             valueFields[i].setEditable(false); // 조회 전용으로 편집 불가
@@ -234,12 +235,14 @@ public class ViewDiaryPanel extends JPanel {
         editBtn = ButtonFactory.createCustomButton("수정하기", Color.WHITE, UIColors.TEXT_PRIMARY);
         editBtn.addActionListener(e -> {
             if (currentEntry != null) {
-                ModifyPanel modifyPanel = new ModifyPanel();
-                modifyPanel.fillEntry(currentEntry);
-                JFrame frame = new JFrame("일기 수정");
-                frame.add(modifyPanel);
-                frame.setSize(495, 630);
-                frame.setVisible(true);
+                // 요구사항 5: 새 창이 아닌 ExtraWindow의 CardLayout으로 ModifyPanel 전환
+                Window window = SwingUtilities.getWindowAncestor(this);
+                if (window instanceof ExtraWindow) {
+                    ExtraWindow extraWindow = (ExtraWindow) window;
+                    extraWindow.modifyPanel.fillEntry(currentEntry);
+                    extraWindow.cardLayout.show(extraWindow.cardPanel, "EDIT");
+                    extraWindow.setTitle("일기 수정");
+                }
             }
         });
         gbc.gridx = 1;
