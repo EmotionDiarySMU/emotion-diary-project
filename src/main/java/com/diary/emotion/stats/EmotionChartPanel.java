@@ -43,14 +43,14 @@ public class EmotionChartPanel extends JPanel {
 
         // 12개 이모지를 모두 0으로 초기화
         for (String emotion : OFFICIAL_EMOTIONS) {
-            dataset.setValue(0.0, "횟수", emotion);
-            dataset.setValue(0.0, "수치", emotion);
+            dataset.setValue(0.0, "횟수(%)", emotion);
+            dataset.setValue(0.0, "수치(%)", emotion);
         }
 
         barChart = ChartFactory.createBarChart(
             null,
             "(감정)",
-            null,
+            "(%)",
             dataset,
             PlotOrientation.VERTICAL,
             false,
@@ -116,7 +116,7 @@ public class EmotionChartPanel extends JPanel {
         JPanel legendPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
         legendPanel.setBackground(Color.WHITE);
         legendPanel.setOpaque(true);
-        legendPanel.add(createLegendItem(new Color(100, 150, 255), "횟수"));
+        legendPanel.add(createLegendItem(new Color(100, 150, 255), "횟수(%)"));
         legendPanel.add(Box.createHorizontalStrut(5));
         legendPanel.add(createLegendItem(new Color(190, 220, 255), "수치"));
         legendPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));

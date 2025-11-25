@@ -60,6 +60,9 @@ public class StatisticsDAO {
         data.put("횟수", new HashMap<>());
         data.put("수치", new HashMap<>());
 
+        // 전체 횟수를 계산하기 위한 변수
+        double totalCount = 0.0;
+
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sqlCount)) {
 
@@ -72,10 +75,20 @@ public class StatisticsDAO {
                     String emojiIcon = rs.getString(1);
                     double count = rs.getDouble(2);
                     data.get("횟수").put(emojiIcon, count);
+                    totalCount += count;
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        // 횟수를 백분율로 변환
+        if (totalCount > 0) {
+            Map<String, Double> counts = data.get("횟수");
+            for (String emotion : counts.keySet()) {
+                double percentage = (counts.get(emotion) / totalCount) * 100.0;
+                counts.put(emotion, percentage);
+            }
         }
 
         try (Connection conn = getConnection();
