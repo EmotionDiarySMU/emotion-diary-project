@@ -425,30 +425,11 @@ public class WriteDiaryGUI extends JPanel {
     }
 
     public void saveOrFinish() {
-        // 화면에 표시된 질문 텍스트 가져오기 (Q. 제거)
-        String displayedQuestion = questionLabel.getText();
-        if (displayedQuestion.startsWith("Q. ")) {
-            displayedQuestion = displayedQuestion.substring(3);
-        }
-
-        int result = JOptionPane.showConfirmDialog(
-                this,
-                "오늘의 질문: " + displayedQuestion + "\n\n이 질문에 대한 답변으로 저장하시겠습니까?",
-                "질문 답변 여부",
-                JOptionPane.YES_NO_CANCEL_OPTION
-        );
-
-        if (result == JOptionPane.YES_OPTION) {
-            // YES: 질문에 대한 답변으로 저장
-            saveEntry(true);
-        } else if (result == JOptionPane.NO_OPTION) {
-            // NO: 질문과 관계없이 일반 일기로 저장
-            saveEntry(false);
-        }
-        // CANCEL 또는 창 닫기: 아무것도 하지 않음 (저장 취소)
+        // 팝업 없이 바로 저장
+        saveEntry();
     }
 
-    private void saveEntry(boolean isAnswerToQuestion) {
+    private void saveEntry() {
         String title = titleField.getText().trim();
         String content = contentArea.getText().trim();
         int stress = stressSlider.getValue();
@@ -462,7 +443,6 @@ public class WriteDiaryGUI extends JPanel {
         entry.setTitle(title);
         entry.setContent(content);
         entry.setStress_level(stress);
-        entry.setAnswerToQuestion(isAnswerToQuestion);
 
         List<Emotion> emotions = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
