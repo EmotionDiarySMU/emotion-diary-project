@@ -1,7 +1,10 @@
 package write;
 
 import java.awt.*;
+<<<<<<< Updated upstream
 import java.awt.event.*;
+=======
+>>>>>>> Stashed changes
 import javax.swing.*;
 import java.util.List;
 import java.util.ArrayList;
@@ -23,6 +26,12 @@ public class SingleIconChooserDialog extends JDialog {
 
     // 🔸 추가된 부분 — 내부에서 선택된 아이콘 위치를 기억
     int selectedIndex = -1; 
+<<<<<<< Updated upstream
+=======
+    
+    // 🔹 (회색!!!!!!!!) 추가된 부분 — 비활성화된 아이콘의 배경색
+    private final Color DISABLED_BG_COLOR = new Color(240, 240, 240); // 연한 회색
+>>>>>>> Stashed changes
 
     // 🔹 Component 타입으로 변경 — JPanel, JFrame 모두 받을 수 있음
     public SingleIconChooserDialog(Component parent, JLabel[] iconLabels, Color bgColor) {
@@ -37,6 +46,7 @@ public class SingleIconChooserDialog extends JDialog {
         JPanel iconPanel = new JPanel(new GridLayout(4, 3, 5, 5));
         iconPanel.setBackground(bgColor);
 
+<<<<<<< Updated upstream
         // 버튼 클릭 시 동작
         ActionListener iconListener = e -> {
             selectedIcon = e.getActionCommand(); // 클릭한 아이콘 저장
@@ -45,6 +55,8 @@ public class SingleIconChooserDialog extends JDialog {
             setVisible(false); // 팝업 닫기
         };
 
+=======
+>>>>>>> Stashed changes
         // 아이콘 버튼 12개 생성
         for (int i = 0; i < allIcons.length; i++) {
             JButton iconButton = new JButton(allIcons[i]);
@@ -56,9 +68,20 @@ public class SingleIconChooserDialog extends JDialog {
             final int index = i;
 
             iconButton.addActionListener(e -> {
+<<<<<<< Updated upstream
                 selectedIndex = index;             // 선택한 인덱스 저장
                 selectedIcon = allIcons[index];    // 선택한 아이콘 저장
                 updateSelectionHighlight();        // 하이라이트 적용
+=======
+                // 버튼이 비활성화(다른 곳에서 사용 중)된 경우 선택하지 않음
+                if (!iconButton.isEnabled()) {
+                    return; 
+                }
+                
+                selectedIndex = index;      // 선택한 인덱스 저장
+                selectedIcon = allIcons[index];     // 선택한 아이콘 저장
+                updateSelectionHighlight();      // 하이라이트 적용
+>>>>>>> Stashed changes
                 setVisible(false);
             });
 
@@ -106,9 +129,15 @@ public class SingleIconChooserDialog extends JDialog {
                 }
             }
         }
+<<<<<<< Updated upstream
 
         // 🔸 추가된 부분 — UI 업데이트
         updateSelectionHighlight();
+=======
+        // 🔸 추가된 부분 — UI 업데이트
+        // 중복 체크는 setVisible(true)에서 수행되므로 여기서는 하이라이트만 준비
+        // updateSelectionHighlight(); // setVisible에서 호출되므로 주석 처리하거나 제거 가능
+>>>>>>> Stashed changes
     }
 
     // 팝업이 열릴 때 중복 아이콘 비활성화 처리
@@ -116,18 +145,37 @@ public class SingleIconChooserDialog extends JDialog {
     public void setVisible(boolean b) {
         if (b) {
             selectedIcon = null;
+<<<<<<< Updated upstream
 
             List<String> usedIcons = new ArrayList<>();
             for (JLabel lbl : allIconLabels) {
                 String icon = lbl.getText();
                 if (!icon.equals("[ ]") && !icon.equals(this.currentIconInSlot)) {
+=======
+            
+         // 다른 슬롯에서 사용 중인 아이콘 목록을 만듦 
+            List<String> usedIcons = new ArrayList<>();
+            for (JLabel lbl : allIconLabels) {
+                String icon = lbl.getText();
+                if (!icon.equals("[ ]") && !icon.equals(this.currentIconInSlot)) {  // 현재 슬롯의 아이콘과 "[ ]"는 제외하고 목록에 추가
+>>>>>>> Stashed changes
                     usedIcons.add(icon);
                 }
             }
 
+<<<<<<< Updated upstream
             for (int i = 0; i < iconButtons.length; i++) {
                 JButton btn = iconButtons[i];
                 btn.setEnabled(!usedIcons.contains(btn.getText()));
+=======
+            for (int i = 0; i < iconButtons.length; i++) { // 모든 버튼을 순회하며 비활성화 처리
+                JButton btn = iconButtons[i];
+                boolean isUsed = usedIcons.contains(btn.getText());
+                btn.setEnabled(!isUsed); // 비활성화
+                
+                // 🔹 추가된 부분 — 비활성화된 아이콘에 시각적 표시 추가
+                // updateSelectionHighlight()에서 처리되도록 이동
+>>>>>>> Stashed changes
             }
 
             // 🔸 추가된 부분 — 중복 체크 후 하이라이트 다시 적용
@@ -136,6 +184,7 @@ public class SingleIconChooserDialog extends JDialog {
         super.setVisible(b);
     }
 
+<<<<<<< Updated upstream
     // 🔸 추가된 부분 — 선택된 아이콘 하이라이트 함수
     private void updateSelectionHighlight() {
         for (int i = 0; i < iconButtons.length; i++) {
@@ -151,3 +200,35 @@ public class SingleIconChooserDialog extends JDialog {
         }
     }
 }
+=======
+    // 🔸 수정된 부분 — 선택된 아이콘 하이라이트 함수 (비활성화 상태도 반영)
+    private void updateSelectionHighlight() {
+        Color defaultBg = getContentPane().getBackground();
+        Color selectedBg = new Color(255, 235, 200);
+        Color selectedBorder = Color.ORANGE;
+        
+        for (int i = 0; i < iconButtons.length; i++) {
+            JButton btn = iconButtons[i];
+            
+            // 1. 현재 슬롯의 아이콘 (선택 강조)
+            if (i == selectedIndex) {
+                btn.setBorder(BorderFactory.createLineBorder(selectedBorder, 3));
+                btn.setBackground(selectedBg);
+                btn.setForeground(Color.BLACK); // 선택된 것은 명확하게
+            } 
+            // 2. 다른 슬롯에서 이미 사용 중인 아이콘 (비활성화 강조)
+            else if (!btn.isEnabled()) {  // 버튼 클릭 방지!!
+                btn.setBorder(BorderFactory.createEtchedBorder()); // 테두리는 기본
+               btn.setBackground(DISABLED_BG_COLOR); // 회색 배경 (회색!!!!!!!!)
+               btn.setForeground(Color.GRAY); // 글자도 회색으로 (회색!!!!!!!!) > !btn.isEnabled()가 트루인지 잘 보기
+            }
+            // 3. 선택 가능한 기본 아이콘
+            else {
+                btn.setBorder(BorderFactory.createEtchedBorder());
+                btn.setBackground(defaultBg);
+                btn.setForeground(Color.BLACK); // 기본 글자색
+            }
+        }
+    }
+}
+>>>>>>> Stashed changes
