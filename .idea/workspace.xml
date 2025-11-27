@@ -4,11 +4,42 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8eb840dc-993b-4419-bbaa-cd45170e40e4" name="변경" comment="" />
+    <list default="true" id="8eb840dc-993b-4419-bbaa-cd45170e40e4" name="변경" comment="">
+      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/share/Main.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/stats/StatisticsController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/stats/StatisticsDAO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/stats/StatisticsView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DB/DatabaseManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/DB/DatabaseManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DB/DiaryEntry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/DB/DiaryEntry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DB/Emotion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/DB/Emotion.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DB/QuestionDBManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/DB/QuestionDBManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/login/AuthenticationFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/login/AuthenticationFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/share/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/share/MainView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/share/MainView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/share/SaveQuestion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/share/SaveQuestion.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/view/DateSelectorPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/view/DateSelectorPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/view/ExtraWindow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/view/ExtraWindow.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/view/ModifyPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/view/ModifyPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/view/SearchDiaryPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/view/SearchDiaryPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/view/ViewDiaryPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/view/ViewDiaryPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/write/LengthFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/write/LengthFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/write/NumericRangeFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/write/NumericRangeFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/write/SingleIconChooserDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/write/SingleIconChooserDialog.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/write/WriteDiaryGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/write/WriteDiaryGUI.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -18,27 +49,78 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;iee129&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/EmotionDiarySMU/emotion-diary-project.git&quot;,
+    &quot;accountId&quot;: &quot;ad4e0c4c-7de0-479f-81df-fdb89f56ee45&quot;
+  }
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 6
 }</component>
   <component name="ProjectId" id="35xEyXo1HOhVkemwwzEzUdMnzMi" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
-    <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.Main.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "stp",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/iee12/IdeaProjects/emotion-diary-project/src/main/java/com/diary/emotion/share",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "configurable.group.editor",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/java/com/diary/emotion/share" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/java/com/diary/emotion" />
+      <recent name="$PROJECT_DIR$/src/main" />
+      <recent name="$PROJECT_DIR$/src/java" />
+      <recent name="$PROJECT_DIR$/src" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="Emotion_Diary" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="Emotion_Diary" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
         <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.27397.103" />
+        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-IU-252.27397.103" />
       </set>
     </attachedChunks>
   </component>
@@ -50,7 +132,20 @@
       <option name="presentableId" value="Default" />
       <updated>1764043578974</updated>
       <workItem from="1764043580252" duration="7000" />
+      <workItem from="1764220811617" duration="566000" />
+      <workItem from="1764221877851" duration="1120000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
   </component>
 </project>
