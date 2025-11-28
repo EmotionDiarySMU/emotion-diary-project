@@ -6,6 +6,8 @@ import java.time.DayOfWeek;
 import java.time.temporal.WeekFields;
 import java.util.Map;
 import org.jfree.data.category.DefaultCategoryDataset;
+import com.diary.emotion.login.AuthenticationFrame;
+import com.diary.emotion.DB.DBDebugUtil;
 
 public class StatisticsController {
 
@@ -17,6 +19,13 @@ public class StatisticsController {
         this.dao = dao;
 
         addListeners();
+        updateAllCharts();
+    }
+
+    /**
+     * 외부에서 차트를 강제로 새로고침할 때 사용
+     */
+    public void refreshCharts() {
         updateAllCharts();
     }
 
@@ -42,6 +51,16 @@ public class StatisticsController {
             LocalDate startDate = getStartDateFromView(mode);
             LocalDate endDate = getEndDateFromView(mode);
 
+            System.out.println("\n===============================================");
+            System.out.println("통계 차트 업데이트 시작");
+            System.out.println("모드: " + mode);
+            System.out.println("시작일: " + startDate);
+            System.out.println("종료일: " + endDate);
+            System.out.println("===============================================");
+
+            // DB의 모든 감정 데이터 출력
+            DBDebugUtil.printAllEmotions(AuthenticationFrame.loggedInUserId);
+
             double avgStress = dao.getAverageStress(startDate, endDate);
 
             Map<String, Map<String, Double>> emotionData = dao.getEmotionData(startDate, endDate);
@@ -55,7 +74,12 @@ public class StatisticsController {
             view.updateEmotionChart(emotionData);
             view.updateStressChart(stressDataset);
 
+            System.out.println("===============================================");
+            System.out.println("통계 차트 업데이트 완료");
+            System.out.println("===============================================\n");
+
         } catch (Exception e) {
+            System.err.println("차트 업데이트 중 오류 발생:");
             e.printStackTrace();
             view.showError("데이터를 불러오는 중 오류가 발생했습니다.\n" +
                     "데이터베이스 연결 상태를 확인해주세요.\n\n" +

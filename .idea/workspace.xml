@@ -5,29 +5,47 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8eb840dc-993b-4419-bbaa-cd45170e40e4" name="변경" comment="">
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/share/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/stats/StatisticsController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/stats/StatisticsDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/stats/StatisticsView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DB/DatabaseManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/DB/DatabaseManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DB/DiaryEntry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/DB/DiaryEntry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DB/Emotion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/DB/Emotion.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DB/QuestionDBManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/DB/QuestionDBManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/login/AuthenticationFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/login/AuthenticationFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/share/Main.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/share/MainView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/share/MainView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/share/SaveQuestion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/share/SaveQuestion.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/DateSelectorPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/view/DateSelectorPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/ExtraWindow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/view/ExtraWindow.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/ModifyPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/view/ModifyPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/SearchDiaryPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/view/SearchDiaryPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/ViewDiaryPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/view/ViewDiaryPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/write/LengthFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/write/LengthFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/write/NumericRangeFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/write/NumericRangeFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/write/SingleIconChooserDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/write/SingleIconChooserDialog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/write/WriteDiaryGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/diary/emotion/write/WriteDiaryGUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/META-INF/MANIFEST.MF" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/META-INF/maven/com.diary/emotion-diary-project/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/META-INF/maven/com.diary/emotion-diary-project/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/DB/DatabaseManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/DB/DatabaseManager.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/DB/DiaryEntry.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/DB/DiaryEntry.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/DB/Emotion.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/DB/Emotion.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/DB/QuestionDBManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/DB/QuestionDBManager.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/login/AuthenticationFrame$LoginPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/login/AuthenticationFrame$LoginPanel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/login/AuthenticationFrame$SignUpPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/login/AuthenticationFrame$SignUpPanel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/login/AuthenticationFrame$SignUpSuccessPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/login/AuthenticationFrame$SignUpSuccessPanel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/login/AuthenticationFrame.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/login/AuthenticationFrame.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/share/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/share/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/share/MainView$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/share/MainView$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/share/MainView.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/share/MainView.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/share/SaveQuestion.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/share/SaveQuestion.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/stats/StatisticsController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/stats/StatisticsController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/stats/StatisticsDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/stats/StatisticsDAO.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/stats/StatisticsView$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/stats/StatisticsView$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/stats/StatisticsView.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/stats/StatisticsView.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/view/DateSelectorPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/view/DateSelectorPanel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/view/ExtraWindow$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/view/ExtraWindow$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/view/ExtraWindow.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/view/ExtraWindow.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/view/ModifyPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/view/ModifyPanel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/view/SearchDiaryPanel$1$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/view/SearchDiaryPanel$1$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/view/SearchDiaryPanel$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/view/SearchDiaryPanel$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/view/SearchDiaryPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/view/SearchDiaryPanel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/view/ViewDiaryPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/view/ViewDiaryPanel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/LengthFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/LengthFilter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/NumericRangeFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/NumericRangeFilter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/QuestionDBManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/QuestionDBManager.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/SingleIconChooserDialog.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/SingleIconChooserDialog.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/WriteDiaryGUI$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/WriteDiaryGUI$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/WriteDiaryGUI$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/WriteDiaryGUI$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/WriteDiaryGUI$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/WriteDiaryGUI$3.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/WriteDiaryGUI$4.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/WriteDiaryGUI$4.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/WriteDiaryGUI$5.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/WriteDiaryGUI$5.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/WriteDiaryGUI$6.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/WriteDiaryGUI$6.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/WriteDiaryGUI$SimpleModifyListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/WriteDiaryGUI$SimpleModifyListener.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/WriteDiaryGUI.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/diary/emotion/write/WriteDiaryGUI.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -77,6 +95,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "stp",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/Users/iee12/IdeaProjects/emotion-diary-project/src/main/java/com/diary/emotion/share",
