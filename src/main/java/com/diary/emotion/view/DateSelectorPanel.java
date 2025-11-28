@@ -11,8 +11,7 @@ public class DateSelectorPanel extends JPanel {
     private JComboBox<Object> monthCombo;
     private JComboBox<Object> dayCombo;
     
-    Object preSelected = "-";
-    int flag = 0;
+    public static int startYear = com.diary.emotion.DB.DatabaseManager.getOldestDiaryYear();
 
     public DateSelectorPanel() {
         this.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 5));
@@ -30,15 +29,13 @@ public class DateSelectorPanel extends JPanel {
         int currentYear = LocalDate.now().getYear();
 
         yearCombo = new JComboBox<>();
-        yearCombo.setEditable(true);
         yearCombo.addItem("-"); // 선택 안 된 상태
-        for (int i = 0; i < 5; i++) {
-            yearCombo.addItem(currentYear - i);
+        for (int i = currentYear; i >= startYear; i--) {
+            yearCombo.addItem(i);
         }
 
         // 🔹 월 콤보박스 (초기 비활성화)
         monthCombo = new JComboBox<>();
-        monthCombo.setEditable(true);
         monthCombo.addItem("-");
         for (int i = 1; i <= 12; i++) {
             monthCombo.addItem(i);
@@ -47,7 +44,6 @@ public class DateSelectorPanel extends JPanel {
 
         // 🔹 일 콤보박스 (초기 비활성화)
         dayCombo = new JComboBox<>();
-        dayCombo.setEditable(true);
         dayCombo.addItem("-");
         dayCombo.setEnabled(false);
 
@@ -83,67 +79,26 @@ public class DateSelectorPanel extends JPanel {
 
     // 🟡 날짜 선택 과정 로직 구현
     private void addChangeListeners() {
-    	// ♦️ year 선택 리스너
-    	yearCombo.addActionListener(e -> {
-    	    Object yObj = yearCombo.getSelectedItem();
-
-    	    if (yObj instanceof Integer) {
-    	        // 1. 미리 추가된 Integer 항목을 선택했을 때
-    	        flag = 1;
-    	    }
-    	    else if (yObj instanceof String) {
-    	        // 2. "-" 선택하거나 사용자가 직접 텍스트 필드에 입력했을 때 (Enter 누른 경우)
-    	        String inputYear = ((String) yObj).trim();
-    	        
-    	        if (inputYear.isEmpty() || inputYear.equals("-")) {
-    	        	yearCombo.setSelectedItem("-");
-    	        	flag = 0;
-    	        }
-    	        else {
-	    	        try {
-	    	            // String을 int로 변환 시도
-	    	            int selectedYear = Integer.parseInt(inputYear);
-	    	            
-	                    int minYear = (int) yearCombo.getItemAt(1); // 최소값
-	                    int maxYear = (int) yearCombo.getItemAt(yearCombo.getItemCount() - 1); // 최대값
-
-	                    // 선택한 연도가 최소값보다 작으면 최소값으로 설정
-	                    if (selectedYear < minYear) {
-	                        yearCombo.setSelectedItem(minYear);
-	                    }
-	                    // 선택한 연도가 최대값보다 크면 최대값으로 설정
-	                    else if (selectedYear > maxYear) {
-	                        yearCombo.setSelectedItem(maxYear);
-	                    } else {
-	                        // 유효한 값이므로 선택 유지
-	                        yearCombo.setSelectedItem(selectedYear);
-	                    }
-	                    flag = 1;
-	                    
-	    	        } catch (NumberFormatException ex) {
-	    	            // 숫자가 아닌 "abcd" 같은 것을 입력했거나, 빈칸일 경우
-	    	        	yearCombo.setSelectedItem(preSelected); // 목록에 없으면 강제로 이전 선택 값으로 되돌림
-	    	        }
-    	        }
-    	        preSelected = yearCombo.getSelectedItem();
-    	    }
-
-    	    // 3. 공통 로직: selectedYear를 기반으로 month/day 콤보박스 상태 변경
-    	    if (flag == 1) {
-    	        monthCombo.setEnabled(true);
-    	        monthCombo.setSelectedItem("-");
-    	        dayCombo.removeAllItems();
-    	        dayCombo.addItem("-");
-    	        dayCombo.setEnabled(false);
-    	    } else {
-    	        // year 해제 또는 유효하지 않은 입력 시
-    	        monthCombo.setSelectedItem("-");
-    	        monthCombo.setEnabled(false);
-    	        dayCombo.removeAllItems();
-    	        dayCombo.addItem("-");
-    	        dayCombo.setEnabled(false);
-    	    }
-    	});
+        // ♦️ year 선택 리스너
+        yearCombo.addActionListener(e -> {
+            Object yObj = yearCombo.getSelectedItem();
+            if (yObj instanceof Integer) {
+                // 콤보박스 내부 요소엔 '-'와 날짜들이 있음. '-'는 선택한 날짜가 없음 나타냄. 모든 콤보박스는 활성화/비활성화시 '-'로 초기화됨
+                // year 선택 -> month 활성화, day 비활성화
+                monthCombo.setEnabled(true);
+                monthCombo.setSelectedItem("-");
+                dayCombo.removeAllItems();
+                dayCombo.addItem("-");
+                dayCombo.setEnabled(false);
+            } else {
+                // year 해제 -> month, day 비활성화
+                monthCombo.setSelectedItem("-");
+                monthCombo.setEnabled(false);
+                dayCombo.removeAllItems();
+                dayCombo.addItem("-");
+                dayCombo.setEnabled(false);
+            }
+        });
 
         // ♦️ month 선택 리스너
         monthCombo.addActionListener(e -> {
