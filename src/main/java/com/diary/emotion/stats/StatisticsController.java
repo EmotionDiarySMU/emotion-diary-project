@@ -5,6 +5,7 @@ import java.time.YearMonth;
 import java.time.DayOfWeek;
 import java.time.temporal.WeekFields;
 import java.util.Map;
+import javax.swing.JPanel;
 import org.jfree.data.category.DefaultCategoryDataset;
 import com.diary.emotion.login.AuthenticationFrame;
 import com.diary.emotion.DB.DBDebugUtil;
@@ -30,7 +31,15 @@ public class StatisticsController {
     }
 
     private void addListeners() {
-        view.getViewModeSelector().addActionListener(e -> updateAllCharts());
+        view.getViewModeSelector().addActionListener(e -> {
+            // 뷰 모드가 변경되면 차트 패널을 새로 생성
+            String mode = (String) view.getViewModeSelector().getSelectedItem();
+            if (mode != null) {
+                JPanel newChartPanel = view.createChartPanel(mode);
+                view.setMainChartPanel(newChartPanel);
+            }
+            updateAllCharts();
+        });
 
         view.getYearComboW().addActionListener(e -> updateAllCharts());
         view.getMonthComboW().addActionListener(e -> updateAllCharts());

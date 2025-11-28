@@ -132,8 +132,7 @@ public class StatisticsView extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 String selectedMode = (String) viewModeSelector.getSelectedItem();
                 datePickerCardLayout.show(datePickerCardPanel, selectedMode);
-                JPanel newChartPanel = createChartPanel(selectedMode);
-                setMainChartPanel(newChartPanel);
+                // 차트 업데이트는 Controller에서 담당하므로 여기서는 날짜 선택기만 변경
             }
         });
         controlPanel.add(datePickerCardPanel);
@@ -215,7 +214,7 @@ public class StatisticsView extends JPanel {
         }
         return new javax.swing.DefaultComboBoxModel<>(weeks.toArray(new String[0]));
     }
-    private JPanel createChartPanel(String mode) {
+    public JPanel createChartPanel(String mode) {
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         centerPanel.setBackground(PASTEL_BLUE);
