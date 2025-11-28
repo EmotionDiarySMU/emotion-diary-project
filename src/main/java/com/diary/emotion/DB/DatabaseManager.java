@@ -19,7 +19,7 @@ public class DatabaseManager {
     // ⭐️ 이 클래스는 'emotion_diary' DB에 바로 연결
     private static final String DB_URL = "jdbc:mysql://localhost:3306/emotion_diary?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&useUnicode=true";
 	private static final String DB_ID = "root";
-	private static final String DB_PW = "quwrof12"; // 비번
+	private static final String DB_PW = "U9Bsi7sj1*"; // 비번
 	
     // 1. DB 연결을 가져오는 메소드
     public static Connection getConnection() throws Exception {
