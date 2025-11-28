@@ -29,6 +29,7 @@ com/diary/emotion/stats/StatisticsDAO.class
 com/diary/emotion/write/LengthFilter.class
 com/diary/emotion/write/WriteDiaryGUI.class
 com/diary/emotion/stats/StatisticsController.class
+com/diary/emotion/DB/DBDebugUtil.class
 com/diary/emotion/stats/StatisticsView$1.class
 com/diary/emotion/login/AuthenticationFrame$SignUpPanel.class
 com/diary/emotion/view/ModifyPanel.class
