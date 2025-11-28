@@ -51,8 +51,12 @@ public class WriteDiaryGUI extends JPanel {
     public int[] emotionValues = new int[4];
     public boolean isModified = false;
 
-    Color lightGreen = new Color(240, 255, 240);
+    protected Color getBackgroundColor() {
+        return new Color(240, 255, 240); // lightGreen
+    }
+
     Color lightYellow = new Color(255, 255, 224);
+    Color backgroundColor = getBackgroundColor();
 
 
     public WriteDiaryGUI() {
@@ -62,7 +66,7 @@ public class WriteDiaryGUI extends JPanel {
 
         // --- 메인 컨텐츠 패널 (GridBagLayout 사용) ---
         mainPanel = new JPanel(new GridBagLayout());
-        mainPanel.setBackground(lightGreen);
+        mainPanel.setBackground(backgroundColor);
 
         gbc = new GridBagConstraints();
         gbc.insets = new Insets(15, 15, 15, 15);
@@ -135,7 +139,7 @@ public class WriteDiaryGUI extends JPanel {
 
         // 4개의 감정 슬롯을 담을 패널
         JPanel iconDisplayPanel = new JPanel(new GridLayout(1, 4, 5, 5));
-        iconDisplayPanel.setBackground(lightGreen);
+        iconDisplayPanel.setBackground(backgroundColor);
 
         // 아이콘 선택 팝업창 초기화
         iconDialog = new SingleIconChooserDialog(this, iconLabels, lightYellow);
@@ -221,7 +225,7 @@ public class WriteDiaryGUI extends JPanel {
         mainPanel.add(stressLabel, gbc);
 
         JPanel stressPanel = new JPanel(new BorderLayout(5, 0));
-        stressPanel.setBackground(lightGreen);
+        stressPanel.setBackground(backgroundColor);
 
         stressSlider = new JSlider(0, 100, 50);
         stressSlider.setOpaque(false); //수정1125
@@ -242,7 +246,7 @@ public class WriteDiaryGUI extends JPanel {
         saveButton = new JButton("저장하기");
 
         southPanel = new JPanel();
-        southPanel.setBackground(lightGreen);
+        southPanel.setBackground(backgroundColor);
         southPanel.add(newPostButton);
         southPanel.add(saveButton);
 
