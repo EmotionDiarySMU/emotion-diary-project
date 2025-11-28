@@ -32,7 +32,10 @@ public class SearchDiaryPanel extends JPanel{
 	static DateSelectorPanel secondDS;
 
 	public SearchDiaryPanel() {
-		
+
+        Color salmon = new Color(255, 218, 185);
+        Color bisque = new Color(255, 245, 238);
+
 		setLayout(new BorderLayout());
 		
 		// 제목 검색
@@ -41,7 +44,8 @@ public class SearchDiaryPanel extends JPanel{
 		titleFd = new JTextField(30);
 		titlePn.add(titleLb);
 		titlePn.add(titleFd);
-		
+
+        titlePn.setBackground(salmon);
 		
 		// 날짜 검색
 		JPanel datePn = new JPanel();
@@ -51,12 +55,14 @@ public class SearchDiaryPanel extends JPanel{
 		JPanel firstRow = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		firstRow.add(new JLabel("날짜: "));
 		firstDS = new DateSelectorPanel();
+        firstRow.setBackground(salmon);
 		firstRow.add(firstDS);
 		
 		// 2줄: "~" + 두 번째 DateSelectorPanel
 		JPanel secondRow = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		secondRow.add(new JLabel("~"));
 		secondDS = new DateSelectorPanel();
+        secondRow.setBackground(salmon);
 		secondRow.add(secondDS);
 		
 		// 패널에 두 줄 추가
@@ -67,6 +73,7 @@ public class SearchDiaryPanel extends JPanel{
 		// 검색 버튼
 		JPanel serchBtWrapPn = new JPanel(); 
 		JButton serchBt = new JButton("검색");
+        serchBtWrapPn.setBackground(salmon);
 		serchBtWrapPn.add(serchBt); // FlowLayout이 버튼의 선호 크기 유지
 		
 		
@@ -74,6 +81,7 @@ public class SearchDiaryPanel extends JPanel{
 		JPanel array = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		JButton latest = new JButton("최신순");
 		JButton oldest = new JButton("오래된순");
+        array.setBackground(salmon);
 		array.add(latest);
 		array.add(oldest);
 		
@@ -103,6 +111,7 @@ public class SearchDiaryPanel extends JPanel{
 
 		diaryModel = new DefaultListModel<>();
 		JList<String> diaries = new JList<>(diaryModel);
+        diaries.setBackground(bisque);
 		JScrollPane scrollPane = new JScrollPane(diaries);
 
 		
@@ -210,5 +219,3 @@ public class SearchDiaryPanel extends JPanel{
     }
 	
 }
-
-
