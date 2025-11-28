@@ -384,6 +384,38 @@ public class DatabaseManager {
             return false;
         }
     }
+    
 
+    // 6. 로그인한 사용자의 가장 오래된 일기 연도를 가져오는 메서드 (일기가 없으면 현재 연도를 반환)
+    public static int getOldestDiaryYear() {
+        int currentYear = LocalDateTime.now().getYear();
+        
+        // entry_date를 오름차순으로 정렬하여 가장 첫 번째 일기의 날짜를 가져옵니다.
+        String sql = "SELECT entry_date FROM diary WHERE user_id = ? ORDER BY entry_date ASC LIMIT 1";
 
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // 사용자 ID 설정
+            pstmt.setString(1, AuthenticationFrame.loggedInUserId); 
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    // 가장 오래된 entry_date를 Timestamp로 가져와서
+                    Timestamp oldestTimestamp = rs.getTimestamp("entry_date");
+                    // LocalDateTime으로 변환 후 연도만 반환
+                    return oldestTimestamp.toLocalDateTime().getYear();
+                }
+            }
+            
+            // 일기가 하나도 없을 경우 (ResultSet이 비어있음)
+            return currentYear;
+
+        } catch (Exception e) {
+            System.err.println("가장 오래된 일기 연도 조회 중 오류 발생:");
+            e.printStackTrace();
+            // 오류 발생 시에도 기본값으로 현재 연도 반환
+            return currentYear;
+        }
+    }
 }

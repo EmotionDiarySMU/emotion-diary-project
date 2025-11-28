@@ -10,6 +10,8 @@ public class DateSelectorPanel extends JPanel {
     private JComboBox<Object> yearCombo;
     private JComboBox<Object> monthCombo;
     private JComboBox<Object> dayCombo;
+    
+    public static int startYear = com.diary.emotion.DB.DatabaseManager.getOldestDiaryYear();
 
     public DateSelectorPanel() {
         this.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 5));
@@ -28,8 +30,8 @@ public class DateSelectorPanel extends JPanel {
 
         yearCombo = new JComboBox<>();
         yearCombo.addItem("-"); // 선택 안 된 상태
-        for (int i = 0; i < 5; i++) {
-            yearCombo.addItem(currentYear - i);
+        for (int i = currentYear; i >= startYear; i--) {
+            yearCombo.addItem(i);
         }
 
         // 🔹 월 콤보박스 (초기 비활성화)
