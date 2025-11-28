@@ -17,7 +17,7 @@ import com.diary.emotion.login.AuthenticationFrame;
 public class DatabaseManager {
 
     // ⭐️ 이 클래스는 'emotion_diary' DB에 바로 연결
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/emotion_diary?serverTimezone=Asia/Seoul";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/emotion_diary?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&useUnicode=true";
 	private static final String DB_ID = "root";
 	private static final String DB_PW = "U9Bsi7sj1*"; // 비번
 	
@@ -27,8 +27,8 @@ public class DatabaseManager {
     }
     
     // 처음 DB 생성을 위한 URL
-    private static final String Initial_DB_URL = "jdbc:mysql://localhost:3306/?serverTimezone=Asia/Seoul";
-    
+    private static final String Initial_DB_URL = "jdbc:mysql://localhost:3306/?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&useUnicode=true";
+
     // DB 생성 메서드
     public static boolean createDatabase() {
 	
@@ -70,18 +70,18 @@ public class DatabaseManager {
 	            """;
 	            stmt.executeUpdate(createTable_diary);
 	            
-	            // emotion 테이블 생성
-	            String createTable_emotion = """
-	                CREATE TABLE emotion (
-	                    emotion_id INTEGER AUTO_INCREMENT PRIMARY KEY,
-	                    entry_id INTEGER NOT NULL,
-	                    emotion_level INTEGER NOT NULL,
-	                    emoji_icon VARCHAR(10) NOT NULL,
-	                    FOREIGN KEY (entry_id) REFERENCES diary(entry_id)
-	                )
-	            """;
-	            stmt.executeUpdate(createTable_emotion);
-	                
+            // emotion 테이블 생성
+            String createTable_emotion = """
+                CREATE TABLE emotion (
+                    emotion_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+                    entry_id INTEGER NOT NULL,
+                    emotion_level INTEGER NOT NULL,
+                    emoji_icon VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+                    FOREIGN KEY (entry_id) REFERENCES diary(entry_id)
+                )
+            """;
+            stmt.executeUpdate(createTable_emotion);
+
 	            // question 테이블 생성
 	            String createTable_question = """
 	                CREATE TABLE question (
