@@ -13,7 +13,6 @@ public class DateSelectorPanel extends JPanel {
     
     public static int startYear = com.diary.emotion.DB.DatabaseManager.getOldestDiaryYear();
 
-    public static int startYear = com.diary.emotion.DB.DatabaseManager.getOldestDiaryYear();
 
     public DateSelectorPanel() {
         this.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 5));

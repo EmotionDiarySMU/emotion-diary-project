@@ -17,17 +17,17 @@ import com.diary.emotion.login.AuthenticationFrame;
 public class DatabaseManager {
 
     // ⭐️ 이 클래스는 'emotion_diary' DB에 바로 연결
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/emotion_diary?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&useUnicode=true";
-	private static final String DB_ID = "root";
-	private static final String DB_PW = "password"; // 비번
-	
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/emotion_diary?serverTimezone=Asia/Seoul";
+    private static final String DB_ID = "root";
+    private static final String DB_PW = "U9Bsi7sj1*"; // 비번
+
     // 1. DB 연결을 가져오는 메소드
     public static Connection getConnection() throws Exception {
         return DriverManager.getConnection(DB_URL, DB_ID, DB_PW);
     }
-    
+
     // 처음 DB 생성을 위한 URL
-    private static final String Initial_DB_URL = "jdbc:mysql://localhost:3306/?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&useUnicode=true";
+    private static final String Initial_DB_URL = "jdbc:mysql://localhost:3306/?serverTimezone=Asia/Seoul";
 
     // DB 생성 메서드
     public static boolean createDatabase() {
@@ -76,7 +76,7 @@ public class DatabaseManager {
                     emotion_id INTEGER AUTO_INCREMENT PRIMARY KEY,
                     entry_id INTEGER NOT NULL,
                     emotion_level INTEGER NOT NULL,
-                    emoji_icon VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+                    emoji_icon VARCHAR(10) NOT NULL,
                     FOREIGN KEY (entry_id) REFERENCES diary(entry_id)
                 )
             """;
