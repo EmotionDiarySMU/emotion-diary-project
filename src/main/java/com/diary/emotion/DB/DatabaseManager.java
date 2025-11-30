@@ -383,6 +383,7 @@ public class DatabaseManager {
             return false;
         }
     }
+    
 
     // 6. 로그인한 사용자의 가장 오래된 일기 연도를 가져오는 메서드 (일기가 없으면 현재 연도를 반환)
     public static int getOldestDiaryYear() {

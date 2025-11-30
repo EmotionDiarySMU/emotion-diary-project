@@ -10,6 +10,8 @@ public class DateSelectorPanel extends JPanel {
     private JComboBox<Object> yearCombo;
     private JComboBox<Object> monthCombo;
     private JComboBox<Object> dayCombo;
+    
+    public static int startYear = com.diary.emotion.DB.DatabaseManager.getOldestDiaryYear();
 
     public static int startYear = com.diary.emotion.DB.DatabaseManager.getOldestDiaryYear();
 
