@@ -22,6 +22,7 @@ public class AuthenticationFrame extends JFrame {
     public AuthenticationFrame() {
         setTitle("Emotion Diary");
         setSize(495, 630);
+        setMinimumSize(new java.awt.Dimension(495, 630));
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -121,6 +122,8 @@ public class AuthenticationFrame extends JFrame {
             loginButton = new JButton("로그인");
             centerPanel.add(loginButton, gbc);
             loginButton.addActionListener(this);
+            
+            rootPane.setDefaultButton(loginButton);
 
             // 회원가입 버튼
             gbc.gridx = 0;

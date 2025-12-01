@@ -41,17 +41,23 @@ public class ViewDiaryPanel extends WriteDiaryGUI {
 
         Color bisque = new Color(255, 245, 238);
 
-        // 제목, 내용 적는 칸 테두리 제거, 색 설정
-        titleField.setBackground(bisque); 		// 배경 색
-//        titleField.setBorder(null);	  		// 테두리 제거
-        contentArea.setBackground(bisque);		// 배경 색
-//        contentScrollPane.setBorder(null);	// 테두리 제거
-
+        // 컴포넌트들 배경색 설정
+        titleField.setBackground(bisque);
+        contentArea.setBackground(bisque);
+        stressValueField.setBackground(bisque);
         
-        // 아이콘 선택 라벨 수정 불가 상태로 만들기 위해 마우스리스너 제거
-        for (JLabel icon : iconLabels) {
-            for (MouseListener ml : icon.getMouseListeners()) { // 우리 코드에선 각 라벨들에 마우스리스너가 1개만 붙어있지만 안전하게 모든 마우스리스너를 찾아서 제거해 주게끔 했다
-                icon.removeMouseListener(ml); // 기존 클릭 이벤트 제거
+        // for 루프 하나로 3가지 작업 동시 처리
+        for (int i = 0; i < 4; i++) {
+            
+            // 1. 패널 배경색 변경
+            slotPanels[i].setBackground(bisque);
+            
+            // 2. 필드 배경색 변경
+            valueFields[i].setBackground(bisque);
+            
+            // 3. 아이콘 라벨의 마우스 리스너 제거
+            for (MouseListener ml : iconLabels[i].getMouseListeners()) {
+            	iconLabels[i].removeMouseListener(ml);
             }
         }
 
