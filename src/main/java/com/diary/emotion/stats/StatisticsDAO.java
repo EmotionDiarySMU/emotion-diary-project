@@ -44,16 +44,16 @@ public class StatisticsDAO {
     public Map<String, Map<String, Double>> getEmotionData(LocalDate startDate, LocalDate endDate) {
 
         String sqlCount = "SELECT e.emoji_icon, COUNT(e.emoji_icon) " +
-                          "FROM emotion e " +
-                          "JOIN diary d ON e.entry_id = d.entry_id " +
-                          "WHERE DATE(d.entry_date) BETWEEN ? AND ? " +
-                          "GROUP BY e.emoji_icon";
+                "FROM emotion e " +
+                "JOIN diary d ON e.entry_id = d.entry_id " +
+                "WHERE DATE(d.entry_date) BETWEEN ? AND ? " +
+                "GROUP BY e.emoji_icon";
 
         String sqlValue = "SELECT e.emoji_icon, AVG(e.emotion_level) " +
-                          "FROM emotion e " +
-                          "JOIN diary d ON e.entry_id = d.entry_id " +
-                          "WHERE DATE(d.entry_date) BETWEEN ? AND ? " +
-                          "GROUP BY e.emoji_icon";
+                "FROM emotion e " +
+                "JOIN diary d ON e.entry_id = d.entry_id " +
+                "WHERE DATE(d.entry_date) BETWEEN ? AND ? " +
+                "GROUP BY e.emoji_icon";
 
         Map<String, Map<String, Double>> data = new HashMap<>();
         data.put("횟수", new HashMap<>());
@@ -117,21 +117,21 @@ public class StatisticsDAO {
 
         if (mode.equals("주간")) {
             sql = "SELECT DAYOFWEEK(entry_date) AS day_num, AVG(stress_level) FROM diary " +
-                  "WHERE DATE(entry_date) BETWEEN ? AND ? " +
-                  "GROUP BY day_num " +
-                  "ORDER BY FIELD(day_num, 2, 3, 4, 5, 6, 7, 1)";
+                    "WHERE DATE(entry_date) BETWEEN ? AND ? " +
+                    "GROUP BY day_num " +
+                    "ORDER BY FIELD(day_num, 2, 3, 4, 5, 6, 7, 1)";
 
         } else if (mode.equals("월간")) {
             sql = "SELECT WEEK(entry_date, 3) AS week_num, AVG(stress_level) FROM diary " +
-                  "WHERE DATE(entry_date) BETWEEN ? AND ? " +
-                  "GROUP BY week_num " +
-                  "ORDER BY week_num";
+                    "WHERE DATE(entry_date) BETWEEN ? AND ? " +
+                    "GROUP BY week_num " +
+                    "ORDER BY week_num";
 
         } else {
             sql = "SELECT MONTH(entry_date) AS month_num, AVG(stress_level) FROM diary " +
-                  "WHERE DATE(entry_date) BETWEEN ? AND ? " +
-                  "GROUP BY month_num " +
-                  "ORDER BY month_num";
+                    "WHERE DATE(entry_date) BETWEEN ? AND ? " +
+                    "GROUP BY month_num " +
+                    "ORDER BY month_num";
         }
 
         try (Connection conn = getConnection();

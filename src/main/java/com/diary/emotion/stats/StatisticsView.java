@@ -71,8 +71,8 @@ public class StatisticsView extends JPanel {
     private static final Font CHART_TITLE_FONT = new Font("SansSerif", Font.BOLD, 16);
 
     private static final String[] OFFICIAL_EMOTIONS = {
-        "😊", "😆", "😍", "😌", "😂", "🤗",
-        "😢", "😠", "😰", "😅", "😧", "😔"
+            "😊", "😆", "😍", "😌", "😂", "🤗",
+            "😢", "😠", "😰", "😅", "😧", "😔"
     };
 
     public StatisticsView() {
@@ -132,8 +132,7 @@ public class StatisticsView extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 String selectedMode = (String) viewModeSelector.getSelectedItem();
                 datePickerCardLayout.show(datePickerCardPanel, selectedMode);
-                JPanel newChartPanel = createChartPanel(selectedMode);
-                setMainChartPanel(newChartPanel);
+                // 차트 업데이트는 Controller에서 담당하므로 여기서는 날짜 선택기만 변경
             }
         });
         controlPanel.add(datePickerCardPanel);
@@ -170,11 +169,11 @@ public class StatisticsView extends JPanel {
         int maxMonthM = (yearM == currentYear) ? currentMonth : 12;
         monthComboM.setModel(createMonthModel(maxMonthM));
         if (monthComboM.getSelectedIndex() == -1) {
-             if (yearM == currentYear) {
+            if (yearM == currentYear) {
                 monthComboM.setSelectedItem(String.format("%02d월", currentMonth));
-             } else {
+            } else {
                 monthComboM.setSelectedIndex(0);
-             }
+            }
         }
     }
     private void updateWeekCombo() {
@@ -197,7 +196,7 @@ public class StatisticsView extends JPanel {
             if (year == currentYear && month == currentMonth) {
                 weekComboW.setSelectedItem(currentWeek + "주");
             } else {
-                 weekComboW.setSelectedIndex(0);
+                weekComboW.setSelectedIndex(0);
             }
         }
     }
@@ -215,7 +214,7 @@ public class StatisticsView extends JPanel {
         }
         return new javax.swing.DefaultComboBoxModel<>(weeks.toArray(new String[0]));
     }
-    private JPanel createChartPanel(String mode) {
+    public JPanel createChartPanel(String mode) {
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         centerPanel.setBackground(PASTEL_BLUE);
@@ -264,13 +263,13 @@ public class StatisticsView extends JPanel {
         return centerPanel;
     }
     private String getAvgStressText(String mode) {
-        
+
         double avgStress = 0.0;
         return String.format("<html><center>평균 스트레스 지수<b>:</b> <b>%.1f</b></center></html>", avgStress);
     }
     private JPanel createDemoStressLineChart(String mode) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        
+
 
         String xAxisLabel = "(요일)";
         if(mode.equals("주간")) {
@@ -282,14 +281,14 @@ public class StatisticsView extends JPanel {
         }
 
         JFreeChart lineChart = ChartFactory.createLineChart(
-            null,
-            xAxisLabel,
-            "(%)",
-            dataset,
-            PlotOrientation.VERTICAL,
-            false,
-            true,
-            false
+                null,
+                xAxisLabel,
+                "(%)",
+                dataset,
+                PlotOrientation.VERTICAL,
+                false,
+                true,
+                false
         );
         lineChart.setBackgroundPaint(PASTEL_BLUE);
         CategoryPlot plot = lineChart.getCategoryPlot();
@@ -318,14 +317,14 @@ public class StatisticsView extends JPanel {
     private JPanel createDemoEmotionBarChart(String mode) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         JFreeChart barChart = ChartFactory.createBarChart(
-            null,
-            "(감정)",
-            "(%)",
-            dataset,
-            PlotOrientation.VERTICAL,
-            false,
-            true,
-            false
+                null,
+                "(감정)",
+                "(%)",
+                dataset,
+                PlotOrientation.VERTICAL,
+                false,
+                true,
+                false
         );
         barChart.setBackgroundPaint(PASTEL_BLUE);
         CategoryPlot plot = barChart.getCategoryPlot();
@@ -460,28 +459,28 @@ public class StatisticsView extends JPanel {
 
     public void showError(String message) {
         JOptionPane.showMessageDialog(
-            this,
-            message,
-            "오류",
-            JOptionPane.ERROR_MESSAGE
+                this,
+                message,
+                "오류",
+                JOptionPane.ERROR_MESSAGE
         );
     }
 
     public void showWarning(String message) {
         JOptionPane.showMessageDialog(
-            this,
-            message,
-            "경고",
-            JOptionPane.WARNING_MESSAGE
+                this,
+                message,
+                "경고",
+                JOptionPane.WARNING_MESSAGE
         );
     }
 
     public void showInfo(String message) {
         JOptionPane.showMessageDialog(
-            this,
-            message,
-            "알림",
-            JOptionPane.INFORMATION_MESSAGE
+                this,
+                message,
+                "알림",
+                JOptionPane.INFORMATION_MESSAGE
         );
     }
 }

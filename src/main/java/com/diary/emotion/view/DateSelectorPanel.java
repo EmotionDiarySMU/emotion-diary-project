@@ -10,7 +10,7 @@ public class DateSelectorPanel extends JPanel {
     private JComboBox<Object> yearCombo;
     private JComboBox<Object> monthCombo;
     private JComboBox<Object> dayCombo;
-    
+
     public static int startYear = com.diary.emotion.DB.DatabaseManager.getOldestDiaryYear();
 
     public DateSelectorPanel() {
@@ -21,10 +21,10 @@ public class DateSelectorPanel extends JPanel {
 
     // 🟡 콤보박스 생성, 설정
     private void initializeComponents() {
-    	
-    	Color salmon = new Color(255, 218, 185);
-    	setBackground(salmon);
-    	
+
+        Color salmon = new Color(255, 218, 185);
+        setBackground(salmon);
+
         // 🔹 연도 콤보박스
         int currentYear = LocalDate.now().getYear();
 

@@ -5,7 +5,10 @@ import java.time.YearMonth;
 import java.time.DayOfWeek;
 import java.time.temporal.WeekFields;
 import java.util.Map;
+import javax.swing.JPanel;
 import org.jfree.data.category.DefaultCategoryDataset;
+import com.diary.emotion.login.AuthenticationFrame;
+import com.diary.emotion.DB.DBDebugUtil;
 
 public class StatisticsController {
 
@@ -20,8 +23,23 @@ public class StatisticsController {
         updateAllCharts();
     }
 
+    /**
+     * 외부에서 차트를 강제로 새로고침할 때 사용
+     */
+    public void refreshCharts() {
+        updateAllCharts();
+    }
+
     private void addListeners() {
-        view.getViewModeSelector().addActionListener(e -> updateAllCharts());
+        view.getViewModeSelector().addActionListener(e -> {
+            // 뷰 모드가 변경되면 차트 패널을 새로 생성
+            String mode = (String) view.getViewModeSelector().getSelectedItem();
+            if (mode != null) {
+                JPanel newChartPanel = view.createChartPanel(mode);
+                view.setMainChartPanel(newChartPanel);
+            }
+            updateAllCharts();
+        });
 
         view.getYearComboW().addActionListener(e -> updateAllCharts());
         view.getMonthComboW().addActionListener(e -> updateAllCharts());
@@ -42,25 +60,39 @@ public class StatisticsController {
             LocalDate startDate = getStartDateFromView(mode);
             LocalDate endDate = getEndDateFromView(mode);
 
+            System.out.println("\n===============================================");
+            System.out.println("통계 차트 업데이트 시작");
+            System.out.println("모드: " + mode);
+            System.out.println("시작일: " + startDate);
+            System.out.println("종료일: " + endDate);
+            System.out.println("===============================================");
+
+            // DB의 모든 감정 데이터 출력
+            DBDebugUtil.printAllEmotions(AuthenticationFrame.loggedInUserId);
+
             double avgStress = dao.getAverageStress(startDate, endDate);
 
-            // 수정 제안
-            Map<String, Map<String, Double>> emotionDataset = dao.getEmotionData(startDate, endDate);
+            Map<String, Map<String, Double>> emotionData = dao.getEmotionData(startDate, endDate);
 
             DefaultCategoryDataset stressDataset = dao.getStressData(startDate, endDate, mode);
 
             view.getAvgStressLabel().setText(
-                String.format("<html><center>평균 스트레스 지수<b>:</b> <b>%.1f</b></center></html>", avgStress)
+                    String.format("<html><center>평균 스트레스 지수<b>:</b> <b>%.1f</b></center></html>", avgStress)
             );
 
-            view.updateEmotionChart(emotionDataset);
+            view.updateEmotionChart(emotionData);
             view.updateStressChart(stressDataset);
 
+            System.out.println("===============================================");
+            System.out.println("통계 차트 업데이트 완료");
+            System.out.println("===============================================\n");
+
         } catch (Exception e) {
+            System.err.println("차트 업데이트 중 오류 발생:");
             e.printStackTrace();
             view.showError("데이터를 불러오는 중 오류가 발생했습니다.\n" +
-                          "데이터베이스 연결 상태를 확인해주세요.\n\n" +
-                          "오류: " + e.getMessage());
+                    "데이터베이스 연결 상태를 확인해주세요.\n\n" +
+                    "오류: " + e.getMessage());
         }
     }
 
