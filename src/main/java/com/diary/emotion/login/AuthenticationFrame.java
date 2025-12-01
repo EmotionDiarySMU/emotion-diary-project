@@ -121,6 +121,8 @@ public class AuthenticationFrame extends JFrame {
             loginButton = new JButton("로그인");
             centerPanel.add(loginButton, gbc);
             loginButton.addActionListener(this);
+            
+            rootPane.setDefaultButton(loginButton);
 
             // 회원가입 버튼
             gbc.gridx = 0;
