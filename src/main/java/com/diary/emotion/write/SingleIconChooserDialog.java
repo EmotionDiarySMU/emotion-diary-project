@@ -21,8 +21,8 @@ public class SingleIconChooserDialog extends JDialog {
     JButton[] iconButtons = new JButton[12]; // 12개 버튼
 
     // 🔸 추가된 부분 — 내부에서 선택된 아이콘 위치를 기억
-    int selectedIndex = -1; 
-    
+    int selectedIndex = -1;
+
     // 🔹 (회색!!!!!!!!) 추가된 부분 — 비활성화된 아이콘의 배경색
     private final Color DISABLED_BG_COLOR = new Color(240, 240, 240); // 연한 회색
 
@@ -45,16 +45,16 @@ public class SingleIconChooserDialog extends JDialog {
             iconButton.setFont(new Font("SansSerif", Font.PLAIN, 24));
             iconButton.setBackground(bgColor);
             iconButton.setBorder(BorderFactory.createEtchedBorder());
-            
+
             // 🔸 추가된 부분 — 선택 시 index 저장
             final int index = i;
 
             iconButton.addActionListener(e -> {
                 // 버튼이 비활성화(다른 곳에서 사용 중)된 경우 선택하지 않음
                 if (!iconButton.isEnabled()) {
-                    return; 
+                    return;
                 }
-                
+
                 selectedIndex = index;      // 선택한 인덱스 저장
                 selectedIcon = allIcons[index];     // 선택한 아이콘 저장
                 updateSelectionHighlight();      // 하이라이트 적용
@@ -115,8 +115,8 @@ public class SingleIconChooserDialog extends JDialog {
     public void setVisible(boolean b) {
         if (b) {
             selectedIcon = null;
-            
-         // 다른 슬롯에서 사용 중인 아이콘 목록을 만듦 
+
+            // 다른 슬롯에서 사용 중인 아이콘 목록을 만듦
             List<String> usedIcons = new ArrayList<>();
             for (JLabel lbl : allIconLabels) {
                 String icon = lbl.getText();
@@ -129,7 +129,7 @@ public class SingleIconChooserDialog extends JDialog {
                 JButton btn = iconButtons[i];
                 boolean isUsed = usedIcons.contains(btn.getText());
                 btn.setEnabled(!isUsed); // 비활성화
-                
+
                 // 🔹 추가된 부분 — 비활성화된 아이콘에 시각적 표시 추가
                 // updateSelectionHighlight()에서 처리되도록 이동
             }
@@ -145,16 +145,16 @@ public class SingleIconChooserDialog extends JDialog {
         Color defaultBg = getContentPane().getBackground();
         Color selectedBg = new Color(255, 235, 200);
         Color selectedBorder = Color.ORANGE;
-        
+
         for (int i = 0; i < iconButtons.length; i++) {
             JButton btn = iconButtons[i];
-            
+
             // 1. 현재 슬롯의 아이콘 (선택 강조)
             if (i == selectedIndex) {
                 btn.setBorder(BorderFactory.createLineBorder(selectedBorder, 3));
                 btn.setBackground(selectedBg);
                 btn.setForeground(Color.BLACK); // 선택된 것은 명확하게
-            } 
+            }
             // 2. 다른 슬롯에서 이미 사용 중인 아이콘 (비활성화 강조)
             else if (!btn.isEnabled()) {  // 버튼 클릭 방지!!
                 btn.setBorder(BorderFactory.createEtchedBorder()); // 테두리는 기본
