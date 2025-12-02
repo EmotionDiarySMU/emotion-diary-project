@@ -12,8 +12,11 @@ public class AuthenticationFrame extends JFrame {
 
     private static final long serialVersionUID = 1L;
     
-    JTextField idField;
-    JPasswordField passwordField;
+    JTextField LoginIdField;
+    JPasswordField LoginPasswordField;
+    
+    JTextField SigninIdField;
+    JPasswordField SigninPasswordField, confirmPasswordField;
 
     public static String loggedInUserId = null;
 
@@ -118,8 +121,8 @@ public class AuthenticationFrame extends JFrame {
             gbc.anchor = GridBagConstraints.WEST; // 필드를 왼쪽(라벨쪽)으로 붙임
             gbc.gridx = 1;
             gbc.gridy = 2;
-            idField = new JTextField(15); // 크기 변경
-            centerPanel.add(idField, gbc);
+            LoginIdField = new JTextField(15); // 크기 변경
+            centerPanel.add(LoginIdField, gbc);
 
             // Password 라벨 및 필드
             gbc.anchor = GridBagConstraints.EAST;
@@ -131,8 +134,8 @@ public class AuthenticationFrame extends JFrame {
             gbc.anchor = GridBagConstraints.WEST;
             gbc.gridx = 1;
             gbc.gridy = 3;
-            passwordField = new JPasswordField(15); // 크기 변경
-            centerPanel.add(passwordField, gbc);
+            LoginPasswordField = new JPasswordField(15); // 크기 변경
+            centerPanel.add(LoginPasswordField, gbc);
 
             // 로그인 버튼
             gbc.gridx = 0;
@@ -157,8 +160,8 @@ public class AuthenticationFrame extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == loginButton) {
-                String id = idField.getText();
-                String pw = new String(passwordField.getPassword());
+                String id = LoginIdField.getText();
+                String pw = new String(LoginPasswordField.getPassword());
 
                 // [수정됨] 직접 DB를 만지지 않고 매니저를 부름.
                 DatabaseManager dbManager = new DatabaseManager();
@@ -178,6 +181,7 @@ public class AuthenticationFrame extends JFrame {
                 }
 
             } else if (e.getSource() == signUpButton) {
+            	clearLoginFields();
                 authFrame.showPanel("SIGNUP");
             }
         }
@@ -190,8 +194,6 @@ public class AuthenticationFrame extends JFrame {
 
         private static final long serialVersionUID = 1L;
         AuthenticationFrame authFrame;
-        JTextField idField;
-        JPasswordField passwordField, confirmPasswordField;
         JButton signUpButton, backButton;
 
         public SignUpPanel(AuthenticationFrame frame) {
@@ -226,8 +228,8 @@ public class AuthenticationFrame extends JFrame {
             gbc.anchor = GridBagConstraints.WEST; // 필드를 왼쪽(라벨쪽)으로 붙임
             gbc.gridx = 1;
             gbc.gridy = 1;
-            idField = new JTextField(15); // 크기 통일
-            centerPanel.add(idField, gbc);
+            SigninIdField = new JTextField(15); // 크기 통일
+            centerPanel.add(SigninIdField, gbc);
 
             // Password 라벨 및 필드
             gbc.anchor = GridBagConstraints.EAST;
@@ -239,8 +241,8 @@ public class AuthenticationFrame extends JFrame {
             gbc.anchor = GridBagConstraints.WEST;
             gbc.gridx = 1;
             gbc.gridy = 2;
-            passwordField = new JPasswordField(15); // 크기 통일
-            centerPanel.add(passwordField, gbc);
+            SigninPasswordField = new JPasswordField(15); // 크기 통일
+            centerPanel.add(SigninPasswordField, gbc);
 
             // Confirm Password 라벨 및 필드
             gbc.anchor = GridBagConstraints.EAST;
@@ -279,8 +281,8 @@ public class AuthenticationFrame extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == signUpButton) {
-                String id = idField.getText().trim();
-                String pw = new String(passwordField.getPassword());
+                String id = SigninIdField.getText().trim();
+                String pw = new String(SigninPasswordField.getPassword());
                 String confirmPw = new String(confirmPasswordField.getPassword());
 
                 if (id.isEmpty() || pw.isEmpty()) {
@@ -306,6 +308,7 @@ public class AuthenticationFrame extends JFrame {
                 }
 
             } else if (e.getSource() == backButton) {
+            	clearSignupFields();
                 authFrame.showPanel("LOGIN");
             }
         }
@@ -388,11 +391,24 @@ public class AuthenticationFrame extends JFrame {
     }
     
     public void clearLoginFields() {
-        if (idField != null) {
-            idField.setText("");
+        if (LoginIdField != null) {
+        	LoginIdField.setText("");
         }
-        if (passwordField != null) {
-            passwordField.setText("");
+        if (LoginPasswordField != null) {
+        	LoginPasswordField.setText("");
+        }
+    }
+    
+    public void clearSignupFields() {
+        if (SigninIdField != null) {
+        	SigninIdField.setText("");
+        }
+        if (SigninPasswordField != null) {
+        	SigninPasswordField.setText("");
+        }
+        
+        if (confirmPasswordField != null) {
+        	confirmPasswordField.setText("");
         }
     }
         

@@ -79,17 +79,16 @@ public class DeleteAccountDialog extends JDialog {
         boolean success = DatabaseManager.deleteUserAccount(inputPassword);
         
         if (success) {
-            JOptionPane.showMessageDialog(this, "계정이 성공적으로 삭제되었습니다.\n프로그램을 종료합니다.", "성공", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "계정이 성공적으로 삭제되었습니다.", "성공", JOptionPane.INFORMATION_MESSAGE);
             
-            // 2단계: 메인 창(MainView)과 열려있는 모든 ExtraWindow를 닫기
             dispose(); // 현재 다이얼로그 닫기
             
-            // 열람 창에서 열었던 모든 수정 다이얼로그 닫기
+            // 열람 창에서 열었던 모든 다이얼로그 닫기
             for (Window win : new HashSet<>(parent.viewPanel.openWindows)) {
                 win.dispose();
             }
 
-            // 3단계: 메인 창 닫고 로그인 화면으로 이동
+            // 메인 창 닫고 로그인 화면으로 이동
             parent.dispose();
             
             // 로그인 화면 다시 띄우기 (AuthenticationFrame의 인스턴스를 새로 생성하거나 가져와서 표시)
