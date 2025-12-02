@@ -11,6 +11,9 @@ import com.diary.emotion.share.MainView;
 public class AuthenticationFrame extends JFrame {
 
     private static final long serialVersionUID = 1L;
+    
+    JTextField idField;
+    JPasswordField passwordField;
 
     public static String loggedInUserId = null;
 
@@ -42,10 +45,29 @@ public class AuthenticationFrame extends JFrame {
         cardLayout.show(mainPanel, "LOGIN");
 
         setVisible(true);
+        
+        showPanel("LOGIN");
     }
 
+    // 패널 전환, 포커싱 버튼 설정
     public void showPanel(String panelName) {
         cardLayout.show(mainPanel, panelName);
+        
+        // 패널 전환 시 기본 버튼 설정
+        JRootPane rootPane = getRootPane();
+        
+        if ("LOGIN".equals(panelName)) {
+            // LOGIN 패널을 찾아 로그인 버튼을 기본 버튼으로 설정
+            LoginPanel loginPanel = (LoginPanel) mainPanel.getComponent(0);
+            rootPane.setDefaultButton(loginPanel.loginButton);
+        } else if ("SIGNUP".equals(panelName)) {
+            // SIGNUP 패널을 찾아 가입하기 버튼을 기본 버튼으로 설정
+            SignUpPanel signUpPanel = (SignUpPanel) mainPanel.getComponent(1);
+            rootPane.setDefaultButton(signUpPanel.signUpButton);
+        } else {
+            // 기타 패널(SUCCESS 등)에서는 기본 버튼을 제거하여 Enter 키가 아무 동작도 하지 않게 함
+            rootPane.setDefaultButton(null);
+        }
     }
 
     // =========================================================
@@ -55,8 +77,6 @@ public class AuthenticationFrame extends JFrame {
 
         private static final long serialVersionUID = 1L;
         AuthenticationFrame authFrame;
-        JTextField idField;
-        JPasswordField passwordField;
         JButton loginButton, signUpButton;
 
         public LoginPanel(AuthenticationFrame frame) {
@@ -122,8 +142,6 @@ public class AuthenticationFrame extends JFrame {
             loginButton = new JButton("로그인");
             centerPanel.add(loginButton, gbc);
             loginButton.addActionListener(this);
-            
-            rootPane.setDefaultButton(loginButton);
 
             // 회원가입 버튼
             gbc.gridx = 0;
@@ -151,11 +169,10 @@ public class AuthenticationFrame extends JFrame {
 
                     loggedInUserId = id;
 
-                    // [추가] 팀원의 메인 화면 실행
-                    new MainView();
+                    // 메인 화면 실행
+                    new MainView(authFrame);
 
-                    // [추가] 로그인 창 닫기
-                    authFrame.dispose();
+                    authFrame.setVisible(false);
                 } else {
                     JOptionPane.showMessageDialog(this, "아이디 또는 비밀번호가 틀렸습니다.", "로그인 실패", JOptionPane.ERROR_MESSAGE);
                 }
@@ -369,4 +386,14 @@ public class AuthenticationFrame extends JFrame {
             }
         }
     }
+    
+    public void clearLoginFields() {
+        if (idField != null) {
+            idField.setText("");
+        }
+        if (passwordField != null) {
+            passwordField.setText("");
+        }
+    }
+        
 }

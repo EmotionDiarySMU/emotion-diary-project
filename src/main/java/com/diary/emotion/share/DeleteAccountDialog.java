@@ -12,14 +12,14 @@ public class DeleteAccountDialog extends JDialog {
 
     private static final long serialVersionUID = 1L;
     private JPasswordField passwordField;
-    private MainView mainView; // 메인 창을 참조하기 위한 필드
+    private MainView parent; // 메인 창을 참조하기 위한 필드
 
     /**
      * 계정 삭제 확인 다이얼로그 생성자
      */
     public DeleteAccountDialog(MainView parent) {
         super(parent, "비밀번호 재확인", true); // 모달 다이얼로그 설정 (true)
-        this.mainView = parent;
+        this.parent = parent;
         
         setLayout(new BorderLayout(10, 10));
         setSize(300, 150);
@@ -85,12 +85,12 @@ public class DeleteAccountDialog extends JDialog {
             dispose(); // 현재 다이얼로그 닫기
             
             // 열람 창에서 열었던 모든 수정 다이얼로그 닫기
-            for (Window win : new HashSet<>(SearchDiaryPanel.openWindows)) {
+            for (Window win : new HashSet<>(parent.viewPanel.openWindows)) {
                 win.dispose();
             }
 
             // 3단계: 메인 창 닫고 로그인 화면으로 이동
-            mainView.dispose();
+            parent.dispose();
             
             // 로그인 화면 다시 띄우기 (AuthenticationFrame의 인스턴스를 새로 생성하거나 가져와서 표시)
             new AuthenticationFrame(); 

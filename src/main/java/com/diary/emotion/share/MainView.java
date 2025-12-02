@@ -16,6 +16,7 @@ import com.diary.emotion.view.ExtraWindow;
 import com.diary.emotion.view.SearchDiaryPanel;
 import com.diary.emotion.write.WriteDiaryGUI;
 import com.diary.emotion.stats.StatisticsView;
+import com.diary.emotion.login.AuthenticationFrame;
 import com.diary.emotion.stats.StatisticsController;
 import com.diary.emotion.stats.StatisticsDAO;
 
@@ -49,9 +50,13 @@ public class MainView extends JFrame {
 	public StatisticsDAO statisticsDAO;
 	public StatisticsController statisticsController;
 	
-	public MainView() {
-		
-		instance = this; // ⭐ 생성자에서 정적 필드를 초기화
+	// AuthenticationFrame을 참조할 필드
+    private AuthenticationFrame authFrame; 
+
+    public MainView(AuthenticationFrame authFrame) {
+        
+        this.authFrame = authFrame; // AuthenticationFrame 객체 참조 저장
+        instance = this;
 		
 		// 창 설정
 		setTitle("Emotion Diary");
@@ -67,6 +72,7 @@ public class MainView extends JFrame {
 		JButton write = new JButton("쓰기");
 		JButton view = new JButton("열람");
 		JButton chart = new JButton("통계");
+		JButton logoutButton = new JButton("로그아웃");
 		JButton deleteAccount = new JButton("계정 삭제");
 		
 		// 버튼 메뉴바에 추가
@@ -75,6 +81,7 @@ public class MainView extends JFrame {
             menuBar.add(b);
         }
         menuBar.add(Box.createHorizontalGlue());
+        menuBar.add(logoutButton);
         menuBar.add(deleteAccount);
         
         // cardLayout 패널 생성
@@ -98,7 +105,7 @@ public class MainView extends JFrame {
         // cardLayout 패널 창에 추가
         add(cardPanel);
 
-        // 버튼 클릭 시 화면 전환
+        // 버튼 클릭 시 화면 전환 리스너
         write.addActionListener(e -> cardLayout.show(cardPanel, "write"));
         view.addActionListener(e -> cardLayout.show(cardPanel, "view"));
         chart.addActionListener(e -> {
@@ -106,6 +113,9 @@ public class MainView extends JFrame {
             // 통계 탭 클릭 시 차트 강제 새로고침
             statisticsController.refreshCharts();
         });
+        
+        // 로그아웃 버튼 리스너
+        logoutButton.addActionListener(e -> logout());
         
         // 삭제 버튼 리스너
         deleteAccount.addActionListener(e -> {
@@ -121,11 +131,11 @@ public class MainView extends JFrame {
 
             // 2. 사용자의 선택에 따른 작동
             switch (result) {
-            case JOptionPane.YES_OPTION:
-            	new DeleteAccountDialog(MainView.this); // 새 다이얼로그 띄우기
-                break;
-            case JOptionPane.NO_OPTION:
-                break;
+	            case JOptionPane.YES_OPTION:
+	            	new DeleteAccountDialog(MainView.this); // 새 다이얼로그 띄우기
+	                break;
+	            case JOptionPane.NO_OPTION:
+	                break;
             }
         });
 
@@ -138,15 +148,39 @@ public class MainView extends JFrame {
         	public void windowClosing(WindowEvent e) {
         		flag = 0;
         		
-    			for (ExtraWindow win : new HashSet<>(SearchDiaryPanel.openWindows)) {
+    			for (ExtraWindow win : new HashSet<>(viewPanel.openWindows)) {
     				flag = SaveQuestion.handleWindowClosing(win, win.modifyPanel, 2);
     				if (flag == 1) return;
     			}
         		SaveQuestion.handleWindowClosing(MainView.this, writePanel, 1);
             }
         });
-        
+
 	}
+    
+    private void logout() {
+    	flag = 0;
+        
+        // 저장 안 된 일기 수정들 정리
+        for (ExtraWindow win : new HashSet<>(viewPanel.openWindows)) {
+            flag = SaveQuestion.handleWindowClosing(win, win.modifyPanel, 2);
+            if (flag == 1) return; // 사용자가 취소했을 경우 로그아웃 중단
+        }
+        
+        // 저장 안 된 일기 쓰기 정리
+        int flag2 = SaveQuestion.handleWindowClosing(MainView.this, writePanel, 2);
+        
+        if (flag2 == 1) return; // 사용자가 취소했을 경우 로그아웃 중단
+        
+        authFrame.clearLoginFields();
+        
+        // 로그인 정보 초기화
+        AuthenticationFrame.loggedInUserId = null;
+        
+        // 로그인 화면(AuthenticationFrame) 다시 보이기
+        authFrame.setVisible(true);
+        authFrame.showPanel("LOGIN");
+    }
 }
 	
 	

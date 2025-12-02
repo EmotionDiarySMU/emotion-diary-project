@@ -10,6 +10,7 @@ import javax.swing.text.*;
 import com.diary.emotion.DB.DatabaseManager;
 import com.diary.emotion.DB.DiaryEntry;
 import com.diary.emotion.DB.QuestionDBManager;
+import com.diary.emotion.share.MainView;
 import com.diary.emotion.view.SearchDiaryPanel;
 
 import java.awt.*;
@@ -323,7 +324,7 @@ public class WriteDiaryGUI extends JPanel {
 
                         clearAllFields();
 
-                        SearchDiaryPanel.refreshDiaryModel(true);
+                        MainView.getInstance().viewPanel.refreshDiaryModel(true);
 
                         // 3. 저장 후 '수정됨' 플래그 리셋
                         isModified = false;

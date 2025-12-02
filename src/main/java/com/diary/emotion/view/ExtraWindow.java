@@ -12,6 +12,7 @@ import javax.swing.*;
 
 import com.diary.emotion.DB.DatabaseManager;
 import com.diary.emotion.DB.DiaryEntry;
+import com.diary.emotion.share.MainView;
 import com.diary.emotion.share.SaveQuestion;
 
 public class ExtraWindow extends JFrame{
@@ -103,7 +104,7 @@ public class ExtraWindow extends JFrame{
                     viewPanel.fillEntry(entry); // viewPanel에 수정된 값 반영
                     modifyPanel.fillEntry(entry); // modifyPanel에 수정된 값 반영
                     
-                    SearchDiaryPanel.refreshDiaryModel(true); // 목록 패널도 갱신
+                    MainView.getInstance().viewPanel.refreshDiaryModel(true); // 목록 패널도 갱신
                     
                     cardLayout.show(cardPanel,"view");
                     
@@ -146,8 +147,8 @@ public class ExtraWindow extends JFrame{
             
             DatabaseManager.deleteEntry(entry.getEntry_id()); // DB에서 삭제
             JOptionPane.showMessageDialog(this, "삭제되었습니다.");
-            SearchDiaryPanel.refreshDiaryModel(true); // 일기 목록 새로고침
-            SearchDiaryPanel.openWindows.remove(this); // openWindows Set에서 제거
+            MainView.getInstance().viewPanel.refreshDiaryModel(true); // 일기 목록 새로고침
+            MainView.getInstance().viewPanel.openWindows.remove(this); // openWindows Set에서 제거
             dispose();
         });
 
