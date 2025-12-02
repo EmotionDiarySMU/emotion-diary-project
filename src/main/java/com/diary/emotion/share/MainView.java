@@ -5,7 +5,9 @@ import java.awt.CardLayout;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.event.WindowAdapter;
@@ -72,17 +74,26 @@ public class MainView extends JFrame {
 		JButton write = new JButton("쓰기");
 		JButton view = new JButton("열람");
 		JButton chart = new JButton("통계");
-		JButton logoutButton = new JButton("로그아웃");
-		JButton deleteAccount = new JButton("계정 삭제");
 		
-		// 버튼 메뉴바에 추가
+		// 버튼을 메뉴바에 추가
 		JButton[] leftButtons = {write, view, chart};
         for (JButton b : leftButtons) {
             menuBar.add(b);
         }
+        
         menuBar.add(Box.createHorizontalGlue());
-        menuBar.add(logoutButton);
-        menuBar.add(deleteAccount);
+        
+        // 메뉴와 메뉴아이템 생성
+        JMenu account = new JMenu("사용자: " + AuthenticationFrame.loggedInUserId);
+        JMenuItem logoutButton = new JMenuItem("로그아웃");
+        JMenuItem deleteAccount = new JMenuItem("계정삭제");
+        
+        // 메뉴에 메뉴아이템 추가
+        account.add(logoutButton);
+        account.add(deleteAccount);
+        
+        // 메뉴를 메뉴바에 추가
+        menuBar.add(account);
         
         // cardLayout 패널 생성
         cardLayout = new CardLayout();
