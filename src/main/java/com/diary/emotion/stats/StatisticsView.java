@@ -44,6 +44,9 @@ import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 
+import com.diary.emotion.DB.DatabaseManager;
+import com.diary.emotion.view.DateSelectorPanel;
+
 public class StatisticsView extends JPanel {
 
     private static final Color PASTEL_BLUE = new Color(230, 240, 255);
@@ -143,7 +146,7 @@ public class StatisticsView extends JPanel {
     }
     private void populateYearCombos() {
         List<String> years = new ArrayList<>();
-        for (int y = 2020; y <= currentYear; y++) {
+        for (int y = DatabaseManager.getOldestDiaryYear(); y <= currentYear; y++) {
             years.add(y + "년");
         }
         String[] yearArray = years.toArray(new String[0]);
