@@ -19,17 +19,17 @@ import com.diary.emotion.DB.DiaryEntry;
 import com.diary.emotion.DB.DatabaseManager;
 
 public class SearchDiaryPanel extends JPanel{
-	private static final long serialVersionUID = 1L;
+	private final long serialVersionUID = 1L;
 	
-	public static Set<ExtraWindow> openWindows = new HashSet<>();
+	public Set<ExtraWindow> openWindows = new HashSet<>();
 	
-	public static DefaultListModel<String> diaryModel;
-	public static List<DiaryEntry> diaryEntries = new ArrayList<>();
+	public DefaultListModel<String> diaryModel;
+	public List<DiaryEntry> diaryEntries = new ArrayList<>();
 	
-	static JTextField titleFd;
+	JTextField titleFd;
 	
-	static DateSelectorPanel firstDS;
-	static DateSelectorPanel secondDS;
+	DateSelectorPanel firstDS;
+	DateSelectorPanel secondDS;
 
 	public SearchDiaryPanel() {
 
@@ -168,7 +168,7 @@ public class SearchDiaryPanel extends JPanel{
 		refreshDiaryModel(true);
 	}
 	
-	public static Timestamp getStartTimestamp() {
+	public Timestamp getStartTimestamp() {
 	    int year = firstDS.getYear();
 	    int month = firstDS.getMonth();
 	    int day = firstDS.getDay();
@@ -182,7 +182,7 @@ public class SearchDiaryPanel extends JPanel{
 	    return Timestamp.valueOf(date.atStartOfDay());
 	}
 
-	public static Timestamp getEndTimestamp() {
+	public Timestamp getEndTimestamp() {
 	    int year = secondDS.getYear();
 	    int month = secondDS.getMonth();
 	    int day = secondDS.getDay();
@@ -198,7 +198,7 @@ public class SearchDiaryPanel extends JPanel{
 
 	
 	
-	public static void refreshDiaryModel(boolean fromDB) {
+	public void refreshDiaryModel(boolean fromDB) {
 		if (fromDB) {
 			String keyword = titleFd.getText().trim();
 		    Timestamp start = getStartTimestamp();

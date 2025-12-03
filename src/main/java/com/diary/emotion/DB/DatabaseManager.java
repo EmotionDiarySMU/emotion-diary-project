@@ -17,17 +17,17 @@ import com.diary.emotion.login.AuthenticationFrame;
 public class DatabaseManager {
 
     // ⭐️ 이 클래스는 'emotion_diary' DB에 바로 연결
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/emotion_diary?serverTimezone=Asia/Seoul";
-    private static final String DB_ID = "root";
-    private static final String DB_PW = "U9Bsi7sj1*"; // 비번
-
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/emotion_diary?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&useUnicode=true";
+	private static final String DB_ID = "root";
+	private static final String DB_PW = "quwrof12"; // 비번
+	
     // 1. DB 연결을 가져오는 메소드
     public static Connection getConnection() throws Exception {
         return DriverManager.getConnection(DB_URL, DB_ID, DB_PW);
     }
-
+    
     // 처음 DB 생성을 위한 URL
-    private static final String Initial_DB_URL = "jdbc:mysql://localhost:3306/?serverTimezone=Asia/Seoul";
+    private static final String Initial_DB_URL = "jdbc:mysql://localhost:3306/?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&useUnicode=true";
 
     // DB 생성 메서드
     public static boolean createDatabase() {
@@ -76,7 +76,7 @@ public class DatabaseManager {
                     emotion_id INTEGER AUTO_INCREMENT PRIMARY KEY,
                     entry_id INTEGER NOT NULL,
                     emotion_level INTEGER NOT NULL,
-                    emoji_icon VARCHAR(10) NOT NULL,
+                    emoji_icon VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
                     FOREIGN KEY (entry_id) REFERENCES diary(entry_id)
                 )
             """;
@@ -95,7 +95,7 @@ public class DatabaseManager {
 	        return true;
 	        
 	    } catch (Exception e) {
-	    	System.err.println("일기 삭제 중 오류 발생:");
+	    	System.err.println("일기 생성 중 오류 발생:");
 	    	e.printStackTrace(); // 오류 콘솔에 출력 (디버깅용)
 	    	
 	    	return false;
@@ -103,7 +103,7 @@ public class DatabaseManager {
 	}
     
     // 1. 로그인 기능: ID와 비번을 받아서 맞으면 true, 틀리면 false 반환
-    public boolean checkLogin(String id, String pw) {
+    public static boolean checkLogin(String id, String pw) {
         String sql = "SELECT user_pw FROM user WHERE user_id = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_ID, DB_PW);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -122,7 +122,7 @@ public class DatabaseManager {
     }
 
     // 2. 회원가입 기능: 성공(1), 중복ID(0), 에러(-1) 반환
-    public int registerUser(String id, String pw) {
+    public static int registerUser(String id, String pw) {
         String checkSql = "SELECT user_id FROM user WHERE user_id = ?";
         String insertSql = "INSERT INTO user (user_id, user_pw) VALUES (?, ?)";
 
@@ -383,7 +383,6 @@ public class DatabaseManager {
             return false;
         }
     }
-    
 
     // 6. 로그인한 사용자의 가장 오래된 일기 연도를 가져오는 메서드 (일기가 없으면 현재 연도를 반환)
     public static int getOldestDiaryYear() {
@@ -415,6 +414,57 @@ public class DatabaseManager {
             e.printStackTrace();
             // 오류 발생 시에도 기본값으로 현재 연도 반환
             return currentYear;
+        }
+    }
+    
+    // 7. 계정 삭제 메서드
+    public static boolean deleteUserAccount(String password) {
+    	
+    	// 1단계: 입력된 비밀번호가 DB의 비밀번호와 일치하는지 확인 (정적 메서드로 호출)
+        if (!checkLogin(AuthenticationFrame.loggedInUserId, password)) {
+            return false;
+        }
+        
+        // 2단계: 데이터 삭제 (emotion -> diary -> user 순서)
+        String sqlDeleteEmotion =
+            "DELETE e FROM emotion e JOIN diary d ON e.entry_id = d.entry_id WHERE d.user_id = ?";
+
+        String sqlDeleteDiary =
+            "DELETE FROM diary WHERE user_id = ?";
+        
+        String sqlDeleteUser =
+            "DELETE FROM user WHERE user_id = ?";
+
+        try (Connection conn = getConnection()) {
+            conn.setAutoCommit(false); // 트랜잭션 시작
+
+            // 2-1. 감정 데이터 삭제
+            try (PreparedStatement pstmt = conn.prepareStatement(sqlDeleteEmotion)) {
+                pstmt.setString(1, AuthenticationFrame.loggedInUserId);
+                pstmt.executeUpdate();
+            }
+
+            // 2-2. 일기 데이터 삭제
+            try (PreparedStatement pstmt = conn.prepareStatement(sqlDeleteDiary)) {
+                pstmt.setString(1, AuthenticationFrame.loggedInUserId);
+                pstmt.executeUpdate();
+            }
+
+            // 2-3. 사용자 계정 데이터 삭제 (최종)
+            try (PreparedStatement pstmt = conn.prepareStatement(sqlDeleteUser)) {
+                pstmt.setString(1, AuthenticationFrame.loggedInUserId);
+                pstmt.executeUpdate();
+            }
+
+            conn.commit(); // 모든 작업 성공, 최종 반영
+            return true;
+
+        } catch (Exception e) {
+            System.err.println("계정 삭제 중 오류 발생:");
+            e.printStackTrace();
+            // 오류 발생 시 롤백 (try-with-resources가 Connection을 닫을 때 rollback 시도)
+            
+            return false;
         }
     }
 }

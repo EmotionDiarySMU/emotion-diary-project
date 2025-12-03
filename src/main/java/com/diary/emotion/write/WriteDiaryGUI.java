@@ -10,11 +10,14 @@ import javax.swing.text.*;
 import com.diary.emotion.DB.DatabaseManager;
 import com.diary.emotion.DB.DiaryEntry;
 import com.diary.emotion.DB.QuestionDBManager;
+import com.diary.emotion.share.MainView;
 import com.diary.emotion.view.SearchDiaryPanel;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -38,12 +41,14 @@ public class WriteDiaryGUI extends JPanel {
     public JTextArea contentArea;
     public JScrollPane contentScrollPane;
 
+    public JPanel[] slotPanels = new JPanel[4];
     public JLabel[] iconLabels = new JLabel[4];
     public JTextField[] valueFields = new JTextField[4];
     SingleIconChooserDialog iconDialog; // 아이콘 선택 팝업창
 
     public JSlider stressSlider;
     public JTextField stressValueField;
+    
 
     public JButton newPostButton;
     public JButton saveButton;
@@ -149,9 +154,9 @@ public class WriteDiaryGUI extends JPanel {
 
         // 4개의 감정 슬롯(아이콘+텍스트필드) 생성
         for (int i = 0; i < 4; i++) {
-            JPanel slotPanel = new JPanel(new BorderLayout());
-            slotPanel.setBorder(BorderFactory.createEtchedBorder());
-            slotPanel.setBackground(Color.WHITE);
+        	slotPanels[i] = new JPanel(new BorderLayout());
+        	slotPanels[i].setBorder(BorderFactory.createEtchedBorder());
+        	slotPanels[i].setBackground(Color.WHITE);
 
             iconLabels[i] = new JLabel("[ ]", SwingConstants.CENTER);
             iconLabels[i].setFont(new Font("SansSerif", Font.PLAIN, 24));
@@ -161,10 +166,10 @@ public class WriteDiaryGUI extends JPanel {
             ((AbstractDocument) valueFields[i].getDocument()).setDocumentFilter(filter);
             valueFields[i].getDocument().addDocumentListener(new SimpleModifyListener());
 
-            slotPanel.add(iconLabels[i], BorderLayout.CENTER);
-            slotPanel.add(valueFields[i], BorderLayout.SOUTH);
+            slotPanels[i].add(iconLabels[i], BorderLayout.CENTER);
+            slotPanels[i].add(valueFields[i], BorderLayout.SOUTH);
 
-            iconDisplayPanel.add(slotPanel);
+            iconDisplayPanel.add(slotPanels[i]);
 
             final int slotIndex = i;
 
@@ -319,7 +324,7 @@ public class WriteDiaryGUI extends JPanel {
 
                         clearAllFields();
 
-                        SearchDiaryPanel.refreshDiaryModel(true);
+                        MainView.getInstance().viewPanel.refreshDiaryModel(true);
 
                         // 3. 저장 후 '수정됨' 플래그 리셋
                         isModified = false;
@@ -342,6 +347,21 @@ public class WriteDiaryGUI extends JPanel {
             }
         });
 
+        // 제목 필드에 포커싱
+        titleField.addHierarchyListener(new HierarchyListener() {
+            @Override
+            public void hierarchyChanged(HierarchyEvent e) {
+                // 창이 실제로 표시될 때 (HierarchyListener.SHOWING_CHANGED)
+                if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0) {
+                    // 이 리스너는 한 번만 실행되도록 제거
+                    titleField.removeHierarchyListener(this);
+
+                    // 포커스 요청
+                    titleField.requestFocusInWindow();
+                }
+            }
+        });
+        
     }
 
 

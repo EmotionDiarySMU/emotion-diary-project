@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 import com.diary.emotion.DB.DatabaseManager;
+import com.diary.emotion.login.AuthenticationFrame;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 public class StatisticsDAO {
@@ -18,15 +19,16 @@ public class StatisticsDAO {
 
     public double getAverageStress(LocalDate startDate, LocalDate endDate) {
 
-        String sql = "SELECT AVG(stress_level) FROM diary WHERE DATE(entry_date) BETWEEN ? AND ?";
+        String sql = "SELECT AVG(stress_level) FROM diary WHERE user_id = ? AND DATE(entry_date) BETWEEN ? AND ?";
 
         double avgStress = 0.0;
 
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setObject(1, startDate);
-            pstmt.setObject(2, endDate);
+            pstmt.setString(1, AuthenticationFrame.loggedInUserId);
+            pstmt.setObject(2, startDate);
+            pstmt.setObject(3, endDate);
 
             try (ResultSet rs = pstmt.executeQuery()) {
 
@@ -46,13 +48,13 @@ public class StatisticsDAO {
         String sqlCount = "SELECT e.emoji_icon, COUNT(e.emoji_icon) " +
                 "FROM emotion e " +
                 "JOIN diary d ON e.entry_id = d.entry_id " +
-                "WHERE DATE(d.entry_date) BETWEEN ? AND ? " +
+                "WHERE d.user_id = ? AND DATE(d.entry_date) BETWEEN ? AND ? " +
                 "GROUP BY e.emoji_icon";
 
         String sqlValue = "SELECT e.emoji_icon, AVG(e.emotion_level) " +
                 "FROM emotion e " +
                 "JOIN diary d ON e.entry_id = d.entry_id " +
-                "WHERE DATE(d.entry_date) BETWEEN ? AND ? " +
+                "WHERE d.user_id = ? AND DATE(d.entry_date) BETWEEN ? AND ? " +
                 "GROUP BY e.emoji_icon";
 
         Map<String, Map<String, Double>> data = new HashMap<>();
@@ -65,8 +67,9 @@ public class StatisticsDAO {
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sqlCount)) {
 
-            pstmt.setObject(1, startDate);
-            pstmt.setObject(2, endDate);
+            pstmt.setString(1, AuthenticationFrame.loggedInUserId);
+            pstmt.setObject(2, startDate);
+            pstmt.setObject(3, endDate);
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -92,8 +95,9 @@ public class StatisticsDAO {
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sqlValue)) {
 
-            pstmt.setObject(1, startDate);
-            pstmt.setObject(2, endDate);
+            pstmt.setString(1, AuthenticationFrame.loggedInUserId);
+            pstmt.setObject(2, startDate);
+            pstmt.setObject(3, endDate);
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -117,19 +121,19 @@ public class StatisticsDAO {
 
         if (mode.equals("주간")) {
             sql = "SELECT DAYOFWEEK(entry_date) AS day_num, AVG(stress_level) FROM diary " +
-                    "WHERE DATE(entry_date) BETWEEN ? AND ? " +
+                    "WHERE user_id = ? AND DATE(entry_date) BETWEEN ? AND ? " +
                     "GROUP BY day_num " +
                     "ORDER BY FIELD(day_num, 2, 3, 4, 5, 6, 7, 1)";
 
         } else if (mode.equals("월간")) {
             sql = "SELECT WEEK(entry_date, 3) AS week_num, AVG(stress_level) FROM diary " +
-                    "WHERE DATE(entry_date) BETWEEN ? AND ? " +
+                    "WHERE user_id = ? AND DATE(entry_date) BETWEEN ? AND ? " +
                     "GROUP BY week_num " +
                     "ORDER BY week_num";
 
         } else {
             sql = "SELECT MONTH(entry_date) AS month_num, AVG(stress_level) FROM diary " +
-                    "WHERE DATE(entry_date) BETWEEN ? AND ? " +
+                    "WHERE user_id = ? AND DATE(entry_date) BETWEEN ? AND ? " +
                     "GROUP BY month_num " +
                     "ORDER BY month_num";
         }
@@ -137,8 +141,9 @@ public class StatisticsDAO {
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setObject(1, startDate);
-            pstmt.setObject(2, endDate);
+            pstmt.setString(1, AuthenticationFrame.loggedInUserId);
+            pstmt.setObject(2, startDate);
+            pstmt.setObject(3, endDate);
 
             try (ResultSet rs = pstmt.executeQuery()) {
 

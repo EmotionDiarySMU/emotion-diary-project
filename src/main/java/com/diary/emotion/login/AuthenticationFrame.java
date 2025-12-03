@@ -11,6 +11,12 @@ import com.diary.emotion.share.MainView;
 public class AuthenticationFrame extends JFrame {
 
     private static final long serialVersionUID = 1L;
+    
+    JTextField LoginIdField;
+    JPasswordField LoginPasswordField;
+    
+    JTextField SigninIdField;
+    JPasswordField SigninPasswordField, confirmPasswordField;
 
     public static String loggedInUserId = null;
 
@@ -22,6 +28,7 @@ public class AuthenticationFrame extends JFrame {
     public AuthenticationFrame() {
         setTitle("Emotion Diary");
         setSize(495, 630);
+        setMinimumSize(new java.awt.Dimension(495, 630));
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -41,10 +48,29 @@ public class AuthenticationFrame extends JFrame {
         cardLayout.show(mainPanel, "LOGIN");
 
         setVisible(true);
+        
+        showPanel("LOGIN");
     }
 
+    // 패널 전환, 포커싱 버튼 설정
     public void showPanel(String panelName) {
         cardLayout.show(mainPanel, panelName);
+        
+        // 패널 전환 시 기본 버튼 설정
+        JRootPane rootPane = getRootPane();
+        
+        if ("LOGIN".equals(panelName)) {
+            // LOGIN 패널을 찾아 로그인 버튼을 기본 버튼으로 설정
+            LoginPanel loginPanel = (LoginPanel) mainPanel.getComponent(0);
+            rootPane.setDefaultButton(loginPanel.loginButton);
+        } else if ("SIGNUP".equals(panelName)) {
+            // SIGNUP 패널을 찾아 가입하기 버튼을 기본 버튼으로 설정
+            SignUpPanel signUpPanel = (SignUpPanel) mainPanel.getComponent(1);
+            rootPane.setDefaultButton(signUpPanel.signUpButton);
+        } else {
+            // 기타 패널(SUCCESS 등)에서는 기본 버튼을 제거하여 Enter 키가 아무 동작도 하지 않게 함
+            rootPane.setDefaultButton(null);
+        }
     }
 
     // =========================================================
@@ -54,8 +80,6 @@ public class AuthenticationFrame extends JFrame {
 
         private static final long serialVersionUID = 1L;
         AuthenticationFrame authFrame;
-        JTextField idField;
-        JPasswordField passwordField;
         JButton loginButton, signUpButton;
 
         public LoginPanel(AuthenticationFrame frame) {
@@ -97,8 +121,8 @@ public class AuthenticationFrame extends JFrame {
             gbc.anchor = GridBagConstraints.WEST; // 필드를 왼쪽(라벨쪽)으로 붙임
             gbc.gridx = 1;
             gbc.gridy = 2;
-            idField = new JTextField(15); // 크기 변경
-            centerPanel.add(idField, gbc);
+            LoginIdField = new JTextField(15); // 크기 변경
+            centerPanel.add(LoginIdField, gbc);
 
             // Password 라벨 및 필드
             gbc.anchor = GridBagConstraints.EAST;
@@ -110,8 +134,8 @@ public class AuthenticationFrame extends JFrame {
             gbc.anchor = GridBagConstraints.WEST;
             gbc.gridx = 1;
             gbc.gridy = 3;
-            passwordField = new JPasswordField(15); // 크기 변경
-            centerPanel.add(passwordField, gbc);
+            LoginPasswordField = new JPasswordField(15); // 크기 변경
+            centerPanel.add(LoginPasswordField, gbc);
 
             // 로그인 버튼
             gbc.gridx = 0;
@@ -136,8 +160,8 @@ public class AuthenticationFrame extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == loginButton) {
-                String id = idField.getText();
-                String pw = new String(passwordField.getPassword());
+                String id = LoginIdField.getText();
+                String pw = new String(LoginPasswordField.getPassword());
 
                 // [수정됨] 직접 DB를 만지지 않고 매니저를 부름.
                 DatabaseManager dbManager = new DatabaseManager();
@@ -148,16 +172,16 @@ public class AuthenticationFrame extends JFrame {
 
                     loggedInUserId = id;
 
-                    // [추가] 팀원의 메인 화면 실행
-                    new MainView();
+                    // 메인 화면 실행
+                    new MainView(authFrame);
 
-                    // [추가] 로그인 창 닫기
-                    authFrame.dispose();
+                    authFrame.setVisible(false);
                 } else {
                     JOptionPane.showMessageDialog(this, "아이디 또는 비밀번호가 틀렸습니다.", "로그인 실패", JOptionPane.ERROR_MESSAGE);
                 }
 
             } else if (e.getSource() == signUpButton) {
+            	clearLoginFields();
                 authFrame.showPanel("SIGNUP");
             }
         }
@@ -170,8 +194,6 @@ public class AuthenticationFrame extends JFrame {
 
         private static final long serialVersionUID = 1L;
         AuthenticationFrame authFrame;
-        JTextField idField;
-        JPasswordField passwordField, confirmPasswordField;
         JButton signUpButton, backButton;
 
         public SignUpPanel(AuthenticationFrame frame) {
@@ -206,8 +228,8 @@ public class AuthenticationFrame extends JFrame {
             gbc.anchor = GridBagConstraints.WEST; // 필드를 왼쪽(라벨쪽)으로 붙임
             gbc.gridx = 1;
             gbc.gridy = 1;
-            idField = new JTextField(15); // 크기 통일
-            centerPanel.add(idField, gbc);
+            SigninIdField = new JTextField(15); // 크기 통일
+            centerPanel.add(SigninIdField, gbc);
 
             // Password 라벨 및 필드
             gbc.anchor = GridBagConstraints.EAST;
@@ -219,8 +241,8 @@ public class AuthenticationFrame extends JFrame {
             gbc.anchor = GridBagConstraints.WEST;
             gbc.gridx = 1;
             gbc.gridy = 2;
-            passwordField = new JPasswordField(15); // 크기 통일
-            centerPanel.add(passwordField, gbc);
+            SigninPasswordField = new JPasswordField(15); // 크기 통일
+            centerPanel.add(SigninPasswordField, gbc);
 
             // Confirm Password 라벨 및 필드
             gbc.anchor = GridBagConstraints.EAST;
@@ -259,8 +281,8 @@ public class AuthenticationFrame extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == signUpButton) {
-                String id = idField.getText().trim();
-                String pw = new String(passwordField.getPassword());
+                String id = SigninIdField.getText().trim();
+                String pw = new String(SigninPasswordField.getPassword());
                 String confirmPw = new String(confirmPasswordField.getPassword());
 
                 if (id.isEmpty() || pw.isEmpty()) {
@@ -286,6 +308,7 @@ public class AuthenticationFrame extends JFrame {
                 }
 
             } else if (e.getSource() == backButton) {
+            	clearSignupFields();
                 authFrame.showPanel("LOGIN");
             }
         }
@@ -366,4 +389,27 @@ public class AuthenticationFrame extends JFrame {
             }
         }
     }
+    
+    public void clearLoginFields() {
+        if (LoginIdField != null) {
+        	LoginIdField.setText("");
+        }
+        if (LoginPasswordField != null) {
+        	LoginPasswordField.setText("");
+        }
+    }
+    
+    public void clearSignupFields() {
+        if (SigninIdField != null) {
+        	SigninIdField.setText("");
+        }
+        if (SigninPasswordField != null) {
+        	SigninPasswordField.setText("");
+        }
+        
+        if (confirmPasswordField != null) {
+        	confirmPasswordField.setText("");
+        }
+    }
+        
 }

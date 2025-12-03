@@ -1,6 +1,9 @@
 package com.diary.emotion.view;
 
 import javax.swing.*;
+
+import com.diary.emotion.DB.DatabaseManager;
+
 import java.awt.*;
 import java.time.*;
 
@@ -10,8 +13,8 @@ public class DateSelectorPanel extends JPanel {
     private JComboBox<Object> yearCombo;
     private JComboBox<Object> monthCombo;
     private JComboBox<Object> dayCombo;
-    
-    public static int startYear = com.diary.emotion.DB.DatabaseManager.getOldestDiaryYear();
+
+	public int startYear;
 
 
     public DateSelectorPanel() {
@@ -22,6 +25,8 @@ public class DateSelectorPanel extends JPanel {
 
     // 🟡 콤보박스 생성, 설정
     private void initializeComponents() {
+    	
+    	this.startYear = DatabaseManager.getOldestDiaryYear();
 
         Color salmon = new Color(255, 218, 185);
         setBackground(salmon);
