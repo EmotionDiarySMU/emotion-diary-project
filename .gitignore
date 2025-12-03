@@ -1,1 +1,8 @@
-/target/
+.DS_Store
+.settings
+.idea
+
+bin
+target
+
+*.iml
