@@ -2,7 +2,6 @@ package com.diary.emotion.share;
 
 import com.diary.emotion.DB.DatabaseManager;
 import com.diary.emotion.login.AuthenticationFrame; // 로그인 화면으로 돌아가기 위해 필요
-import com.diary.emotion.view.SearchDiaryPanel;
 
 import javax.swing.*;
 import java.awt.*;

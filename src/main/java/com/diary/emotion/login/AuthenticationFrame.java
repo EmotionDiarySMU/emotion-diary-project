@@ -176,6 +176,8 @@ public class AuthenticationFrame extends JFrame {
                     new MainView(authFrame);
 
                     authFrame.setVisible(false);
+                    
+                    clearLoginFields();
                 } else {
                     JOptionPane.showMessageDialog(this, "아이디 또는 비밀번호가 틀렸습니다.", "로그인 실패", JOptionPane.ERROR_MESSAGE);
                 }
@@ -301,6 +303,9 @@ public class AuthenticationFrame extends JFrame {
                     SignUpSuccessPanel successPanel = (SignUpSuccessPanel) authFrame.mainPanel.getComponent(2);
                     successPanel.setSuccessMessage(id);
                     authFrame.showPanel("SUCCESS");
+                    
+                    clearSignupFields();
+                    
                 } else if (result == 0) {
                     JOptionPane.showMessageDialog(this, "이미 존재하는 ID입니다.", "가입 실패", JOptionPane.WARNING_MESSAGE);
                 } else {

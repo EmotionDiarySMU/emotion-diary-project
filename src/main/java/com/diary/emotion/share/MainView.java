@@ -183,8 +183,6 @@ public class MainView extends JFrame {
         
         if (flag2 == 1) return; // 사용자가 취소했을 경우 로그아웃 중단
         
-        authFrame.clearLoginFields();
-        
         // 로그인 정보 초기화
         AuthenticationFrame.loggedInUserId = null;
         
