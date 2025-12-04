@@ -52,22 +52,27 @@ public class SearchDiaryPanel extends JPanel{
 		datePn.setLayout(new BoxLayout(datePn, BoxLayout.Y_AXIS));
 		
 		// 1줄: "날짜:" + 첫 번째 DateSelectorPanel
-		JPanel firstRow = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		JPanel firstRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
 		firstRow.add(new JLabel("날짜: "));
 		firstDS = new DateSelectorPanel();
         firstRow.setBackground(salmon);
 		firstRow.add(firstDS);
 		
-		// 2줄: "~" + 두 번째 DateSelectorPanel
-		JPanel secondRow = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		// 2줄: "~"
+		JPanel secondRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
 		secondRow.add(new JLabel("~"));
+		secondRow.setBackground(salmon);
+		
+		// 3줄: 두 번째 DateSelectorPanel
+		JPanel thirdRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
 		secondDS = new DateSelectorPanel();
-        secondRow.setBackground(salmon);
-		secondRow.add(secondDS);
+		thirdRow.setBackground(salmon);
+		thirdRow.add(secondDS);
 		
 		// 패널에 두 줄 추가
 		datePn.add(firstRow);
 		datePn.add(secondRow);
+		datePn.add(thirdRow);
 		
 		
 		// 검색 버튼
@@ -119,6 +124,11 @@ public class SearchDiaryPanel extends JPanel{
 		diaries.addMouseListener(new MouseAdapter() {
 		    public void mouseClicked(MouseEvent e) {
 		        int index = diaries.getSelectedIndex();
+		        
+		        if (index == -1 || index >= diaryEntries.size()) {
+		            return;
+		        }
+		        
 		        DiaryEntry entry = diaryEntries.get(index);
 		        
 		        // 이미 같은 entry 창이 열려 있는지 검사
