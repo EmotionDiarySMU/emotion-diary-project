@@ -415,17 +415,14 @@ public class WriteDiaryGUI extends JPanel {
     public void checkAndClear() {
         if (isModified) {
             int result = JOptionPane.showConfirmDialog(this,
-                    "작성 중인 일기가 있습니다.\n저장하고 새 일기를 쓰시겠습니까?",
+                    "지우고 새 일기를 쓰시겠습니까?",
                     "새 일기 작성",
-                    JOptionPane.YES_NO_CANCEL_OPTION);
+                    JOptionPane.YES_NO_OPTION);
 
             if (result == JOptionPane.YES_OPTION) {
-                saveButton.doClick();
-                if (!isModified) {
                     clearAllFields();
-                }
             } else if (result == JOptionPane.NO_OPTION) {
-                clearAllFields();
+                return;
             }
         } else {
             clearAllFields();
