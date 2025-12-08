@@ -162,8 +162,13 @@ public class AuthenticationFrame extends JFrame {
             if (e.getSource() == loginButton) {
                 String id = LoginIdField.getText();
                 String pw = new String(LoginPasswordField.getPassword());
+                
+                if (id.isEmpty() || pw.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "ID와 비밀번호를 입력해주세요.");
+                    return;
+                }
 
-                // [수정됨] 직접 DB를 만지지 않고 매니저를 부름.
+                // 직접 DB를 만지지 않고 매니저를 부름.
                 DatabaseManager dbManager = new DatabaseManager();
                 boolean isSuccess = dbManager.checkLogin(id, pw);
 
