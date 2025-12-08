@@ -13,7 +13,7 @@ public class SingleIconChooserDialog extends JDialog {
     private static final long serialVersionUID = 1L;
 
     // 12개 아이콘 목록
-    String[] allIcons = {"😊", "😆", "😍", "😌", "😂", "🤗", "😢", "😠", "😧", "😰", "😅", "😔"};
+    String[] allIcons = {"😊", "😆", "😍", "😌", "😂", "😩", "😢", "😠", "😧", "😰", "😅", "😔"};
     String selectedIcon = null; // 사용자가 선택한 아이콘
 
     JLabel[] allIconLabels; // 메인 GUI의 4개 아이콘 라벨 (중복 검사용)
