@@ -115,7 +115,7 @@ emotion-diary-project/
 ### 개발팀
 - **이아진** - ajin1390@gmail.com
 - **이연주** - 3yjmy89@gmail.com
-- **이지민** - jimin@029000@gmail.com
+- **이지민** - jimin029000@gmail.com
 - **장정아** - isopurple@outlook.com
 
 ## 라이선스
