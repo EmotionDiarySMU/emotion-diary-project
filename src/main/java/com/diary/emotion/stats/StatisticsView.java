@@ -74,7 +74,7 @@ public class StatisticsView extends JPanel {
     private static final Font CHART_TITLE_FONT = new Font("SansSerif", Font.BOLD, 16);
 
     private static final String[] OFFICIAL_EMOTIONS = {
-            "😊", "😆", "😍", "😌", "😂", "🤗",
+            "😊", "😆", "😍", "😌", "😂", "😩",
             "😢", "😠", "😰", "😅", "😧", "😔"
     };
 
